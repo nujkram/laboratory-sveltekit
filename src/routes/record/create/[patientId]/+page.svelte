@@ -36,7 +36,7 @@
 		eosinophil,
 		basophil,
 		lympocyte,
-		monoctye,
+		monocyte,
 		erythrocyteSedimentation,
 		thrombocyteNumber,
 		bleedingTime,
@@ -47,6 +47,7 @@
 		remarks,
 		date,
 		time;
+	let total = '1.0';
 
 	const options = ['Chemistry', 'Hematology', 'Parasitology', 'Urinalysis', 'Miscellaneous'];
 
@@ -93,8 +94,9 @@
 			{#if selectedOption == 'Chemistry'}
 				<Chemistry {stat} {fastingBloodSugar} {randomBloodSugar} {postPrandial} {hba1c} {urea} {creatinine} {uricAcid} {cholesterol} {triglycerides} {hdlCholesterol} {ldlCholesterol} {sgotAst} {sgptAlt} {sodium} {potassium} {calcium} />
 			{:else if selectedOption == 'Hematology'}
-				<Hematology {stat} {exam} {hemoglobin} {erythrocyteVolume} {erythrocyteNumber} {leukocyteNumber} {neutrophilNumber} {segmenters} {stab} {eosinophil} {basophil} {lympocyte} {monoctye} {erythrocyteSedimentation} {thrombocyteNumber} {bleedingTime} {clottingTime} {bloodType} {rh} {others} />
+				<Hematology {stat} {exam} {hemoglobin} {erythrocyteVolume} {erythrocyteNumber} {leukocyteNumber} {neutrophilNumber} {segmenters} {stab} {eosinophil} {basophil} {lympocyte} {monocyte} {total} {erythrocyteSedimentation} {thrombocyteNumber} {bleedingTime} {clottingTime} {bloodType} {rh} {others} />
 			{/if}
+			<hr class="mb-4" />
 			<div class="md:flex md:items-center mb-6">
 				<div class="md:w-3/12">
 					<label

@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import dateToString from '$lib/utils/dateHelper';
 	import { paginate, LightPaginationNav } from 'svelte-paginate';
-	import AddUserForm from '$lib/components/forms/AddUserForm.svelte';
+	import AddUserForm from '$lib/components/forms/account/AddUserForm.svelte';
 
 
 	let search;
