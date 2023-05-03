@@ -3,6 +3,7 @@
 	import Chemistry from "$lib/components/forms/record/Chemistry.svelte";
 	import Hematology from "$lib/components/forms/record/Hematology.svelte";
 	import Parasitology from "$lib/components/forms/record/Parasitology.svelte";
+	import Urinalysis from "$lib/components/forms/record/Urinalysis.svelte";
 	export let data;
 	let { patientId } = data;
 	let category = '';
@@ -44,7 +45,6 @@
 		clottingTime,
 		bloodType,
 		rh,
-		others,
 		color,
 		consistency,
 		ascarisLumb,
@@ -55,11 +55,29 @@
 		entamoebaColiTroph,
 		entamoebaHistCyst,
 		entamoebaHistTroph,
-		plusCell,
+		pusCell,
 		rbc,
 		yeastCell,
 		fatGlobules,
 		bacteria,
+		transparency,
+		reaction,
+		specificGravity,
+		protein,
+		sugar,
+		fineGran,
+		coarseGran,
+		pusCellCast,
+		hyaline,
+		calciumOxolate,
+		amorphous,
+		tripPhosphates,
+		squamous,
+		mucous,
+		roundEpithelial,
+		vaginalis,
+		hominis,
+		others,
 		remarks;
 	let total = '1.0';
 
@@ -110,7 +128,9 @@
 			{:else if selectedOption == 'Hematology'}
 				<Hematology {stat} {exam} {hemoglobin} {erythrocyteVolume} {erythrocyteNumber} {leukocyteNumber} {neutrophilNumber} {segmenters} {stab} {eosinophil} {basophil} {lympocyte} {monocyte} {total} {erythrocyteSedimentation} {thrombocyteNumber} {bleedingTime} {clottingTime} {bloodType} {rh} {others} />
 			{:else if selectedOption == 'Parasitology'}
-				<Parasitology {color} {consistency} {ascarisLumb} {hookworm} {trichuris} {strongyloides} {entamoebaColiCyst} {entamoebaColiTroph} {entamoebaHistCyst} {entamoebaHistTroph} {plusCell} {rbc} {yeastCell} {fatGlobules} {bacteria} {others} {remarks} />
+				<Parasitology {color} {consistency} {ascarisLumb} {hookworm} {trichuris} {strongyloides} {entamoebaColiCyst} {entamoebaColiTroph} {entamoebaHistCyst} {entamoebaHistTroph} {pusCell} {rbc} {yeastCell} {fatGlobules} {bacteria} {others} {remarks} />
+			{:else if selectedOption == 'Urinalysis'}
+				<Urinalysis {exam} {color} {transparency} {reaction} {specificGravity} {protein} {sugar} {fineGran} {coarseGran} {pusCellCast} {hyaline} {rbc} {pusCell} {uricAcid} {calciumOxolate} {amorphous} {tripPhosphates} {squamous} {mucous} {roundEpithelial} {yeastCell} {vaginalis} {hominis} />
 			{/if}
 			<hr class="mb-4" />
 			<div class="md:flex md:items-center mb-6">
