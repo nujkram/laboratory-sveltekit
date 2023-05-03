@@ -2,6 +2,7 @@
 	// @ts-nocheck
 	import Chemistry from "$lib/components/forms/record/Chemistry.svelte";
 	import Hematology from "$lib/components/forms/record/Hematology.svelte";
+	import Parasitology from "$lib/components/forms/record/Parasitology.svelte";
 	export let data;
 	let { patientId } = data;
 	let category = '';
@@ -44,9 +45,22 @@
 		bloodType,
 		rh,
 		others,
-		remarks,
-		date,
-		time;
+		color,
+		consistency,
+		ascarisLumb,
+		hookworm,
+		trichuris,
+		strongyloides,
+		entamoebaColiCyst,
+		entamoebaColiTroph,
+		entamoebaHistCyst,
+		entamoebaHistTroph,
+		plusCell,
+		rbc,
+		yeastCell,
+		fatGlobules,
+		bacteria,
+		remarks;
 	let total = '1.0';
 
 	const options = ['Chemistry', 'Hematology', 'Parasitology', 'Urinalysis', 'Miscellaneous'];
@@ -95,6 +109,8 @@
 				<Chemistry {stat} {fastingBloodSugar} {randomBloodSugar} {postPrandial} {hba1c} {urea} {creatinine} {uricAcid} {cholesterol} {triglycerides} {hdlCholesterol} {ldlCholesterol} {sgotAst} {sgptAlt} {sodium} {potassium} {calcium} />
 			{:else if selectedOption == 'Hematology'}
 				<Hematology {stat} {exam} {hemoglobin} {erythrocyteVolume} {erythrocyteNumber} {leukocyteNumber} {neutrophilNumber} {segmenters} {stab} {eosinophil} {basophil} {lympocyte} {monocyte} {total} {erythrocyteSedimentation} {thrombocyteNumber} {bleedingTime} {clottingTime} {bloodType} {rh} {others} />
+			{:else if selectedOption == 'Parasitology'}
+				<Parasitology {color} {consistency} {ascarisLumb} {hookworm} {trichuris} {strongyloides} {entamoebaColiCyst} {entamoebaColiTroph} {entamoebaHistCyst} {entamoebaHistTroph} {plusCell} {rbc} {yeastCell} {fatGlobules} {bacteria} {others} {remarks} />
 			{/if}
 			<hr class="mb-4" />
 			<div class="md:flex md:items-center mb-6">

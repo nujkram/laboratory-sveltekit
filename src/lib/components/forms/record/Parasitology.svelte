@@ -1,26 +1,22 @@
 <script>
     // @ts-nocheck
-    export let stat, 
-        exam,
-		hemoglobin,
-		erythrocyteVolume,
-		erythrocyteNumber,
-		leukocyteNumber,
-		neutrophilNumber,
-		segmenters,
-		stab,
-		eosinophil,
-		basophil,
-		lympocyte,
-		monocyte,
-        total,
-		erythrocyteSedimentation,
-		thrombocyteNumber,
-		bleedingTime,
-		clottingTime,
-		bloodType,
-		rh,
-		others;
+    export let color,
+        consistency,
+        ascarisLumb,
+        hookworm,
+        trichuris,
+        strongyloides,
+        entamoebaColiCyst,
+        entamoebaColiTroph,
+        entamoebaHistCyst,
+        entamoebaHistTroph,
+        plusCell,
+        rbc,
+        yeastCell,
+        fatGlobules,
+        bacteria,
+        others,
+        remarks;
 </script>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
@@ -28,7 +24,7 @@
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
             for="inline-firstName"
         >
-            Stat
+            Color
         </label>
     </div>
     <div class="md:w-5/12">
@@ -36,8 +32,8 @@
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
             id="inline-firstName"
             type="text"
-            placeholder="Stat"
-            bind:value={stat}
+            placeholder="Color"
+            bind:value={color}
         />
     </div>
 </div>
@@ -47,7 +43,7 @@
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
             for="inline-firstName"
         >
-            Exam Desired
+            Consistency
         </label>
     </div>
     <div class="md:w-5/12">
@@ -55,8 +51,8 @@
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
             id="inline-firstName"
             type="text"
-            placeholder="Exam Desired"
-            bind:value={exam}
+            placeholder="Consistency"
+            bind:value={consistency}
         />
     </div>
 </div>
@@ -66,7 +62,7 @@
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
             for="inline-firstName"
         >
-            Hemoglobin Concentration Mass
+            Ascaris Lumbricoides
         </label>
     </div>
     <div class="md:w-5/12">
@@ -74,12 +70,12 @@
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
             id="inline-firstName"
             type="text"
-            placeholder="Hemoglobin Concentration Mass"
-            bind:value={hemoglobin}
+            placeholder="Ascaris Lumbricoides"
+            bind:value={ascarisLumb}
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">F: 120-150 gms/L | M: 130-170 gms/L</h4>
+        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
@@ -88,7 +84,7 @@
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
             for="inline-firstName"
         >
-            Erythrocyte Volume Fraction
+            Hookworm
         </label>
     </div>
     <div class="md:w-5/12">
@@ -96,12 +92,12 @@
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
             id="inline-firstName"
             type="text"
-            placeholder="Erythrocyte Volume Fraction"
-            bind:value={erythrocyteVolume}
+            placeholder="Hookworm"
+            bind:value={hookworm}
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">F: 0.37-0.45 gms/L | M: 0.40-0.50 gms/L</h4>
+        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
@@ -110,7 +106,7 @@
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
             for="inline-firstName"
         >
-            Erythrocyte Number Concentration
+            Trichuris Trichiura
         </label>
     </div>
     <div class="md:w-5/12">
@@ -118,12 +114,12 @@
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
             id="inline-firstName"
             type="text"
-            placeholder="Erythrocyte Number Concentration"
-            bind:value={erythrocyteNumber}
+            placeholder="Trichuris Trichiura"
+            bind:value={trichuris}
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">F: 4.0-5.0 xⁱ²10/L | M: 4.5-5.50 xⁱ²10/L</h4>
+        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
@@ -132,7 +128,7 @@
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
             for="inline-firstName"
         >
-            Leukocyte Number Concentration
+            Strongyloides Stercoralis
         </label>
     </div>
     <div class="md:w-5/12">
@@ -140,12 +136,12 @@
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
             id="inline-firstName"
             type="text"
-            placeholder="Leukocyte Number Concentration"
-            bind:value={leukocyteNumber}
+            placeholder="Strongyloides Stercoralis"
+            bind:value={strongyloides}
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">5.0-10 x⁹10/L</h4>
+        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
@@ -154,7 +150,7 @@
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
             for="inline-firstName"
         >
-            Neutrophil Number Fraction
+            Entamoeba Coli Cyst
         </label>
     </div>
     <div class="md:w-5/12">
@@ -162,12 +158,12 @@
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
             id="inline-firstName"
             type="text"
-            placeholder="Neutrophil Number Fraction"
-            bind:value={neutrophilNumber}
+            placeholder="Entamoeba Coli Cyst"
+            bind:value={entamoebaColiCyst}
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">0.60-0.70</h4>
+        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
@@ -176,7 +172,7 @@
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
             for="inline-firstName"
         >
-            Segmenters
+            Entamoeba Coli Trophozoite
         </label>
     </div>
     <div class="md:w-5/12">
@@ -184,12 +180,12 @@
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
             id="inline-firstName"
             type="text"
-            placeholder="Segmenters"
-            bind:value={segmenters}
+            placeholder="Entamoeba Coli Trophozoite"
+            bind:value={entamoebaColiTroph}
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">0.60-0.70</h4>
+        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
@@ -198,7 +194,7 @@
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
             for="inline-firstName"
         >
-            Stab
+            Entamoeba Histolytica Cyst
         </label>
     </div>
     <div class="md:w-5/12">
@@ -206,12 +202,12 @@
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
             id="inline-firstName"
             type="text"
-            placeholder="Stab"
-            bind:value={stab}
+            placeholder="Entamoeba Histolytica Cyst"
+            bind:value={entamoebaHistCyst}
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">0.02-0.06</h4>
+        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
@@ -220,7 +216,7 @@
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
             for="inline-firstName"
         >
-            Eosinophil
+            Entamoeba Histolytica Trophozoite
         </label>
     </div>
     <div class="md:w-5/12">
@@ -228,12 +224,12 @@
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
             id="inline-firstName"
             type="text"
-            placeholder="Eosinophil"
-            bind:value={eosinophil}
+            placeholder="Entamoeba Histolytica Trophozoite"
+            bind:value={entamoebaHistTroph}
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">0.02-0.06</h4>
+        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
@@ -242,7 +238,7 @@
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
             for="inline-firstName"
         >
-            Basophil
+            Plus Cells
         </label>
     </div>
     <div class="md:w-5/12">
@@ -250,12 +246,12 @@
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
             id="inline-firstName"
             type="text"
-            placeholder="Basophil"
-            bind:value={basophil}
+            placeholder="Plus Cells"
+            bind:value={plusCell}
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">0.00-0.01</h4>
+        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
@@ -264,7 +260,7 @@
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
             for="inline-firstName"
         >
-            Lymphocyte
+            RBC
         </label>
     </div>
     <div class="md:w-5/12">
@@ -272,12 +268,12 @@
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
             id="inline-firstName"
             type="text"
-            placeholder="Lymphocyte"
-            bind:value={lympocyte}
+            placeholder="RBC"
+            bind:value={rbc}
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">Adult: 0.18-0.30 | Infant: 0.22-0.44</h4>
+        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
@@ -286,7 +282,7 @@
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
             for="inline-firstName"
         >
-            Monocyte
+            Yeast Cells
         </label>
     </div>
     <div class="md:w-5/12">
@@ -294,30 +290,8 @@
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
             id="inline-firstName"
             type="text"
-            placeholder="Monocyte"
-            bind:value={monocyte}
-        />
-    </div>
-    <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">0.04-0.08</h4>
-    </div>
-</div>
-<div class="md:flex md:items-center mb-6">
-    <div class="md:w-3/12">
-        <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
-        >
-            Total
-        </label>
-    </div>
-    <div class="md:w-5/12">
-        <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
-            type="text"
-            placeholder="Total"
-            bind:value={total}
+            placeholder="Yeast Cells"
+            bind:value={yeastCell}
         />
     </div>
 </div>
@@ -327,7 +301,7 @@
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
             for="inline-firstName"
         >
-            Erythrocyte Sedimentation Rate
+            Fat Globules
         </label>
     </div>
     <div class="md:w-5/12">
@@ -335,96 +309,8 @@
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
             id="inline-firstName"
             type="text"
-            placeholder="Erythrocyte Sedimentation Rate"
-            bind:value={erythrocyteSedimentation}
-        />
-    </div>
-    <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">F: 0-20 mm/hr | M: 0-9 mm/hr</h4>
-    </div>
-</div>
-<div class="md:flex md:items-center mb-6">
-    <div class="md:w-3/12">
-        <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
-        >
-            Thrombocyte Number Fraction
-        </label>
-    </div>
-    <div class="md:w-5/12">
-        <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
-            type="text"
-            placeholder="Thrombocyte Number Fraction"
-            bind:value={thrombocyteNumber}
-        />
-    </div>
-    <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">150-350 x⁹10/L</h4>
-    </div>
-</div>
-<div class="md:flex md:items-center mb-6">
-    <div class="md:w-3/12">
-        <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
-        >
-            Bleeding Time
-        </label>
-    </div>
-    <div class="md:w-5/12">
-        <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
-            type="text"
-            placeholder="Bleeding Time"
-            bind:value={bleedingTime}
-        />
-    </div>
-    <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">1-5 minutes</h4>
-    </div>
-</div>
-<div class="md:flex md:items-center mb-6">
-    <div class="md:w-3/12">
-        <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
-        >
-            Clotting Time
-        </label>
-    </div>
-    <div class="md:w-5/12">
-        <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
-            type="text"
-            placeholder="Clotting Time"
-            bind:value={clottingTime}
-        />
-    </div>
-    <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">2-6 minutes</h4>
-    </div>
-</div>
-<div class="md:flex md:items-center mb-6">
-    <div class="md:w-3/12">
-        <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
-        >
-            Blood Type
-        </label>
-    </div>
-    <div class="md:w-5/12">
-        <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
-            type="text"
-            placeholder="Blood Type"
-            bind:value={bloodType}
+            placeholder="Fat Globules"
+            bind:value={fatGlobules}
         />
     </div>
 </div>
@@ -434,7 +320,7 @@
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
             for="inline-firstName"
         >
-            RH
+            Bacteria
         </label>
     </div>
     <div class="md:w-5/12">
@@ -442,8 +328,8 @@
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
             id="inline-firstName"
             type="text"
-            placeholder="RH"
-            bind:value={rh}
+            placeholder="Bacteria"
+            bind:value={bacteria}
         />
     </div>
 </div>
@@ -465,6 +351,27 @@
             type="text"
             placeholder="Others"
             bind:value={others}
+        />
+    </div>
+</div>
+<div class="md:flex md:items-center mb-6">
+    <div class="md:w-3/12">
+        <label
+            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            for="inline-firstName"
+        >
+            Remarks
+        </label>
+    </div>
+    <div class="md:w-5/12">
+        <textarea
+            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            id="inline-firstName"
+            rows="3"
+            cols="50"
+            type="text"
+            placeholder="Remarks"
+            bind:value={remarks}
         />
     </div>
 </div>
