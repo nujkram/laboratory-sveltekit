@@ -2,6 +2,7 @@
 	// @ts-nocheck
 	import Chemistry from "$lib/components/forms/record/Chemistry.svelte";
 	import Hematology from "$lib/components/forms/record/Hematology.svelte";
+	import Miscellaneous from "$lib/components/forms/record/Miscellaneous.svelte";
 	import Parasitology from "$lib/components/forms/record/Parasitology.svelte";
 	import Urinalysis from "$lib/components/forms/record/Urinalysis.svelte";
 	export let data;
@@ -77,6 +78,8 @@
 		roundEpithelial,
 		vaginalis,
 		hominis,
+		specimen,
+		result,
 		others,
 		remarks;
 	let total = '1.0';
@@ -131,6 +134,8 @@
 				<Parasitology {color} {consistency} {ascarisLumb} {hookworm} {trichuris} {strongyloides} {entamoebaColiCyst} {entamoebaColiTroph} {entamoebaHistCyst} {entamoebaHistTroph} {pusCell} {rbc} {yeastCell} {fatGlobules} {bacteria} {others} {remarks} />
 			{:else if selectedOption == 'Urinalysis'}
 				<Urinalysis {exam} {color} {transparency} {reaction} {specificGravity} {protein} {sugar} {fineGran} {coarseGran} {pusCellCast} {hyaline} {rbc} {pusCell} {uricAcid} {calciumOxolate} {amorphous} {tripPhosphates} {squamous} {mucous} {roundEpithelial} {yeastCell} {vaginalis} {hominis} />
+			{:else if selectedOption == 'Miscellaneous'}
+				<Miscellaneous {exam} {specimen} {result} {others} {remarks} />
 			{/if}
 			<hr class="mb-4" />
 			<div class="md:flex md:items-center mb-6">
