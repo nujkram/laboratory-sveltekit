@@ -5,23 +5,18 @@ import clientPromise from '$lib/server/mongo';
 export async function POST({request, locals}: any) {
     const data = await request.json();
     const db = await clientPromise();
-    const Patient = db.collection('patients');
+    const Record = db.collection('records');
     data._id = id();
-    data.completeName = `${data.firstName} ${data.lastName}`;
     data.created = new Date();
-    data.createdBy = locals.user._id;
-    
-    if(data.middleName)
-        data.completeName = `${data.firstName} ${data.middleName || ''} ${data.lastName}`;
-    data.middleName = data?.middleName || '';
+    data.createdBy = locals.user._id;    
     data.isActive = true;
-    
-    const response = await Patient.insertOne(data);
+    const response = await Record.insertOne(data);
+
     if(response) {
         return new Response(
             JSON.stringify({
                 status: 'Success',
-                message: 'Patient successfully added',
+                message: 'Record successfully added',
                 response
             })
         )

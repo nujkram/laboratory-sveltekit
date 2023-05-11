@@ -3,6 +3,8 @@
 	import { fade } from 'svelte/transition';
 	import Button from "$lib/components/reusable/Button.svelte";
 	import { DateInput} from 'date-picker-svelte';
+	import { goto } from '$app/navigation';
+
     let firstName, middleName, lastName, gender, address, message;
 	let birthDate = new Date();
 </script>
@@ -30,6 +32,7 @@
                 message = result.message;
 				setTimeout(() => {
 					message = null;
+					goto('/patients')
 				}, 3000);
 			} catch (error) {
 				console.error('error', error);

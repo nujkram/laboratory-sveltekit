@@ -1,7 +1,7 @@
 <script>
     // @ts-nocheck
-    export let stat,
-		fastingBloodSugar,
+    export let stat = 'ROUTINE';
+    export let fastingBloodSugar,
 		randomBloodSugar,
 		postPrandial,
 		hba1c,
@@ -22,7 +22,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-stat"
         >
             Stat
         </label>
@@ -30,9 +30,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-stat"
             type="text"
             placeholder="Stat"
+            name="stat"
             bind:value={stat}
         />
     </div>
@@ -41,7 +42,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-fasting-blood-sugar"
         >
             Fasting Blood Sugar
         </label>
@@ -49,9 +50,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-fasting-blood-sugar"
             placeholder="Fasting Blood Sugar"
             type="text"
+            name="fastingBloodSugar"
             bind:value={fastingBloodSugar}
         />
     </div>
@@ -63,7 +65,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-random-blood-sugar"
         >
             Random Blood Sugar
         </label>
@@ -71,9 +73,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-random-blood-sugar"
             placeholder="Random Blood Sugar"
             type="text"
+            name="randomBloodSugar"
             bind:value={randomBloodSugar}
         />
     </div>
@@ -85,7 +88,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-post-prandial-blood-sugar"
         >
             Post Prandial Blood Sugar
         </label>
@@ -93,9 +96,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-post-prandial-blood-sugar"
             placeholder="Post Prandial Blood Sugar"
             type="text"
+            name="postPrandial"
             bind:value={postPrandial}
         />
     </div>
@@ -107,7 +111,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-hba1c"
         >
             HBa1c
         </label>
@@ -115,9 +119,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-hba1c"
             placeholder="HBa1c"
             type="text"
+            name="hba1c"
             bind:value={hba1c}
         />
     </div>
@@ -129,7 +134,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-urea"
         >
             Urea
         </label>
@@ -137,9 +142,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-urea"
             placeholder="Urea"
             type="text"
+            name="urea"
             bind:value={urea}
         />
     </div>
@@ -151,7 +157,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-creatinine"
         >
             Creatinine
         </label>
@@ -159,9 +165,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-creatinine"
             placeholder="Creatinine"
             type="text"
+            name="creatinine"
             bind:value={creatinine}
         />
     </div>
@@ -173,29 +180,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
-        >
-            Creatinine
-        </label>
-    </div>
-    <div class="md:w-5/12">
-        <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
-            placeholder="Creatinine"
-            type="text"
-            bind:value={creatinine}
-        />
-    </div>
-    <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">F: 53-97 mmol/L | M:80-115 mmol/L</h4>
-    </div>
-</div>
-<div class="md:flex md:items-center mb-6">
-    <div class="md:w-3/12">
-        <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-uric-acid"
         >
             Uric Acid
         </label>
@@ -203,9 +188,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-uric-acid"
             placeholder="Uric Acid"
             type="text"
+            name="uricAcid"
             bind:value={uricAcid}
         />
     </div>
@@ -217,7 +203,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-cholesterol"
         >
             Cholesterol
         </label>
@@ -225,9 +211,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-cholesterol"
             placeholder="Cholesterol"
             type="text"
+            name="cholesterol"
             bind:value={cholesterol}
         />
     </div>
@@ -239,7 +226,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-triglycerides"
         >
             Triglycerides
         </label>
@@ -247,9 +234,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-triglycerides"
             placeholder="Triglycerides"
             type="text"
+            name="triglycerides"
             bind:value={triglycerides}
         />
     </div>
@@ -261,7 +249,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-hdl-cholesterol"
         >
             HDL - Cholesterol
         </label>
@@ -269,9 +257,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-hdl-cholesterol"
             placeholder="HDL - Cholesterol"
             type="text"
+            name="hdlCholesterol"
             bind:value={hdlCholesterol}
         />
     </div>
@@ -283,7 +272,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-ldl-cholesterol"
         >
             LDL - Cholesterol
         </label>
@@ -291,9 +280,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-ldl-cholesterol"
             placeholder="LDL - Cholesterol"
             type="text"
+            name="ldlCholesterol"
             bind:value={ldlCholesterol}
         />
     </div>
@@ -305,7 +295,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-sgot-ast"
         >
             SGOT/AST
         </label>
@@ -313,9 +303,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-sgot-ast"
             placeholder="SGOT/AST"
             type="text"
+            name="sgotAst"
             bind:value={sgotAst}
         />
     </div>
@@ -327,7 +318,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-sgpt-alt"
         >
             SGPT/ALT
         </label>
@@ -335,9 +326,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-sgpt-alt"
             placeholder="SGPT/ALT"
             type="text"
+            name="sgptAlt"
             bind:value={sgptAlt}
         />
     </div>
@@ -349,7 +341,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-sodium"
         >
             Soduim
         </label>
@@ -357,9 +349,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-sodium"
             placeholder="Soduim"
             type="text"
+            name="sodium"
             bind:value={sodium}
         />
     </div>
@@ -371,7 +364,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-potassium"
         >
             Potassium
         </label>
@@ -379,9 +372,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-potassium"
             placeholder="Potassium"
             type="text"
+            name="potassium"
             bind:value={potassium}
         />
     </div>
@@ -393,7 +387,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-calcium"
         >
             Calcium
         </label>
@@ -401,7 +395,7 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-calcium"
             placeholder="Calcium"
             type="text"
             bind:value={calcium}
