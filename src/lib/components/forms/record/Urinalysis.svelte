@@ -1,7 +1,7 @@
 <script>
     // @ts-nocheck
-    export let exam,
-        color,
+    export let exam = 'ROUTINE';
+    export let color,
         transparency,
         reaction,
         specificGravity,
@@ -29,7 +29,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-exam"
         >
             Exam Desired
         </label>
@@ -37,9 +37,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-exam"
             type="text"
             placeholder="Exam Desired"
+            name="exam"
             bind:value={exam}
         />
     </div>
@@ -48,7 +49,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-color"
         >
             Color
         </label>
@@ -56,9 +57,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-color"
             type="text"
             placeholder="Color"
+            name="color"
             bind:value={color}
         />
     </div>
@@ -67,7 +69,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-transparency"
         >
             Transparency
         </label>
@@ -75,9 +77,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-transparency"
             type="text"
             placeholder="Transparency"
+            name="transparency"
             bind:value={transparency}
         />
     </div>
@@ -86,7 +89,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-reaction"
         >
             Reaction
         </label>
@@ -94,9 +97,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-reaction"
             type="text"
             placeholder="Reaction"
+            name="reaction"
             bind:value={reaction}
         />
     </div>
@@ -105,7 +109,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-specific-gravity"
         >
             Specific Gravity
         </label>
@@ -113,9 +117,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-specific-gravity"
             type="text"
             placeholder="Specific Gravity"
+            name="specificGravity"
             bind:value={specificGravity}
         />
     </div>
@@ -124,7 +129,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-protein"
         >
             Protein
         </label>
@@ -132,9 +137,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-protein"
             type="text"
             placeholder="Protein"
+            name="protein"
             bind:value={protein}
         />
     </div>
@@ -143,7 +149,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-sugar"
         >
             Sugar
         </label>
@@ -151,9 +157,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-sugar"
             type="text"
             placeholder="Sugar"
+            name="sugar"
             bind:value={sugar}
         />
     </div>
@@ -162,7 +169,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-fine-granular-cast"
         >
             Fine Granular Cast
         </label>
@@ -170,9 +177,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-fine-granular-cast"
             type="text"
             placeholder="Fine Granular Cast"
+            name="fineGran"
             bind:value={fineGran}
         />
     </div>
@@ -184,7 +192,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-coarse-granular-cast"
         >
             Coarse Granular Cast
         </label>
@@ -192,9 +200,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-coarse-granular-cast"
             type="text"
             placeholder="Coarse Granular Cast"
+            name="coarseGran"
             bind:value={coarseGran}
         />
     </div>
@@ -206,7 +215,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-pus-cell-cast"
         >
             Pus Cell Cast
         </label>
@@ -214,9 +223,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-pus-cell-cast"
             type="text"
             placeholder="Pus Cell Cast"
+            name="pusCellCast"
             bind:value={pusCellCast}
         />
     </div>
@@ -228,7 +238,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-hyaline-cast"
         >
             Hyaline Cast
         </label>
@@ -236,9 +246,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-hyaline-cast"
             type="text"
             placeholder="Hyaline Cast"
+            name="hyaline"
             bind:value={hyaline}
         />
     </div>
@@ -250,7 +261,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-rbc"
         >
             RBC
         </label>
@@ -258,9 +269,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-rbc"
             type="text"
             placeholder="RBC"
+            name="rbc"
             bind:value={rbc}
         />
     </div>
@@ -272,7 +284,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-pus-cells"
         >
             Pus Cells
         </label>
@@ -280,9 +292,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-pus-cells"
             type="text"
             placeholder="Pus Cells"
+            name="pusCell"
             bind:value={pusCell}
         />
     </div>
@@ -294,7 +307,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-uri-acid"
         >
             Uric Acid
         </label>
@@ -302,9 +315,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-uri-acid"
             type="text"
             placeholder="Uric Acid"
+            name="uricAcid"
             bind:value={uricAcid}
         />
     </div>
@@ -313,7 +327,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-calcium-oxolate"
         >
             Calcium Oxolate
         </label>
@@ -321,9 +335,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-calcium-oxolate"
             type="text"
             placeholder="Calcium Oxolate"
+            name="calciumOxolate"
             bind:value={calciumOxolate}
         />
     </div>
@@ -332,7 +347,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-amorphous-urates"
         >
             Amorphous Urates
         </label>
@@ -340,9 +355,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-amorphous-urates"
             type="text"
             placeholder="Amorphous Urates"
+            name="amorphous"
             bind:value={amorphous}
         />
     </div>
@@ -351,7 +367,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-triple-phosphates"
         >
             Triple Phosphates
         </label>
@@ -359,9 +375,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-triple-phosphates"
             type="text"
             placeholder="Triple Phosphates"
+            name="tripPhosphates"
             bind:value={tripPhosphates}
         />
     </div>
@@ -370,7 +387,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-squamous-epithelial-cells"
         >
             Squamous Epithelial Cells
         </label>
@@ -378,9 +395,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-squamous-epithelial-cells"
             type="text"
             placeholder="Squamous Epithelial Cells"
+            name="squamous"
             bind:value={squamous}
         />
     </div>
@@ -389,7 +407,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-bacteria"
         >
             Bacteria
         </label>
@@ -397,9 +415,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-bacteria"
             type="text"
             placeholder="Bacteria"
+            name="bacteria"
             bind:value={bacteria}
         />
     </div>
@@ -408,7 +427,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-mucous-threads"
         >
             Mucous Threads
         </label>
@@ -416,9 +435,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-mucous-threads"
             type="text"
             placeholder="Mucous Threads"
+            name="mucous"
             bind:value={mucous}
         />
     </div>
@@ -427,7 +447,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-round-epithelial-cells"
         >
             Round Epithelial Cells
         </label>
@@ -435,9 +455,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-round-epithelial-cells"
             type="text"
             placeholder="Round Epithelial Cells"
+            name="roundEpithelial"
             bind:value={roundEpithelial}
         />
     </div>
@@ -446,7 +467,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-yeast-cells"
         >
             Yeast Cells
         </label>
@@ -454,9 +475,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-yeast-cells"
             type="text"
             placeholder="Yeast Cells"
+            name="yeastCell"
             bind:value={yeastCell}
         />
     </div>
@@ -465,7 +487,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-trichomonas-vaginalis"
         >
             Trichomonas Vaginalis
         </label>
@@ -473,9 +495,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-trichomonas-vaginalis"
             type="text"
             placeholder="Trichomonas Vaginalis"
+            name="vaginalis"
             bind:value={vaginalis}
         />
     </div>
@@ -484,7 +507,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-trichomonas-hominis"
         >
             Trichomonas Hominis
         </label>
@@ -492,9 +515,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-trichomonas-hominis"
             type="text"
             placeholder="Trichomonas Hominis"
+            name="hominis"
             bind:value={hominis}
         />
     </div>

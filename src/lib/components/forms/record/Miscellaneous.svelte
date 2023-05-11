@@ -1,7 +1,7 @@
 <script>
     // @ts-nocheck
-    export let exam,
-        specimen,
+    export let exam = 'ROUTINE';
+    export let specimen,
         result,
         remarks,
         others;
@@ -24,14 +24,14 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-exam"
         >
             Exam Desired
         </label>
     </div>
     <div class="md:w-5/12">
         <select
-            id="dropdown"
+            id="inline-exam"
             name="exam"
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
             placeholder="Select an option"
@@ -47,7 +47,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-specimen"
         >
             Specimen
         </label>
@@ -55,9 +55,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-specimen"
             type="text"
             placeholder="Specimen"
+            name="specimen"
             bind:value={specimen}
         />
     </div>
@@ -66,7 +67,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-result"
         >
             Result
         </label>
@@ -74,9 +75,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-result"
             type="text"
             placeholder="Result"
+            name="result"
             bind:value={result}
         />
     </div>
@@ -85,7 +87,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-remarks"
         >
             Remarks
         </label>
@@ -93,9 +95,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-remarks"
             type="text"
             placeholder="Remarks"
+            name="remarks"
             bind:value={remarks}
         />
     </div>
@@ -104,7 +107,7 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-firstName"
+            for="inline-notes"
         >
             Notes
         </label>
@@ -112,9 +115,10 @@
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-firstName"
+            id="inline-notes"
             type="text"
             placeholder="Notes"
+            name="others"
             bind:value={others}
         />
     </div>
