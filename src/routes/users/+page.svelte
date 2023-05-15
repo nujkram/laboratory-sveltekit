@@ -1,15 +1,18 @@
 <script>
-    // @ts-nocheck
+	// @ts-nocheck
 	import { goto } from '$app/navigation';
-    import { onMount } from 'svelte';
-    import { paginate } from 'svelte-paginate';
+	import { paginate } from 'svelte-paginate';
 	import Button from "$lib/components/reusable/Button.svelte";
-	import EditPatientForm from "$lib/components/forms/patient/EditPatientForm.svelte";
-	import DeletePatientForm from "$lib/components/forms/patient/DeletePatientForm.svelte";
+	import EditUserForm from "$lib/components/forms/user/EditUserForm.svelte";
+	import DeleteUserForm from "$lib/components/forms/user/DeleteUserForm.svelte";
 	import Sort from "$lib/components/reusable/Sort.svelte";
 	import Edit from "$lib/components/icons/Edit.svelte";
 	import Trash from "$lib/components/icons/Trash.svelte";
-	
+	import AddUserForm from '$lib/components/forms/user/AddUserForm.svelte';
+    export let data;
+
+    let { user, users } = data;
+
     let status = 'all'
     let search;
     let items = [];
@@ -17,44 +20,29 @@
 	let pageSize = 10;
 	let itemSize;
 	let paginatedItems = [];
-	let currentPatient;
+	let currentUser;
 	let pageMinIndex = 1;
 	let pageMaxIndex = pageSize;
 	let sortOrder = 'asc';
 	let sortBy = 'code';
+    let isAddModalOpen = false;
     let isEditModalOpen = false;
 	let isConfirmModalOpen = false;
     
-    // Modals
+	items = users;
+
+	// Modals
+    const handleAddModal = () => (isAddModalOpen = !isAddModalOpen);
     const handleEditModal = () => (isEditModalOpen = !isEditModalOpen);
 	const handleConfirmDeleteModal = () => (isConfirmModalOpen = !isConfirmModalOpen);
 
-    function currentPatientExist() {
-		if (currentPatient === undefined || !items.includes(currentPatient)) {
-			log.error('Selected patient does not exist in items fetch from database!');
+	function currentUserExist() {
+		if (currentUser === undefined || !items.includes(currentUser)) {
+			log.error('Selected user does not exist in items fetch from database!');
 			return false;
 		}
 
-		if (patient.code === '' || patient.description === '') {
-			return false;
-		}
 		return true;
-	}
-    
-    async function loadPatient() {
-		try {
-			let response = await fetch('/api/admin/patient', {
-				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			});
-			let result = await response.json();
-			items = result.response;
-			sortItems();
-		} catch (error) {
-			console.error('error', error);
-		}
 	}
 
 	function sortItems() {
@@ -87,24 +75,21 @@
 		if (pageMaxIndex < itemSize) currentPage += 1;
 	};
 
-	onMount(async () => {
-		loadPatient();
-	});
-    $: {
+	$: {
 		// Prevent user to input below the minimum or beyond the maximum value of pagesize.
 		if (pageSize < 1) pageSize = 1;
 		// reactive statement to automatically filter data based on status.
 		paginatedItems = search
-			? items.filter((patient) => {
+			? items.filter((user) => {
 					return status !== 'all'
-						? (patient.lastName.match(RegExp(search, 'gi')) ||
-								patient.firstName.match(RegExp(search, 'gi'))) &&
-								patient.isActive === (status === 'active')
-						: patient.lastName.match(RegExp(search, 'gi')) ||
-								patient.firstName.match(RegExp(search, 'gi'));
+						? (user?.profile?.lastName.match(RegExp(search, 'gi')) ||
+								user?.profile?.firstName.match(RegExp(search, 'gi'))) &&
+								user.isActive === (status === 'active')
+						: user?.profile?.lastName.match(RegExp(search, 'gi')) ||
+								user?.profile?.firstName.match(RegExp(search, 'gi'));
 			  })
-			: items.filter((patient) => {
-					return status !== 'all' ? patient.isActive === (status === 'active') : items;
+			: items.filter((user) => {
+					return status !== 'all' ? user?.isActive === (status === 'active') : items;
 			  });
 		if (paginatedItems.length) {
 			itemSize = paginatedItems.length;
@@ -116,13 +101,12 @@
 				? paginatedItems.length
 				: pageSize * currentPage;
 	}
-    
 </script>
 
 <div class="border-2 border-gray-100 rounded-lg h-auto dark:border-gray-700 mt-12">
 	<div class="flex flex-col justify-center border-b h-fit rounded bg-blue-600 dark:bg-gray-800">
 		<div class="flex flex-col px-5 justify-center py-4">
-			<span class="text-xl font-semibold" style="color:white">Manage Patients</span>
+			<span class="text-xl font-semibold" style="color:white">Manage users</span>
 		</div>
 		<div class="flex gap-4 h-auto px-5 py-5 bg-white dark:bg-gray-800">
 			<div class="flex flex-col w-full h-auto ">
@@ -141,7 +125,7 @@
 						<option class="text-red-500 text-sm font-semibold" value="inactive">Inactive</option>
 					</select>
 					<div class="flex ml-2">
-						<Button color='success' textSize='text-md' text='Create' type='link' href='/patients/create' />
+						<Button color='success' textSize='text-md' text='Create' on:click={handleAddModal} />
 					</div>
 					<div class="col-start-7 col-span-3 rounded ">
 						<form class="flex items-center">
@@ -181,15 +165,15 @@
 				<tr>
 					<th scope="col" class="pl-6">
                         Last Name
-						<Sort on:click={() => handleSort('lastName')} />
 					</th>
 					<th scope="col" class="pl-6">
                         First Name
-						<Sort on:click={() => handleSort('firstName')} />
 					</th>
                     <th scope="col" class="pl-6">
                         Middle Name
-						<Sort on:click={() => handleSort('middleName')} />
+					</th>
+                    <th scope="col" class="pl-6">
+                        Email
 					</th>
 					<th scope="col" class="pl-6">
                         Status 
@@ -219,24 +203,27 @@
 							<tr
 								class=" bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
 								on:mouseenter={() => {
-									if (currentPatient !== data) {
-										currentPatient = data;
+									if (currentUser !== data) {
+										currentUser = data;
 									}
 								}}
 								on:click={() => {
-									goto(`/patients/${currentPatient?._id}`);
+									goto(`/users/${currentUser?._id}`);
 								}}
 							>
 								<td
 									class="px-6 py-4 text-gray-700 whitespace-nowrap dark:text-white text-m font-medium"
 								>
-									{data.lastName || ''}
+									{data?.profile?.lastName || ''}
                                 </td>
 								<td class="px-6 py-4 text-gray-700 whitespace-nowrap dark:text-white text-m font-medium">
-									{data.firstName || ''}
+									{data?.profile?.firstName || ''}
 								</td>
 								<td class="px-6 py-4 text-gray-700 whitespace-nowrap dark:text-white text-m font-medium">
-									{data.middleName || ''}
+									{data?.profile?.middleName || ''}
+								</td>
+								<td class="px-6 py-4 text-gray-700 whitespace-nowrap dark:text-white text-m font-medium">
+									{data?.profile?.email || ''}
 								</td>
 								<td class="flex items-center px-6 py-4">
 									<div class="flex items-center ">
@@ -252,7 +239,6 @@
 								</td>
 
 								<td class="px-6 py-4 col-span-3">
-                                    <Button color='primary' textSize='text-md' text='Add Record' type='link' href='/record/create/{data._id}' />
 									<Button
                                         color='warning' textSize='text-md' text='Update'
 										on:click={handleEditModal}
@@ -309,12 +295,14 @@
 		</table>
 	</div>
 </div>
-
-{#if currentPatientExist}
+{#if isAddModalOpen }
+	<AddUserForm title='Add User' bind:isAddModalOpen />
+{/if}
+{#if currentUserExist}
 	{#if isEditModalOpen}
-		<EditPatientForm bind:isEditModalOpen bind:currentPatient {loadPatient} />
+		<EditUserForm bind:isEditModalOpen bind:currentUser />
 	{/if}
 	{#if isConfirmModalOpen}
-		<DeletePatientForm bind:isConfirmModalOpen {currentPatient} {loadPatient} />
+		<DeleteUserForm bind:isConfirmModalOpen {currentUser} />
 	{/if}
 {/if}

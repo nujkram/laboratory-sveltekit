@@ -17,6 +17,7 @@
 	{#if SidebarItem}
 		<SidebarItem link="/" title="Dashboard"><Dashboard /></SidebarItem>
 		<SidebarItem link="/patients" title="Patients"><Users /></SidebarItem>
+		<SidebarItem link="/users" title="Users"><Users /></SidebarItem>
 		<SidebarItem link="/settings" title="Settings"><Records /></SidebarItem>
 	{/if}
 </aside>
