@@ -5,6 +5,7 @@
 
     export let isAddModalOpen = false;
     export let title;
+	export let loadUsers = () => {};
     import { SHA256 } from 'crypto-js';
 	let message = null;
 	let alertColor = 'green';
@@ -71,6 +72,7 @@
 			message = result.message;
 			setTimeout(() => {
 				message = null;
+				loadUsers();
 				handleCloseModal();
 			}, 3000);
 		}

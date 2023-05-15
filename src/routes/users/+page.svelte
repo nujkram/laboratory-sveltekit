@@ -1,6 +1,7 @@
 <script>
 	// @ts-nocheck
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 	import { paginate } from 'svelte-paginate';
 	import Button from "$lib/components/reusable/Button.svelte";
 	import EditUserForm from "$lib/components/forms/user/EditUserForm.svelte";
@@ -9,9 +10,6 @@
 	import Edit from "$lib/components/icons/Edit.svelte";
 	import Trash from "$lib/components/icons/Trash.svelte";
 	import AddUserForm from '$lib/components/forms/user/AddUserForm.svelte';
-    export let data;
-
-    let { user, users } = data;
 
     let status = 'all'
     let search;
@@ -29,8 +27,6 @@
     let isEditModalOpen = false;
 	let isConfirmModalOpen = false;
     
-	items = users;
-
 	// Modals
     const handleAddModal = () => (isAddModalOpen = !isAddModalOpen);
     const handleEditModal = () => (isEditModalOpen = !isEditModalOpen);
@@ -43,6 +39,22 @@
 		}
 
 		return true;
+	}
+
+	async function loadUsers() {
+		try {
+			let response = await fetch('/api/admin/user', {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+			let result = await response.json();
+			items = result.response;
+			sortItems();
+		} catch (error) {
+			console.error('error', error);
+		}
 	}
 
 	function sortItems() {
@@ -74,6 +86,10 @@
 	const incrementPageNumber = () => {
 		if (pageMaxIndex < itemSize) currentPage += 1;
 	};
+
+	onMount(async () => {
+		loadUsers();
+	});
 
 	$: {
 		// Prevent user to input below the minimum or beyond the maximum value of pagesize.
@@ -296,13 +312,13 @@
 	</div>
 </div>
 {#if isAddModalOpen }
-	<AddUserForm title='Add User' bind:isAddModalOpen />
+	<AddUserForm title='Add User' bind:isAddModalOpen {loadUsers} />
 {/if}
 {#if currentUserExist}
 	{#if isEditModalOpen}
-		<EditUserForm bind:isEditModalOpen bind:currentUser />
+		<EditUserForm bind:isEditModalOpen {currentUser} {loadUsers} />
 	{/if}
 	{#if isConfirmModalOpen}
-		<DeleteUserForm bind:isConfirmModalOpen {currentUser} />
+		<DeleteUserForm bind:isConfirmModalOpen {currentUser} {loadUsers} />
 	{/if}
 {/if}
