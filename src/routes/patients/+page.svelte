@@ -1,6 +1,5 @@
 <script>
     // @ts-nocheck
-	import { goto } from "$app/navigation";
     import { onMount } from 'svelte';
     import { paginate } from 'svelte-paginate';
 	import Button from "$lib/components/reusable/Button.svelte";
@@ -30,11 +29,12 @@
 	const handleConfirmDeleteModal = () => (isConfirmModalOpen = !isConfirmModalOpen);
 
     function currentPatientExist() {
-		if (currentDivision === undefined || !items.includes(currentDivision)) {
-			log.error('Selected division does not exist in items fetch from database!');
+		if (currentPatient === undefined || !items.includes(currentPatient)) {
+			log.error('Selected patient does not exist in items fetch from database!');
 			return false;
 		}
-		if (division.code === '' || division.description === '') {
+		console.log('patient', patient)
+		if (patient.code === '' || patient.description === '') {
 			return false;
 		}
 		return true;
@@ -314,6 +314,6 @@
 		<EditPatientForm bind:isEditModalOpen bind:currentPatient {loadPatient} />
 	{/if}
 	{#if isConfirmModalOpen}
-		<DeletePatientForm bind:isConfirmModalOpen bind:currentPatient {loadPatient} />
+		<DeletePatientForm bind:isConfirmModalOpen {currentPatient} {loadPatient} />
 	{/if}
 {/if}

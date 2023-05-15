@@ -8,7 +8,7 @@
 
     const patient = currentPatient;
     const _id = patient._id;
-
+    console.log('currentPatient', currentPatient)
     const handleCloseModal = () => isConfirmModalOpen = false;
     
 
@@ -48,31 +48,10 @@
                     </button>
                     <div class="p-6 text-center">
                         <svg aria-hidden="true" class="mx-auto mb-4 text-gray-400 w-14 h-14 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" ><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <h2 class="mb-2 text-lg font-normal text-gray-800 dark:text-gray-400">{currentPatient.name}</h2>
-                        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete this gender?</h3>
-                        <Button
-                            extraClasses="focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg"
-                            textColor="text-white"
-                            bgColor="bg-red-600"
-                            bgColorHover="bg-red-800"
-                            textSize="text-sm"
-                            borderColor="bg-red-600"
-                            borderColorHover="bg-red-800"
-                            on:click={handleConfirmDelete}
-                            >
-                            Yes
-                        </Button>
-                        <Button
-                            extraClasses="ml-2 pr-3 pl-3 focus:ring-4 focus:outline-none focus:ring-gray-200 font-medium rounded-lg dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600 "
-                            textColor="text-gray-500"
-                            bgColor="bg-white"
-                            bgColorHover="bg-gray-100"
-                            textSize="text-sm"
-                            borderColor="border-gray-200"
-                            on:click={handleCloseModal}
-                        >
-                            Cancel
-                        </Button>
+                        <h2 class="mb-2 text-lg font-normal text-gray-800 dark:text-gray-400">{currentPatient?.completeName}</h2>
+                        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete this patient?</h3>
+                        <Button color='danger' textSize='text-md' text='Yes' on:click={handleConfirmDelete} />
+                        <Button color='primary' textSize='text-md' text='Cancel' on:click={handleCloseModal} />
                     </div>
                 </div>
             </div>
