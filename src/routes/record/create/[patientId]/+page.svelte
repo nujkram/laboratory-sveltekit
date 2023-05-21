@@ -8,8 +8,9 @@
 	import Urinalysis from "$lib/components/forms/record/Urinalysis.svelte";
 	import Button from "$lib/components/reusable/Button.svelte";
 	import { goto } from '$app/navigation';
+	
 	export let data;
-	let { patientId, medTechs, pathologists } = data;
+	let { patientId, medTechs, pathologists, caseNumber } = data;
 	let category = '';
 	let message = null;
 	let statusMessages = {
@@ -90,9 +91,6 @@
 		others,
 		pathologist,
 		medicalTechnologist,
-		remarks,
-		date,
-		time;
 		remarks;
 	let total = '1.0';
 
@@ -160,6 +158,26 @@
 						type="text"
 						name="patientId"
 						bind:value={patientId}
+					/>
+				</div>
+			</div>
+			<div class="hidden md:items-center mb-6">
+				<div class="md:w-3/12">
+					<label
+						class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+						for="inline-caseNumber-id"
+					>
+						Case Number
+					</label>
+				</div>
+				<div class="md:w-5/12">
+					<input
+						class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+						id="inline-caseNumber-id"
+						placeholder="Case Number"
+						type="text"
+						name="caseNumber"
+						bind:value={caseNumber}
 					/>
 				</div>
 			</div>

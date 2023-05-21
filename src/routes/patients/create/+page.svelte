@@ -53,6 +53,7 @@
 					class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
 					id="inline-firstName"
 					type="text"
+					name="firstName"
 					bind:value={firstName}
 				/>
 			</div>
@@ -71,6 +72,7 @@
 					class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
 					id="inline-middleName"
 					type="text"
+					name="middleName"
 					bind:value={middleName}
 				/>
 			</div>
@@ -89,6 +91,7 @@
 					class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
 					id="inline-lastName"
 					type="text"
+					name="lastName"
 					bind:value={lastName}
 				/>
 			</div>
@@ -103,7 +106,7 @@
 				</label>
 			</div>
 			<div class="md:w-9/12">
-				<select class="bg-gray-200 appearnace-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500">
+				<select name="gender" bind:value={gender} class="bg-gray-200 appearnace-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500">
 					<option value="Male">Male</option>
 					<option value="Female">Female</option>
 				</select>
@@ -136,6 +139,7 @@
 					class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
 					id="inline-address"
 					type="text"
+					name="address"
 					bind:value={address}
 				/>
 			</div>
