@@ -1,7 +1,7 @@
 <script>
 	// @ts-nocheck
 	export let title;
-	export let isModal2Open = false;
+	export let isModalOpen = false;
 	export let loadStudent = () => {};
 	// import bcrypt from 'bcryptjs';
 	import { SHA256 } from 'crypto-js';
@@ -16,7 +16,7 @@
 		password = '';
 
 	const handleClose = () => {
-		isModal2Open = false;
+		isModalOpen = false;
 	};
 
 	async function handleSubmit(event) {
@@ -43,14 +43,14 @@
 			})
 		});
 		let result = await response.json();
-		isModal2Open = false;
+		isModalOpen = false;
 		if (result.status === 'Success') {
 			loadStudent();
 		}
 	}
 </script>
 
-<div class="fixed z-10 inset-0 overflow-y-auto {isModal2Open ? 'block' : 'hidden'}">
+<div class="fixed z-10 inset-0 overflow-y-auto {isModalOpen ? 'block' : 'hidden'}">
 	<div class="flex items-center justify-center min-h-screen">
 		<div class="fixed inset-0 bg-gray-500 bg-opacity-75" />
 		<div

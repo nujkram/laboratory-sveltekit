@@ -13,7 +13,6 @@
 	let itemSize;
 	let paginatedItems = [];
 	let isModalOpen = false;
-	let isModal2Open = false;
 
 	$: {
 		// reactive statement to automatically filter data
@@ -47,10 +46,6 @@
 		}
 	}
 
-	const handleOpenModal = () => {
-		isModalOpen = true;
-	};
-
 </script>
 
 
@@ -62,6 +57,6 @@
 	</div>
 </div>
 
-{#if isModal2Open}
-	<AddUserForm title={'Add User'} bind:isModal2Open {loadUser} />
+{#if isModalOpen}
+	<AddUserForm title={'Add User'} bind:isModalOpen {loadUser} />
 {/if}
