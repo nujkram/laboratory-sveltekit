@@ -63,7 +63,7 @@
 		<div class="fixed inset-0 bg-gray-800 bg-opacity-25" />
         <div 
             class="fixed inset-0 z-50 w-full flex items-center justify-center p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full"
-            id="add-department-modal" 
+            id="updated-patient-modal" 
             tabindex="-1" 
             aria-hidden="true" >
             <div class="relative w-full h-full  max-w-md md:h-auto">
