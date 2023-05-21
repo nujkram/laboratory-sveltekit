@@ -217,14 +217,11 @@
 					{#if paginatedItems.length}
 						{#each paginatedItems as data}
 							<tr
-								class=" bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
+								class=" bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
 								on:mouseenter={() => {
 									if (currentPatient !== data) {
 										currentPatient = data;
 									}
-								}}
-								on:click={() => {
-									goto(`/patients/${currentPatient?._id}`);
 								}}
 							>
 								<td
@@ -252,7 +249,8 @@
 								</td>
 
 								<td class="px-6 py-4 col-span-3">
-                                    <Button color='primary' textSize='text-md' text='Add Record' type='link' href='/record/create/{data._id}' />
+                                    <Button color='primary' padding='py-2 px-8'  textSize='text-md' text='View' type='link' href='/patients/{currentPatient?._id}' />
+                                    <Button color='primary' padding='py-2 px-8'  textSize='text-md' text='Add' type='link' href='/record/create/{data._id}' />
 									<Button
                                         color='warning' textSize='text-md' text='Update'
 										on:click={handleEditModal}
