@@ -8,7 +8,27 @@ export async function load({params}) {
     const db = await clientPromise();
     const Patient = db.collection('patients');
 
-    const patient = await Patient.findOne({_id: patientId});
+    const pipeline = [
+      {
+        $match: { _id: patientId }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'createdBy',
+          foreignField: '_id',
+          as: 'createdBy'
+        }
+      },
+      {
+        $unwind: {
+          path: '$createdBy',
+          preserveNullAndEmptyArrays: true
+        }
+      }
+    ];
+    
+    const [patient] = await Patient.aggregate(pipeline).toArray();
 
     return {patient};
 }
