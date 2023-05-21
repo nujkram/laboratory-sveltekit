@@ -9,7 +9,8 @@
     import { SHA256 } from 'crypto-js';
 	let message = null;
 	let alertColor = 'green';
-    let firstName = '',
+    let license = '',
+		firstName = '',
 		middleName = '',
 		lastName = '',
 		username = '',
@@ -53,6 +54,7 @@
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
+				license,
 				firstName,
 				middleName,
 				lastName,
@@ -95,6 +97,16 @@
 				</h2>
 				<div class="mt-4">
 					<form class="max-w-lg mx-auto" on:submit={handleSubmit}>
+						<div class="mb-4">
+							<label for="license" class="block mb-2 font-bold text-gray-700">License:</label>
+							<input
+								type="text"
+								id="license"
+								name="license"
+								bind:value={license}
+								class="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+							/>
+						</div>
 						<div class="mb-4">
 							<label for="firstName" class="block mb-2 font-bold text-gray-700">First Name:</label>
 							<input

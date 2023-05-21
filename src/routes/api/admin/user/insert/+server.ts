@@ -35,6 +35,7 @@ export async function POST({ request, locals }: any) {
 				verified: true
 			}
 		],
+		license: data.license,
 		profile: profile,
 		isActive: true,
 		isFake: false,

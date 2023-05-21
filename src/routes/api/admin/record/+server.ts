@@ -13,6 +13,14 @@ export async function POST({request}: any) {
         },
         {
             $lookup: {
+                from: 'patients',
+                localField: 'patientId',
+                foreignField: '_id',
+                as: 'patient'
+            },
+        },
+        {
+            $lookup: {
                 from: 'users',
                 localField: 'medicalTechnologist',
                 foreignField: '_id',
@@ -28,6 +36,20 @@ export async function POST({request}: any) {
             },
         },
         {
+            $lookup: {
+                from: 'users',
+                localField: 'createdBy',
+                foreignField: '_id',
+                as: 'createdBy'
+            },
+        },
+        {
+            $unwind: {
+                path: '$patient',
+                preserveNullAndEmptyArrays: true
+            }
+        },
+        {
             $unwind: {
                 path: '$medicalTechnologist',
                 preserveNullAndEmptyArrays: true
@@ -36,6 +58,12 @@ export async function POST({request}: any) {
         {
             $unwind: {
                 path: '$pathologist',
+                preserveNullAndEmptyArrays: true
+            }
+        },
+        {
+            $unwind: {
+                path: '$createdBy',
                 preserveNullAndEmptyArrays: true
             }
         }
