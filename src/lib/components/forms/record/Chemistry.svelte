@@ -398,6 +398,7 @@
             id="inline-calcium"
             placeholder="Calcium"
             type="text"
+            name="calcium"
             bind:value={calcium}
         />
     </div>
