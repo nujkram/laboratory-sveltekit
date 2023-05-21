@@ -15,7 +15,7 @@ export async function POST({request, locals}: any) {
         {
             $set: {
                 'name': data.name,
-                'location': data.name,
+                'location': data.location,
                 'mobile': data.mobile,
             }
         }
