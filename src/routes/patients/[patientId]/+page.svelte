@@ -7,10 +7,8 @@
     import { paginate } from 'svelte-paginate';
 	import Button from "$lib/components/reusable/Button.svelte";
 	import EditPatientForm from "$lib/components/forms/patient/EditPatientForm.svelte";
-	import DeletePatientForm from "$lib/components/forms/patient/DeletePatientForm.svelte";
 	import Sort from "$lib/components/reusable/Sort.svelte";
 	import Edit from "$lib/components/icons/Edit.svelte";
-	import Trash from "$lib/components/icons/Trash.svelte";
 	
 	export let data;
     
@@ -26,28 +24,10 @@
 	let pageMaxIndex = pageSize;
 	let sortOrder = 'asc';
 	let sortBy = 'code';
-    let isEditModalOpen = false;
-	let isConfirmModalOpen = false;
 
 	let { patient } = data;
     let age = calculateAge(patient?.birthDate);
 
-	// Modals
-    const handleEditModal = () => (isEditModalOpen = !isEditModalOpen);
-	const handleConfirmDeleteModal = () => (isConfirmModalOpen = !isConfirmModalOpen);
-
-	function currentRecordExist() {
-		if (currentRecord === undefined || !items.includes(currentRecord)) {
-			log.error('Selected patient does not exist in items fetch from database!');
-			return false;
-		}
-
-		if (record.code === '' || record.description === '') {
-			return false;
-		}
-		return true;
-	}
-    
     async function loadRecord() {
 		try {
 			let response = await fetch('/api/admin/record', {
@@ -299,15 +279,9 @@
 										<td class="px-6 py-4 col-span-3">
 											<Button
 												color='warning' textSize='text-md' text='Update'
-												on:click={handleEditModal}
+												type='link' href='/record/{data?._id}/update'
 											>
 												<Edit />
-											</Button>
-											<Button
-												color='danger' textSize='text-md' text='Delete'
-												on:click={handleConfirmDeleteModal}
-											>
-												<Trash />
 											</Button>
 										</td>
 									</tr>
