@@ -124,7 +124,7 @@
 				message = statusMessages.sent;
 				setTimeout(() => {
 					message = null;
-					goto(`/patients/${patientId}/records`);
+					goto(`/patients/${patientId}`);
 				}, 3000);
 			} else {
 				message = statusMessages.error;
