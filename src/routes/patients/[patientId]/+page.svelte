@@ -9,6 +9,7 @@
 	import EditPatientForm from "$lib/components/forms/patient/EditPatientForm.svelte";
 	import Sort from "$lib/components/reusable/Sort.svelte";
 	import Edit from "$lib/components/icons/Edit.svelte";
+	import ChemistryModal from '$lib/components/modals/ChemistryModal.svelte';
 	
 	export let data;
     
@@ -24,9 +25,13 @@
 	let pageMaxIndex = pageSize;
 	let sortOrder = 'asc';
 	let sortBy = 'code';
+	let isViewModalOpen = false;
 
 	let { patient } = data;
     let age = calculateAge(patient?.birthDate);
+
+	// Modals
+    const handleViewModal = () => (isViewModalOpen = !isViewModalOpen);
 
     async function loadRecord() {
 		try {
@@ -278,11 +283,14 @@
 		
 										<td class="px-6 py-4 col-span-3">
 											<Button
+												color='primary' textSize='text-md' text='View'
+												on:click={handleViewModal}
+											/>
+											<Button
 												color='warning' textSize='text-md' text='Update'
 												type='link' href='/record/{data?._id}/update'
-											>
-												<Edit />
-											</Button>
+												padding='py-2.5 px-5'
+											/>
 										</td>
 									</tr>
 								{/each}
@@ -329,3 +337,9 @@
 		</div>
 	</div>
 </div>
+
+{#if isViewModalOpen}
+	{#if currentRecord.category === 'Chemistry'}
+		<ChemistryModal bind:isViewModalOpen data={currentRecord}  />
+	{/if}
+{/if}
