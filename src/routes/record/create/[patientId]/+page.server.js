@@ -8,7 +8,8 @@ export async function load({params}) {
     const {patientId} = params;
     const db = await clientPromise();
     const Record = db.collection('records');
-  
+    const User = db.collection('users');
+
     const lastDocument = await Record
       .find()
       .sort({ _id: -1 })
@@ -21,8 +22,6 @@ export async function load({params}) {
     }
   
     caseNumber = parseInt(lastDocument['caseNumber']) + 1;
-
-    const User = db.collection('users');
 
     const medTechs = await User.find({role: 'Medical Technologist'}).sort({created: -1}).toArray();
     const pathologists = await User.find({role: 'Pathologist'}).sort({created: -1}).toArray();

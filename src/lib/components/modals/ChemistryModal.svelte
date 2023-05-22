@@ -5,7 +5,6 @@
     import { formatDateMDY } from '$lib/utils/dateHelper.js';
     export let isViewModalOpen = false;
     export let data;
-    console.log(data);
     let age = calculateAge(data?.patient?.birthDate);
     const handleCloseModal = () => isViewModalOpen = false;
 
@@ -194,7 +193,7 @@
                             <div class="w-5/12 text-center">
                                 <div class="font-semibold uppercase">{data?.medicalTechnologist?.profile?.displayName || '--'}</div>
                                 <div>{data?.medicalTechnologist?.license || '--'}</div>
-                                <div>Meedical Technologist</div>
+                                <div>Medical Technologist</div>
                             </div>
                         </div>
                         <div class="flex text-xs mt-4">
