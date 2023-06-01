@@ -1,10 +1,5 @@
 <script>
-	// @ts-nocheck
+	import Dashboard from "$lib/components/Dashboard.svelte";
 </script>
 
-<!-- <Dashboard/> -->
-<div class="p-4 sm:ml-64">
-	<div class="container mt-12">
-		
-	</div>
-</div>
+<Dashboard/>
