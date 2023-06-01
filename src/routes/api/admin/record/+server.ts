@@ -79,3 +79,20 @@ export async function POST({request}: any) {
         )
     }
 }
+
+/** @type {import('./$types').RequestHandler} */
+export async function GET({request, locals}: any) {
+    const db = await clientPromise();
+    const Records = db.collection('records');
+
+    const response = await Records.find({}).toArray();
+
+    if(response) {
+        return new Response(
+            JSON.stringify({
+                status: 'Success',
+                response
+            })
+        )
+    }
+}

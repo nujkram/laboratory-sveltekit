@@ -1,5 +1,6 @@
 <script>
     // @ts-nocheck
+	import {onMount} from 'svelte';
 	import { fade } from 'svelte/transition';
 	import Button from "$lib/components/reusable/Button.svelte";
 
@@ -7,6 +8,7 @@
     export let title;
 	export let loadUsers = () => {};
     import { SHA256 } from 'crypto-js';
+	let roles = [];
 	let message = null;
 	let alertColor = 'green';
     let license = '',
@@ -80,6 +82,24 @@
 		}
 	}
 
+    async function loadRoles() {
+		try {
+			let response = await fetch('/api/admin/role', {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+			let result = await response.json();
+			roles = result.response;
+		} catch (error) {
+			console.error('error', error);
+		}
+	}
+
+    onMount(async () => {
+		loadRoles();
+    });
 </script>
 
 <div class="fixed z-10 inset-0 overflow-y-auto {isAddModalOpen? 'block': 'hidden'} pt-20">
@@ -224,8 +244,13 @@
 									class="w-48 px-4 py-2 text-gray-700 bg-white border rounded shadow appearance-none focus:outline-none focus:shadow-outline class:active:bg-gray-100 class:focus:outline-none class:focus:bg-gray-100"
 								>
 									<option value="" disabled selected>Select an option</option>
-									<option value="Medical Technologist">Medical Technologist</option>
-									<option value="Pathologist">Pathologist</option>
+									{#key roles}
+										{#if roles.length}
+											{#each roles as role}
+												<option value="{role.name}">{role.name}</option>
+											{/each}
+										{/if}
+									{/key}
 								</select>
 							</div>
 						</div>
