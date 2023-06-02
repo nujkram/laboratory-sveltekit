@@ -5,7 +5,7 @@ export async function GET({request, locals}: any) {
     const db = await clientPromise();
     const Role = db.collection('roles');
 
-    const response = await Role.find({}).sort({name: -1}).toArray();
+    const response = await Role.find({}).sort({name: 1}).toArray();
 
     if(response) {
         return new Response(
