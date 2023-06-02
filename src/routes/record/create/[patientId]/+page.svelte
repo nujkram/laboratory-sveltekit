@@ -8,6 +8,7 @@
 	import Urinalysis from "$lib/components/forms/record/Urinalysis.svelte";
 	import Button from "$lib/components/reusable/Button.svelte";
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 	
 	export let data;
 	let { patientId, medTechs, pathologists, caseNumber } = data;
@@ -94,9 +95,29 @@
 		remarks;
 	let total = '1.0';
 
-	const options = ['Chemistry', 'Hematology', 'Parasitology', 'Urinalysis', 'Miscellaneous'];
+	let options = [];
 
-	let selectedOption = 'Chemistry';
+    async function loadCategories() {
+		try {
+			let response = await fetch('/api/admin/record/categories', {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+			let result = await response.json();
+			options = result.response;
+			selectedOption = options.length > 0 ? options[0].name : '';
+		} catch (error) {
+			console.error('error', error);
+		}
+	}
+
+	let selectedOption = '';
+
+    onMount(() => {
+		loadCategories();
+    });
 
 	const handleOnChange = (e) => {
 		selectedOption = e.target.value;
@@ -199,7 +220,7 @@
 						on:change={handleOnChange}
 					>
 						{#each options as option}
-							<option value={option}>{option}</option>
+							<option value={option.name}>{option.name}</option>
 						{/each}
 					</select>
 				</div>
