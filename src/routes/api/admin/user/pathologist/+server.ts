@@ -3,9 +3,9 @@ import clientPromise from '$lib/server/mongo';
 /** @type {import('./$types').RequestHandler} */
 export async function GET({request, locals}: any) {
     const db = await clientPromise();
-    const Patient = db.collection('patients');
+    const User = db.collection('users');
 
-    const response = await Patient.find({}).sort({created: -1}).toArray();
+    const response = await User.find({role: 'Pathologist'}).sort({created: -1}).toArray();
 
     if(response) {
         return new Response(

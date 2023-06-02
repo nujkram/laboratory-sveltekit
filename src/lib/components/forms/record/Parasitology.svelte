@@ -1,40 +1,40 @@
 <script>
     // @ts-nocheck
-    export let stat = 'ROUTINE';
-    export let fastingBloodSugar,
-		randomBloodSugar,
-		postPrandial,
-		hba1c,
-		urea,
-		creatinine,
-		uricAcid,
-		cholesterol,
-		triglycerides,
-		hdlCholesterol,
-		ldlCholesterol,
-		sgotAst,
-		sgptAlt,
-		sodium,
-		potassium,
-		calcium;
+    export let color,
+        consistency,
+        ascarisLumb,
+        hookworm,
+        trichuris,
+        strongyloides,
+        entamoebaColiCyst,
+        entamoebaColiTroph,
+        entamoebaHistCyst,
+        entamoebaHistTroph,
+        pusCell,
+        rbc,
+        yeastCell,
+        fatGlobules,
+        bacteria,
+        others,
+        remarks;
 </script>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-stat"
+            for="inline-color"
         >
-            Stat
+            Color
         </label>
     </div>
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-stat"
+            id="inline-color"
             type="text"
-            placeholder="Stat"
-            name="stat"
-            bind:value={stat}
+            placeholder="Color"
+            name="color"
+            bind:value={color}
         />
     </div>
 </div>
@@ -42,367 +42,353 @@
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-fasting-blood-sugar"
+            for="inline-consistency"
         >
-            Fasting Blood Sugar
+            Consistency
         </label>
     </div>
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-fasting-blood-sugar"
-            placeholder="Fasting Blood Sugar"
+            id="inline-consistency"
             type="text"
-            name="fastingBloodSugar"
-            bind:value={fastingBloodSugar}
+            placeholder="Consistency"
+            name="consistency"
+            bind:value={consistency}
         />
-    </div>
-    <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">3.89-5.83 mmol/L</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-random-blood-sugar"
+            for="inline-ascaris-lumb"
         >
-            Random Blood Sugar
+            Ascaris Lumbricoides
         </label>
     </div>
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-random-blood-sugar"
-            placeholder="Random Blood Sugar"
+            id="inline-ascaris-lumb"
             type="text"
-            name="randomBloodSugar"
-            bind:value={randomBloodSugar}
+            placeholder="Ascaris Lumbricoides"
+            name="ascarisLumb"
+            bind:value={ascarisLumb}
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">2.47-7.17 mmol/L</h4>
+        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-post-prandial-blood-sugar"
+            for="inline-hookworm"
         >
-            Post Prandial Blood Sugar
+            Hookworm
         </label>
     </div>
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-post-prandial-blood-sugar"
-            placeholder="Post Prandial Blood Sugar"
+            id="inline-hookworm"
             type="text"
-            name="postPrandial"
-            bind:value={postPrandial}
+            placeholder="Hookworm"
+            name="hookworm"
+            bind:value={hookworm}
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">Less than 7.8 mmol/L</h4>
+        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-hba1c"
+            for="inline-trichuris-trichiura"
         >
-            HBa1c
+            Trichuris Trichiura
         </label>
     </div>
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-hba1c"
-            placeholder="HBa1c"
+            id="inline-trichuris-trichiura"
             type="text"
-            name="hba1c"
-            bind:value={hba1c}
+            placeholder="Trichuris Trichiura"
+            name="trichuris"
+            bind:value={trichuris}
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">4.5-6.3 percent</h4>
+        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-urea"
+            for="inline-strongyloides-stercoralis"
         >
-            Urea
+            Strongyloides Stercoralis
         </label>
     </div>
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-urea"
-            placeholder="Urea"
+            id="inline-strongyloides-stercoralis"
             type="text"
-            name="urea"
-            bind:value={urea}
+            placeholder="Strongyloides Stercoralis"
+            name="strongyloides"
+            bind:value={strongyloides}
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">2.8-7.2 mmol/L</h4>
+        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-creatinine"
+            for="inline-entamoeba-coli-cyst"
         >
-            Creatinine
+            Entamoeba Coli Cyst
         </label>
     </div>
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-creatinine"
-            placeholder="Creatinine"
+            id="inline-entamoeba-coli-cyst"
             type="text"
-            name="creatinine"
-            bind:value={creatinine}
+            placeholder="Entamoeba Coli Cyst"
+            name="entamoebaColiCyst"
+            bind:value={entamoebaColiCyst}
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">F: 53-97 mmol/L | M:80-115 mmol/L</h4>
+        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-uric-acid"
+            for="inline-entamoeba-coli-trophozoite"
         >
-            Uric Acid
+            Entamoeba Coli Trophozoite
         </label>
     </div>
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-uric-acid"
-            placeholder="Uric Acid"
+            id="inline-entamoeba-coli-trophozoite"
             type="text"
-            name="uricAcid"
-            bind:value={uricAcid}
+            placeholder="Entamoeba Coli Trophozoite"
+            name="entamoebaColiTroph"
+            bind:value={entamoebaColiTroph}
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">F: 137-363 mmol/L | M:214-488 mmol/L</h4>
+        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-cholesterol"
+            for="inline-entamoeba-histolytica-cyst"
         >
-            Cholesterol
+            Entamoeba Histolytica Cyst
         </label>
     </div>
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-cholesterol"
-            placeholder="Cholesterol"
+            id="inline-entamoeba-histolytica-cyst"
             type="text"
-            name="cholesterol"
-            bind:value={cholesterol}
+            placeholder="Entamoeba Histolytica Cyst"
+            name="entamoebaHistCyst"
+            bind:value={entamoebaHistCyst}
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">Up to 5.2 mmol/L</h4>
+        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-triglycerides"
+            for="inline-entamoeba-histolytica-trophozoite"
         >
-            Triglycerides
+            Entamoeba Histolytica Trophozoite
         </label>
     </div>
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-triglycerides"
-            placeholder="Triglycerides"
+            id="inline-entamoeba-histolytica-trophozoite"
             type="text"
-            name="triglycerides"
-            bind:value={triglycerides}
+            placeholder="Entamoeba Histolytica Trophozoite"
+            name="entamoebaHistTroph"
+            bind:value={entamoebaHistTroph}
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">Up to 2.28 mmol/L</h4>
+        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-hdl-cholesterol"
+            for="inline-pus-cells"
         >
-            HDL - Cholesterol
+            Pus Cells
         </label>
     </div>
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-hdl-cholesterol"
-            placeholder="HDL - Cholesterol"
+            id="inline-pus-cells"
             type="text"
-            name="hdlCholesterol"
-            bind:value={hdlCholesterol}
+            placeholder="Pus Cells"
+            name="pusCell"
+            bind:value={pusCell}
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">Greater than 0.90 mmol/L</h4>
+        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-ldl-cholesterol"
+            for="inline-rbc"
         >
-            LDL - Cholesterol
+            RBC
         </label>
     </div>
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-ldl-cholesterol"
-            placeholder="LDL - Cholesterol"
+            id="inline-rbc"
             type="text"
-            name="ldlCholesterol"
-            bind:value={ldlCholesterol}
+            placeholder="RBC"
+            name="rbc"
+            bind:value={rbc}
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">Less than 3.40 mmol/L</h4>
+        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-sgot-ast"
+            for="inline-yeast-cells"
         >
-            SGOT/AST
+            Yeast Cells
         </label>
     </div>
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-sgot-ast"
-            placeholder="SGOT/AST"
+            id="inline-yeast-cells"
             type="text"
-            name="sgotAst"
-            bind:value={sgotAst}
+            placeholder="Yeast Cells"
+            name="yeastCell"
+            bind:value={yeastCell}
         />
-    </div>
-    <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">F: up to 31 U/L | M: up to 37 U/L</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-sgpt-alt"
+            for="inline-fat-globules"
         >
-            SGPT/ALT
+            Fat Globules
         </label>
     </div>
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-sgpt-alt"
-            placeholder="SGPT/ALT"
+            id="inline-fat-globules"
             type="text"
-            name="sgptAlt"
-            bind:value={sgptAlt}
+            placeholder="Fat Globules"
+            name="fatGlobules"
+            bind:value={fatGlobules}
         />
-    </div>
-    <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">F: up to 32 U/L | M: up to 42 U/L</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-sodium"
+            for="inline-bacteria"
         >
-            Soduim
+            Bacteria
         </label>
     </div>
     <div class="md:w-5/12">
         <input
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-sodium"
-            placeholder="Soduim"
+            id="inline-bacteria"
             type="text"
-            name="sodium"
-            bind:value={sodium}
+            placeholder="Bacteria"
+            name="bacteria"
+            bind:value={bacteria}
         />
-    </div>
-    <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">135-148 mmol/L</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-potassium"
+            for="inline-others"
         >
-            Potassium
+            Others
         </label>
     </div>
     <div class="md:w-5/12">
-        <input
+        <textarea
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-potassium"
-            placeholder="Potassium"
+            id="inline-others"
+            rows="3"
+            cols="50"
             type="text"
-            name="potassium"
-            bind:value={potassium}
+            placeholder="Others"
+            name="others"
+            bind:value={others}
         />
-    </div>
-    <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">3.5-5.3 mmol/L</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
             class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-            for="inline-calcium"
+            for="inline-remarks"
         >
-            Calcium
+            Remarks
         </label>
     </div>
     <div class="md:w-5/12">
-        <input
+        <textarea
             class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
-            id="inline-calcium"
-            placeholder="Calcium"
+            id="inline-remarks"
+            rows="3"
+            cols="50"
             type="text"
-            name="calcium"
-            bind:value={calcium}
+            placeholder="Remarks"
+            name="remarks"
+            bind:value={remarks}
         />
-    </div>
-    <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">2.15-2.57 mmol/L</h4>
     </div>
 </div>
