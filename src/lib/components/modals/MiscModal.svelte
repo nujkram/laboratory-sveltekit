@@ -94,7 +94,7 @@
                             <div class="col-span-5">
                                 <div class="flex gap-1">
                                     <div class = "text-right w-32">Exam Desired:</div>
-                                    <div class="font-semibold">{data?.record?.exam || '--'}</div>
+                                    <div class="font-semibold">{data?.exam || '--'}</div>
                                 </div>
                             </div>
 
@@ -102,7 +102,7 @@
                             <div class="col-span-3">
                                 <div class="flex gap-1">
                                     <div class = "text-right w-32">Specimen:</div>
-                                    <div class="font-semibold">{data?.patient?.specimen || '--'}</div>
+                                    <div class="font-semibold">{data?.specimen || '--'}</div>
                                 </div>
                             </div>
 
@@ -140,11 +140,11 @@
                                     <div class="flex-col">
                                         <div class="flex gap-1">
                                             <div class="w-5/12 text-right font-semibold">IgG</div>
-                                            <div class="w-4/12 font-semibold border-b border-black text-right">{data?.fastingBloodSugar || '--'}</div>
+                                            <div class="w-4/12 font-semibold border-b border-black text-right">{data?.result || '--'}</div>
                                         </div>
                                         <div class="flex gap-1">
                                             <div class="w-5/12 text-right font-semibold">IgM</div>
-                                            <div class="w-4/12 font-semibold border-b border-black text-right">{data?.fastingBloodSugar || '--'}</div>
+                                            <div class="w-4/12 font-semibold border-b border-black text-right">{data?.others || '--'}</div>
                                         </div>
 
                                     </div>
@@ -152,8 +152,7 @@
                             </div>
 
                             
-                            
-                       
+                        
 
                         
                                 
