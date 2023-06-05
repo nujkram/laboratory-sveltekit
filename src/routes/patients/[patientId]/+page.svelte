@@ -29,14 +29,12 @@
 	let sortOrder = 'asc';
 	let sortBy = 'code';
 	let isViewModalOpen = false;
-	let isViewmiscModalOpen = false;
 
 	let { patient } = data;
     let age = calculateAge(patient?.birthDate);
 
 	// Modals
     const handleViewModal = () => (isViewModalOpen = !isViewModalOpen);
-	const handleViewmiscModal = () => (isViewmiscModalOpen = !isViewmiscModalOpen);
 
     async function loadRecord() {
 		try {
@@ -288,7 +286,7 @@
 										<td class="px-6 py-4 col-span-3">
 											<Button
 												color='primary' textSize='text-md' text='View'
-												on:click={handleViewmiscModal} || {handleViewModal}
+												on:click={handleViewModal}
 
 											/>
 											<Button
@@ -343,17 +341,14 @@
 	</div>
 </div>
 
-{#if isViewmiscModalOpen}
-	{#if currentRecord.category === 'Miscellaneous'}
-		<MiscModal bind:isViewmiscModalOpen data={currentRecord} />
-	{/if}
-{/if}
-
 {#if isViewModalOpen}
 	{#if currentRecord.category === 'Chemistry'}
 		<ChemistryModal bind:isViewModalOpen data={currentRecord} />
 	{/if}
 	{#if currentRecord.category === 'Urinalysis'}
 		<UrinalysisModal bind:isViewModalOpen data={currentRecord}  />
+	{/if}
+	{#if currentRecord.category === 'Miscellaneous'}
+		<MiscModal bind:isViewModalOpen data={currentRecord} />
 	{/if}
 {/if}
