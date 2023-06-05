@@ -96,8 +96,26 @@
 		remarks
 	} = record;
 	let total = '1.0';
-    
+	let options = [];
+
+    async function loadCategories() {
+		try {
+			let response = await fetch('/api/admin/record/categories', {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+			let result = await response.json();
+			options = result.response;
+			selectedOption = options.length > 0 ? options[0].name : '';
+		} catch (error) {
+			console.error('error', error);
+		}
+	}
+
     onMount(() => {
+		loadCategories();
         if(pathologist) {
             pathologist = pathologist._id;
         }
@@ -107,9 +125,7 @@
         }
     });
     
-	const options = ['Chemistry', 'Hematology', 'Parasitology', 'Urinalysis', 'Miscellaneous'];
-
-	let selectedOption = 'Chemistry';
+	let selectedOption = '';
 
 	const handleOnChange = (e) => {
 		selectedOption = e.target.value;
@@ -212,7 +228,7 @@
 						on:change={handleOnChange}
 					>
 						{#each options as option}
-							<option value={option}>{option}</option>
+							<option value={option.name}>{option.name}</option>
 						{/each}
 					</select>
 				</div>
