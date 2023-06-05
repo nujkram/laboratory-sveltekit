@@ -10,6 +10,7 @@
 	import Sort from "$lib/components/reusable/Sort.svelte";
 	import Edit from "$lib/components/icons/Edit.svelte";
 	import ChemistryModal from '$lib/components/modals/ChemistryModal.svelte';
+	import MiscModal from '$lib/components/modals/MiscModal.svelte';
 	
 	export let data;
     
@@ -26,12 +27,14 @@
 	let sortOrder = 'asc';
 	let sortBy = 'code';
 	let isViewModalOpen = false;
+	let isViewmiscModalOpen = false;
 
 	let { patient } = data;
     let age = calculateAge(patient?.birthDate);
 
 	// Modals
     const handleViewModal = () => (isViewModalOpen = !isViewModalOpen);
+	const handleViewmiscModal = () => (isViewmiscModalOpen = !isViewmiscModalOpen);
 
     async function loadRecord() {
 		try {
@@ -284,7 +287,8 @@
 										<td class="px-6 py-4 col-span-3">
 											<Button
 												color='primary' textSize='text-md' text='View'
-												on:click={handleViewModal}
+												on:click={handleViewmiscModal} || {handleViewModal}
+
 											/>
 											<Button
 												color='warning' textSize='text-md' text='Update'
@@ -338,8 +342,14 @@
 	</div>
 </div>
 
+{#if isViewmiscModalOpen}
+	{#if currentRecord.category === 'Miscellaneous'}
+		<MiscModal bind:isViewmiscModalOpen data={currentRecord} />
+	{/if}
+{/if}
+
 {#if isViewModalOpen}
 	{#if currentRecord.category === 'Chemistry'}
-		<ChemistryModal bind:isViewModalOpen data={currentRecord}  />
+		<ChemistryModal bind:isViewModalOpen data={currentRecord} />
 	{/if}
 {/if}
