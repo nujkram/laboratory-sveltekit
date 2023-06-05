@@ -11,6 +11,8 @@
 	import Edit from "$lib/components/icons/Edit.svelte";
 	import ChemistryModal from '$lib/components/modals/ChemistryModal.svelte';
 	import MiscModal from '$lib/components/modals/MiscModal.svelte';
+	import UrinalysisModal from '$lib/components/modals/UrinalysisModal.svelte';
+
 	
 	export let data;
     
@@ -115,7 +117,6 @@
 				: pageSize * currentPage;
 	}
 </script>
-
 <div class="border-2 border-gray-100 rounded-lg h-auto dark:border-gray-700 mt-12">
 	<div class="p-8 bg-white mt-24">
 		<div class="grid grid-cols-1">
@@ -351,5 +352,8 @@
 {#if isViewModalOpen}
 	{#if currentRecord.category === 'Chemistry'}
 		<ChemistryModal bind:isViewModalOpen data={currentRecord} />
+	{/if}
+	{#if currentRecord.category === 'Urinalysis'}
+		<UrinalysisModal bind:isViewModalOpen data={currentRecord}  />
 	{/if}
 {/if}
