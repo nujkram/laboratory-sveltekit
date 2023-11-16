@@ -1,5 +1,4 @@
 <script>
-    
     // @ts-nocheck
 	import { calculateAge } from "$lib/utils/ageHelper";
     import { formatDateMDY } from '$lib/utils/dateHelper.js';
@@ -74,7 +73,7 @@
                             <div class="col-span-4">
                                 <div class="flex gap-1 justify-start">
                                     <div>Exam Desired:</div>
-                                    <div class="font-semibold">{data?.caseNumber || '--'}</div>
+                                    <div class="font-semibold">{data?.exam || '--'}</div>
                                 </div>
                             </div>
                         </div>

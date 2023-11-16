@@ -1,5 +1,4 @@
 <script>
-    
     // @ts-nocheck
 	import { calculateAge } from "$lib/utils/ageHelper";
     import { formatDateMDY } from '$lib/utils/dateHelper.js';

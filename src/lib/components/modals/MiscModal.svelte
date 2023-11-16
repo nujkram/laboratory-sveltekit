@@ -1,13 +1,12 @@
 <script>
-    
     // @ts-nocheck
 	import { calculateAge } from "$lib/utils/ageHelper";
     import { formatDateMDY } from '$lib/utils/dateHelper.js';
-    export let isViewmiscModalOpen = false;
+    export let isViewModalOpen = false;
     export let data;
 
     let age = calculateAge(data?.patient?.birthDate);
-    const handleCloseModal = () => isViewmiscModalOpen = false;
+    const handleCloseModal = () => isViewModalOpen = false;
 
     function printModal() {
         const printModal = document.querySelector('nav');
@@ -20,7 +19,7 @@
     }
 </script>
 
-<div class="fixed z-10 inset-0 overflow-y-auto {isViewmiscModalOpen ? 'block': 'hidden'}">
+<div class="fixed z-10 inset-0 overflow-y-auto {isViewModalOpen ? 'block': 'hidden'}">
     <div class="flex items-center justify-center min-h-screen">
 		<div class="fixed inset-0 bg-gray-800 bg-opacity-25" />
         <div 
