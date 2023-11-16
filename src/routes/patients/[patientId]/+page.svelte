@@ -12,6 +12,8 @@
 	import ChemistryModal from '$lib/components/modals/ChemistryModal.svelte';
 	import MiscModal from '$lib/components/modals/MiscModal.svelte';
 	import UrinalysisModal from '$lib/components/modals/UrinalysisModal.svelte';
+	import ParasitologyModal from '$lib/components/modals/ParasitologyModal.svelte';
+	import HematologyModal from '$lib/components/modals/HematologyModal.svelte';
 
 	
 	export let data;
@@ -347,6 +349,12 @@
 	{/if}
 	{#if currentRecord.category === 'Urinalysis'}
 		<UrinalysisModal bind:isViewModalOpen data={currentRecord}  />
+	{/if}
+	{#if currentRecord.category === 'Hematology'}
+		<HematologyModal bind:isViewModalOpen data={currentRecord}  />
+	{/if}
+	{#if currentRecord.category === 'Parasitology'}
+		<ParasitologyModal bind:isViewModalOpen data={currentRecord}  />
 	{/if}
 	{#if currentRecord.category === 'Miscellaneous'}
 		<MiscModal bind:isViewModalOpen data={currentRecord} />

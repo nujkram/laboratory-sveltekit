@@ -1,9 +1,9 @@
 import clientPromise from '$lib/server/mongo';
 
 /** @type {import('./$types').RequestHandler} */
-export async function POST({request}: any) {
+export async function POST({ request }: any) {
     const data = await request.json();
-    let {patientId} = data;
+    let { patientId } = data;
     const db = await clientPromise();
     const Record = db.collection('records');
 
@@ -66,11 +66,14 @@ export async function POST({request}: any) {
                 path: '$createdBy',
                 preserveNullAndEmptyArrays: true
             }
+        },
+        {
+            $sort: { created: -1 }
         }
     ]
     const response = await Record.aggregate(pipeline).toArray();
 
-    if(response) {
+    if (response) {
         return new Response(
             JSON.stringify({
                 status: 'Success',
@@ -81,13 +84,13 @@ export async function POST({request}: any) {
 }
 
 /** @type {import('./$types').RequestHandler} */
-export async function GET({request, locals}: any) {
+export async function GET({ request, locals }: any) {
     const db = await clientPromise();
     const Records = db.collection('records');
 
     const response = await Records.find({}).toArray();
 
-    if(response) {
+    if (response) {
         return new Response(
             JSON.stringify({
                 status: 'Success',
