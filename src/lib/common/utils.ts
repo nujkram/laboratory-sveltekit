@@ -98,6 +98,14 @@ export const hashPassword = async (password: string) => {
 	return await bcrypt.hash(password, 10);
 };
 
+// Role used to gate management actions (edit/delete patients, records, users;
+// resetting another user's password).
+export const ADMIN_ROLE = 'Administrator';
+
+// `user` is the shape stored on `locals.user` (see hooks.server.ts) or the
+// client-side `$page.data.user`. Both carry a `role` string.
+export const isAdmin = (user: any) => user?.role === ADMIN_ROLE;
+
 export const formMachine = createMachine({
 	id: 'form',
 	initial: 'fresh',

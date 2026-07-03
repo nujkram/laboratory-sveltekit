@@ -1,8 +1,15 @@
-import { id, hashPassword } from '$lib/common/utils';
+import { id, hashPassword, isAdmin } from '$lib/common/utils';
 import clientPromise from '$lib/server/mongo';
 
 /** @type {import('./$types').RequestHandler} */
 export async function POST({ request, locals }: any) {
+	if (!isAdmin(locals?.user)) {
+		return new Response(
+			JSON.stringify({ status: 'Error', message: 'Only administrators can create users.' }),
+			{ status: 403 }
+		);
+	}
+
 	const data = await request.json();
 	const db = await clientPromise();
 	const User = db.collection('users');

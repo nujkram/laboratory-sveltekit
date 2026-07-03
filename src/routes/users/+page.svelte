@@ -1,6 +1,7 @@
 <script>
 	// @ts-nocheck
 	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { paginate } from 'svelte-paginate';
 	import Button from "$lib/components/reusable/Button.svelte";
@@ -26,7 +27,9 @@
     let isAddModalOpen = false;
     let isEditModalOpen = false;
 	let isConfirmModalOpen = false;
-    
+
+	$: isAdmin = $page.data.user?.role === 'Administrator';
+
 	// Modals
     const handleAddModal = () => (isAddModalOpen = !isAddModalOpen);
     const handleEditModal = () => (isEditModalOpen = !isEditModalOpen);
@@ -69,7 +72,6 @@
 	function handleSort(columnName) {
 		if (columnName === sortBy) {
 			sortOrder = sortOrder === 'asc' ? 'des' : 'asc';
-			console.warn(sortOrder);
 		} else {
 			sortBy = columnName;
 		}
@@ -119,198 +121,179 @@
 	}
 </script>
 
-<div class="border-2 border-gray-100 rounded-lg h-auto dark:border-gray-700 mt-12">
-	<div class="flex flex-col justify-center border-b h-fit rounded bg-blue-600 dark:bg-gray-800">
-		<div class="flex flex-col px-5 justify-center py-4">
-			<span class="text-xl font-semibold" style="color:white">Manage users</span>
+<div class="animate-rise-in space-y-5">
+	<!-- Page header -->
+	<div class="flex flex-wrap items-end justify-between gap-3">
+		<div>
+			<h2 class="font-display text-2xl font-bold text-ink">Users</h2>
+			<p class="mt-1 text-sm text-muted">
+				Manage the staff who can sign in — technologists, pathologists, and administrators.
+			</p>
 		</div>
-		<div class="flex gap-4 h-auto px-5 py-5 bg-white dark:bg-gray-800">
-			<div class="flex flex-col w-full h-auto ">
-				<label
-					for="status"
-					class="block mb-2 pl-1 text-m font-semibold text-gray-900 dark:text-white">Status</label
+		{#if isAdmin}
+			<Button color="primary" text="Add user" padding="py-2 px-4" on:click={handleAddModal}>
+				<svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+					<path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
+				</svg>
+			</Button>
+		{/if}
+	</div>
+
+	<!-- Table card -->
+	<div class="overflow-hidden rounded-xl border border-line bg-surface shadow-card">
+		<!-- Toolbar -->
+		<div class="flex flex-wrap items-center gap-3 border-b border-line px-4 py-3">
+			<div>
+				<label for="status" class="sr-only">Status</label>
+				<select
+					id="status"
+					bind:value={status}
+					class="rounded-lg border-line bg-surface py-2 pl-3 pr-9 text-sm font-medium text-ink focus:border-leaf focus:ring-2 focus:ring-leaf/25"
 				>
-				<div class="grid grid-cols-9">
-					<select
-						id="status"
-						bind:value={status}
-						class=" bg-gray-50 border border-gray-300 font-semibold text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-					>
-						<option class="text-gray-900 text-sm font-semibold" value="all" selected>All</option>
-						<option class="text-green-600 text-sm font-semibold" value="active"> Active</option>
-						<option class="text-red-500 text-sm font-semibold" value="inactive">Inactive</option>
-					</select>
-					<div class="flex ml-2">
-						<Button color='success' textSize='text-md' text='Create' on:click={handleAddModal} />
-					</div>
-					<div class="col-start-7 col-span-3 rounded ">
-						<form class="flex items-center">
-							<label for="search" class="sr-only">Search</label>
-							<div class="relative w-full">
-								<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-									<svg
-										aria-hidden="true"
-										class="w-5 h-5 text-gray-500 dark:text-gray-400"
-										fill="currentColor"
-										viewBox="0 0 20 20"
-										><path
-											fill-rule="evenodd"
-											d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-											clip-rule="evenodd"
-										/></svg
-									>
-								</div>
-								<input
-									type="search"
-									bind:value={search}
-									id="search"
-									class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-									placeholder="Search"
-									required
-								/>
-							</div>
-						</form>
-					</div>
-				</div>
+					<option value="all">All users</option>
+					<option value="active">Active</option>
+					<option value="inactive">Inactive</option>
+				</select>
+			</div>
+			<div class="relative min-w-[12rem] flex-1">
+				<span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-muted">
+					<svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+						<path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+					</svg>
+				</span>
+				<input
+					type="search"
+					bind:value={search}
+					id="search"
+					placeholder="Search by name…"
+					class="w-full rounded-lg border-line bg-surface py-2 pl-9 pr-3 text-sm text-ink placeholder:text-muted/60 focus:border-leaf focus:ring-2 focus:ring-leaf/25"
+				/>
 			</div>
 		</div>
-	</div>
-	<div class="flex items-center justify-center h-fit mb-1 rounded bg-gray-50 dark:bg-gray-800">
-		<table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 table-auto">
-			<thead class="text-m  text-gray-700 border-b bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
-				<tr>
-					<th scope="col" class="pl-6">
-                        Last Name
-					</th>
-					<th scope="col" class="pl-6">
-                        First Name
-					</th>
-                    <th scope="col" class="pl-6">
-                        Middle Name
-					</th>
-                    <th scope="col" class="pl-6">
-                        Email
-					</th>
-					<th scope="col" class="pl-6">
-                        Status 
-                        <Sort on:click={() => handleSort('isActive')} />
-                    </th>
-					<th scope="col" class="pl-6">
-						<div class="flex gap-2 w-max">
-							<label for="items" class="block text-m font-semibold text-gray-900 dark:text-white"
-								>No. of Entries</label
-							>
-							<input
-								type="number"
-								id="items"
-								bind:value={pageSize}
-								on:change={handleOverFlow}
-								class="w-16 h-4 text-sm text-center text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600"
-								placeholder=" "
-							/>
-						</div>
-					</th>
-				</tr>
-			</thead>
-			<tbody>
-				{#key paginatedItems}
-					{#if paginatedItems.length}
-						{#each paginatedItems as data}
-							<tr
-								class=" bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
-								on:mouseenter={() => {
-									if (currentUser !== data) {
-										currentUser = data;
-									}
-								}}
-								on:click={() => {
-									goto(`/users/${currentUser?._id}`);
-								}}
-							>
-								<td
-									class="px-6 py-4 text-gray-700 whitespace-nowrap dark:text-white text-m font-medium"
-								>
-									{data?.profile?.lastName || ''}
-                                </td>
-								<td class="px-6 py-4 text-gray-700 whitespace-nowrap dark:text-white text-m font-medium">
-									{data?.profile?.firstName || ''}
-								</td>
-								<td class="px-6 py-4 text-gray-700 whitespace-nowrap dark:text-white text-m font-medium">
-									{data?.profile?.middleName || ''}
-								</td>
-								<td class="px-6 py-4 text-gray-700 whitespace-nowrap dark:text-white text-m font-medium">
-									{data?.profile?.email || ''}
-								</td>
-								<td class="flex items-center px-6 py-4">
-									<div class="flex items-center ">
-										<div
-											class={data.isActive
-												? 'h-2.5 w-2.5 rounded-full bg-green-500 mr-2'
-												: 'h-2.5 w-2.5 rounded-full bg-red-500 mr-2'}
-										/>
-										<div class="text-sm text-gray-700 font-medium">
-											{data.isActive ? 'Active' : 'Inactive'}
-										</div>
-									</div>
-								</td>
 
-								<td class="px-6 py-4 col-span-3">
-									<Button
-                                        color='warning' textSize='text-md' text='Update'
-										on:click={handleEditModal}
-									>
-										<Edit />
-									</Button>
-									<Button
-                                        color='danger' textSize='text-md' text='Delete'
-										on:click={handleConfirmDeleteModal}
-									>
-										<Trash />
-									</Button>
+		<!-- Table -->
+		<div class="overflow-x-auto">
+			<table class="w-full text-sm">
+				<thead class="border-b border-line bg-paper text-left text-xs uppercase tracking-wide text-muted">
+					<tr>
+						<th scope="col" class="px-5 py-3 font-semibold">Last name</th>
+						<th scope="col" class="px-5 py-3 font-semibold">First name</th>
+						<th scope="col" class="px-5 py-3 font-semibold">Middle name</th>
+						<th scope="col" class="px-5 py-3 font-semibold">Email</th>
+						<th scope="col" class="px-5 py-3 font-semibold">
+							<span class="inline-flex items-center gap-1">Status <Sort on:click={() => handleSort('isActive')} /></span>
+						</th>
+						<th scope="col" class="px-5 py-3 text-right font-semibold">Actions</th>
+					</tr>
+				</thead>
+				<tbody class="divide-y divide-line">
+					{#key paginatedItems}
+						{#if paginatedItems.length}
+							{#each paginatedItems as data}
+								<tr
+									class="cursor-pointer transition-colors hover:bg-paper"
+									on:mouseenter={() => {
+										if (currentUser !== data) {
+											currentUser = data;
+										}
+									}}
+									on:click={() => {
+										goto(`/users/${currentUser?._id}`);
+									}}
+								>
+									<td class="whitespace-nowrap px-5 py-3 font-medium text-ink">{data?.profile?.lastName || '—'}</td>
+									<td class="whitespace-nowrap px-5 py-3 text-ink">{data?.profile?.firstName || '—'}</td>
+									<td class="whitespace-nowrap px-5 py-3 text-muted">{data?.profile?.middleName || '—'}</td>
+									<td class="whitespace-nowrap px-5 py-3 font-mono text-xs text-muted">{data?.profile?.email || '—'}</td>
+									<td class="px-5 py-3">
+										<span
+											class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium {data.isActive
+												? 'bg-leaf-soft text-pine-700'
+												: 'bg-danger/10 text-danger'}"
+										>
+											<span class="h-1.5 w-1.5 rounded-full {data.isActive ? 'bg-leaf' : 'bg-danger'}" />
+											{data.isActive ? 'Active' : 'Inactive'}
+										</span>
+									</td>
+									<td class="px-5 py-3" on:click|stopPropagation>
+										<div class="flex items-center justify-end gap-2">
+											{#if isAdmin}
+												<Button color="warning" text="" padding="py-1.5 px-2.5" textSize="text-xs" on:click={handleEditModal}>
+													<Edit />
+												</Button>
+												<Button color="danger" text="" padding="py-1.5 px-2.5" textSize="text-xs" on:click={handleConfirmDeleteModal}>
+													<Trash />
+												</Button>
+											{:else}
+												<span class="text-xs text-muted">—</span>
+											{/if}
+										</div>
+									</td>
+								</tr>
+							{/each}
+						{:else}
+							<tr>
+								<td colspan="6" class="px-5 py-14 text-center">
+									<p class="font-display text-base font-semibold text-ink">No users found</p>
+									<p class="mt-1 text-sm text-muted">
+										{search || status !== 'all'
+											? 'Try a different name or status filter.'
+											: 'Add a staff member to get started.'}
+									</p>
 								</td>
 							</tr>
-						{/each}
-					{/if}
-				{/key}
-			</tbody>
-			<div class="flex flex-col items-center mt-2">
-				<span class="text-sm text-gray-700 dark:text-gray-400">
-					Showing <span class="font-semibold text-gray-900 dark:text-white">{pageMinIndex}</span> to
-					<span class="font-semibold text-gray-900 dark:text-white">{pageMaxIndex}</span>
-					of <span class="font-semibold text-gray-900 dark:text-white">{itemSize}</span> Entries
+						{/if}
+					{/key}
+				</tbody>
+			</table>
+		</div>
+
+		<!-- Footer / pagination -->
+		<div class="flex flex-wrap items-center justify-between gap-3 border-t border-line px-4 py-3">
+			<div class="flex items-center gap-4 text-sm text-muted">
+				<label class="flex items-center gap-2">
+					Rows
+					<input
+						type="number"
+						min="1"
+						bind:value={pageSize}
+						on:change={handleOverFlow}
+						class="w-16 rounded-lg border-line bg-surface py-1 text-center text-sm text-ink focus:border-leaf focus:ring-2 focus:ring-leaf/25"
+					/>
+				</label>
+				<span>
+					<span class="font-mono font-semibold text-ink">{pageMinIndex}</span>–<span
+						class="font-mono font-semibold text-ink">{pageMaxIndex}</span
+					>
+					of <span class="font-mono font-semibold text-ink">{itemSize || 0}</span>
 				</span>
-				<div class="inline-flex mt-2 xs:mt-0">
-					<button
-						on:click={decrementPageNumber}
-						class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-l hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-					>
-						<svg aria-hidden="true" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-							<path
-								fill-rule="evenodd"
-								d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z"
-								clip-rule="evenodd"
-							/>
-						</svg>
-						Prev
-					</button>
-					<button
-						on:click={incrementPageNumber}
-						class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-800 border-0 border-l border-gray-700 rounded-r hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-					>
-						Next
-						<svg aria-hidden="true" class="w-5 h-5 ml-2" fill="currentColor" viewBox="0 0 20 20">
-							<path
-								fill-rule="evenodd"
-								d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
-								clip-rule="evenodd"
-							/>
-						</svg>
-					</button>
-				</div>
 			</div>
-		</table>
+			<div class="inline-flex gap-1">
+				<button
+					on:click={decrementPageNumber}
+					class="inline-flex items-center gap-1 rounded-lg border border-line bg-surface px-3 py-1.5 text-sm font-medium text-ink transition-colors hover:bg-paper disabled:opacity-40"
+					disabled={pageMinIndex <= 1}
+				>
+					<svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+						<path fill-rule="evenodd" d="M12.7 15.7a1 1 0 01-1.4 0l-5-5a1 1 0 010-1.4l5-5a1 1 0 011.4 1.4L8.42 10l4.3 4.3a1 1 0 010 1.4z" clip-rule="evenodd" />
+					</svg>
+					Prev
+				</button>
+				<button
+					on:click={incrementPageNumber}
+					class="inline-flex items-center gap-1 rounded-lg border border-line bg-surface px-3 py-1.5 text-sm font-medium text-ink transition-colors hover:bg-paper disabled:opacity-40"
+					disabled={pageMaxIndex >= (itemSize || 0)}
+				>
+					Next
+					<svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+						<path fill-rule="evenodd" d="M7.3 4.3a1 1 0 011.4 0l5 5a1 1 0 010 1.4l-5 5a1 1 0 01-1.4-1.4l4.3-4.3-4.3-4.3a1 1 0 010-1.4z" clip-rule="evenodd" />
+					</svg>
+				</button>
+			</div>
+		</div>
 	</div>
 </div>
+
 {#if isAddModalOpen }
 	<AddUserForm title='Add User' bind:isAddModalOpen {loadUsers} />
 {/if}
