@@ -1,0 +1,12 @@
+{
+  "extends": ["config:recommended"],
+  "platform": "github",
+  "labels": ["renovate"],
+  "autodiscover": true,
+  "ignoreDeps": ["eslint", "prettier"],
+  "prHourlyLimit": 3,
+  "schedule": ["before 3am on Monday"],
+  "timezone": "America/New_York",
+  "onboarding": true,
+  "repositories": ["nujkram/laboratory-sveltekit"]
+}
