@@ -76,6 +76,7 @@
 		"dotenv": "^16.0.3",
 		"file-saver": "^2.0.5",
 		"filestack-js": "^3.25.0",
+		"idb": "^8.0.3",
 		"imask": "^6.4.3",
 		"intl-tel-input": "^17.0.19",
 		"jsonwebtoken": "^9.0.0",

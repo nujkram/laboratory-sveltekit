@@ -3,10 +3,13 @@
 	import AccountProfileForm from '$lib/components/forms/account/AccountProfileForm.svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import { isOnline, pendingCount, syncBlocked } from '$lib/stores/connectivity.js';
 
-	const profile = $page.data.user.profile;
-	const fullName = profile.displayName;
-	const imgsrc = profile.photo.url;
+	// Passed from the layout so it survives offline (cached user fallback).
+	export let user = null;
+	$: profile = user?.profile ?? $page.data.user?.profile ?? {};
+	$: fullName = profile.displayName ?? '';
+	$: imgsrc = profile.photo?.url ?? '';
 
 	let isAccountProfileOpen = false;
 	let isDropdownOpen = false;
@@ -40,10 +43,30 @@
 	class="fixed top-0 left-0 right-0 z-30 h-16 border-b border-line bg-surface/85 backdrop-blur sm:left-64"
 >
 	<div class="flex h-full items-center justify-between px-5 lg:px-7">
-		<div class="flex flex-col leading-none">
-			<span class="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-leaf">Workspace</span
-			>
-			<h1 class="mt-0.5 font-display text-lg font-bold text-ink">{title}</h1>
+		<div class="flex items-center gap-3">
+			<div class="flex flex-col leading-none">
+				<span class="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-leaf">Workspace</span
+				>
+				<h1 class="mt-0.5 font-display text-lg font-bold text-ink">{title}</h1>
+			</div>
+			{#if !$isOnline}
+				<span class="inline-flex items-center gap-1.5 rounded-full bg-warning/10 px-2.5 py-1 text-xs font-medium text-warning" title="You're offline. Entries save on this device and sync automatically when back online.">
+					<span class="h-1.5 w-1.5 rounded-full bg-warning" />
+					Offline
+				</span>
+			{/if}
+			{#if $pendingCount > 0}
+				<a href="/pending" class="inline-flex items-center gap-1.5 rounded-full bg-leaf-soft px-2.5 py-1 text-xs font-medium text-pine-700 no-underline transition-colors hover:bg-leaf/20" title="Entries waiting to sync — click to view">
+					<svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 3a7 7 0 100 14 7 7 0 000-14zm.75 3.5a.75.75 0 00-1.5 0V10c0 .2.08.39.22.53l2.5 2.5a.75.75 0 101.06-1.06L10.75 9.7V6.5z" clip-rule="evenodd" /></svg>
+					{$pendingCount} pending
+				</a>
+			{/if}
+			{#if $syncBlocked}
+				<a href="/auth/login" class="inline-flex items-center gap-1.5 rounded-full bg-danger/10 px-2.5 py-1 text-xs font-medium text-danger no-underline transition-colors hover:bg-danger/20" title="Your session expired — sign in again to upload queued entries">
+					<span class="h-1.5 w-1.5 rounded-full bg-danger" />
+					Sign in to sync
+				</a>
+			{/if}
 		</div>
 
 		<div class="relative">

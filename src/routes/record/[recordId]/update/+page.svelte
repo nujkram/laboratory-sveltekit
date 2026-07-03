@@ -9,9 +9,16 @@
 	import Button from '$lib/components/reusable/Button.svelte';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import { loadRefList, getRefData, cacheRefData } from '$lib/client/refdata.js';
+	import { allPending } from '$lib/client/outbox.js';
+	import { saveOrQueue } from '$lib/client/saveOrQueue.js';
+
 	export let data;
-	let { recordId, record, medTechs, pathologists } = data;
-	let category = record?.category || '';
+	let { recordId } = data;
+	let record = null;
+	let medTechs = [];
+	let pathologists = [];
+	let category = '';
 	let message = null;
 	let statusMessages = {
 		sending: 'Sending...',
@@ -19,7 +26,11 @@
 		incomplete: 'Please complete all required fields.',
 		error: 'An error occurred. Please try again later.'
 	};
-	let {
+	let pathologist = '';
+	let medicalTechnologist = '';
+	let selectedOption = '';
+	// Reactively spread the loaded record into the individual form fields.
+	$: ({
         patientId,
 		stat,
 		fastingBloodSugar,
@@ -91,44 +102,54 @@
 		specimen,
 		result,
 		others,
-		pathologist,
-		medicalTechnologist,
 		remarks
-	} = record;
+	} = record ?? {});
 	let total = '1.0';
 	let options = [];
 
-    async function loadCategories() {
-		try {
-			let response = await fetch('/api/admin/record/categories', {
-				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json'
+	// Load the record (fetch + cache online; offline read cache or the queued copy),
+	// then the reference lists — all offline-capable.
+	async function loadRecord() {
+		const cacheKey = `record:${recordId}`;
+		let r = null;
+		if (navigator.onLine) {
+			try {
+				const res = await fetch(`/api/admin/record/${recordId}`);
+				const json = await res.json();
+				if (json.response) {
+					r = json.response;
+					cacheRefData(cacheKey, r);
 				}
-			});
-			let result = await response.json();
-			options = result.response;
-			// Default to THIS record's category so the correct sub-form (with its
-			// existing values) is shown — not just the first category in the list.
-			selectedOption = record?.category || (options.length > 0 ? options[0].name : '');
-			category = selectedOption;
-		} catch (error) {
-			console.error('error', error);
+			} catch (e) {
+				/* fall through */
+			}
+		}
+		if (!r) r = await getRefData(cacheKey);
+		if (!r) {
+			const pend = (await allPending()).find((x) => x.entity === 'record' && x.body?._id === recordId);
+			if (pend) r = pend.body;
+		}
+		if (r) {
+			record = r; // drives the reactive field spread above
+			pathologist = r.pathologist?._id ?? r.pathologist ?? '';
+			medicalTechnologist = r.medicalTechnologist?._id ?? r.medicalTechnologist ?? '';
+			category = r.category || '';
 		}
 	}
 
-    onMount(() => {
-		loadCategories();
-        if(pathologist) {
-            pathologist = pathologist._id;
-        }
-        
-        if(medicalTechnologist) {
-            medicalTechnologist = medicalTechnologist._id;
-        }
-    });
-    
-	let selectedOption = record?.category || '';
+	onMount(async () => {
+		await loadRecord();
+		const [cats, mts, paths] = await Promise.all([
+			loadRefList('categories', '/api/admin/record/categories'),
+			loadRefList('medTechs', '/api/admin/user/med-tech'),
+			loadRefList('pathologists', '/api/admin/user/pathologist')
+		]);
+		options = cats;
+		medTechs = mts;
+		pathologists = paths;
+		selectedOption = record?.category || (options.length > 0 ? options[0].name : '');
+		category = selectedOption;
+	});
 
 	const handleOnChange = (e) => {
 		selectedOption = e.target.value;
@@ -136,28 +157,24 @@
 	};
 
 	async function handleSubmit(e) {
-		console.log('clicked');
-		const form = e.currentTarget;
-		const formData = new FormData(form);
-		let data = Object.fromEntries(formData);
+		const body = Object.fromEntries(new FormData(e.currentTarget));
+		body.baseUpdated = record?.updated ?? null; // for conflict detection at sync
 		message = statusMessages.sending;
 		try {
-			let result = await fetch('/api/admin/record/update', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(data)
+			const res = await saveOrQueue({
+				endpoint: '/api/admin/record/update',
+				entity: 'record',
+				isCreate: false,
+				body
 			});
-			const response = await result.json();
-			if (response.status === 'Success') {
-				message = statusMessages.sent;
+			if (res.ok) {
+				message = res.synced ? statusMessages.sent : 'Saved offline — will sync automatically.';
 				setTimeout(() => {
 					message = null;
 					goto(`/patients/${patientId}`);
-				}, 3000);
+				}, res.synced ? 1500 : 2500);
 			} else {
-				message = statusMessages.error;
+				message = res.result?.message || statusMessages.error;
 			}
 		} catch (error) {
 			message = statusMessages.error;

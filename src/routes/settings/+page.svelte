@@ -2,6 +2,7 @@
 	// @ts-nocheck
 	import { fade } from 'svelte/transition';
 	import Logo from '$lib/components/Logo.svelte';
+	import { saveOrQueue } from '$lib/client/saveOrQueue.js';
 	export let data;
 	const { settings } = data;
 
@@ -14,13 +15,13 @@
 	async function handleSubmit() {
 		saving = true;
 		try {
-			let response = await fetch('/api/admin/settings/update', {
-				method: 'POST',
-				headers: { 'content-type': 'application/json' },
-				body: JSON.stringify({ _id: settings._id, name, location, mobile })
+			const res = await saveOrQueue({
+				endpoint: '/api/admin/settings/update',
+				entity: 'settings',
+				isCreate: false,
+				body: { _id: settings._id, name, location, mobile }
 			});
-			let result = await response.json();
-			message = result.message;
+			message = res.synced ? (res.result?.message || 'Settings saved.') : 'Saved offline — will sync automatically.';
 			setTimeout(() => (message = null), 3000);
 		} catch (error) {
 			console.error('error', error);

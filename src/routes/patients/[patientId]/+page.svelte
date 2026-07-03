@@ -13,9 +13,14 @@
 	import UrinalysisModal from '$lib/components/modals/UrinalysisModal.svelte';
 	import ParasitologyModal from '$lib/components/modals/ParasitologyModal.svelte';
 	import HematologyModal from '$lib/components/modals/HematologyModal.svelte';
-
+	import { getRefData, cacheRefData } from '$lib/client/refdata.js';
+	import { allPending } from '$lib/client/outbox.js';
 
 	export let data;
+
+	let { patientId } = data;
+	let patient = null;
+	let age = '';
 
 	let status = 'all';
 	let search = '';
@@ -30,38 +35,90 @@
 	let loading = true;
 	let searchTimer;
 
-	let { patient } = data;
-	let age = calculateAge(patient?.birthDate);
-
 	// Modals
 	const handleViewModal = () => (isViewModalOpen = !isViewModalOpen);
 
-	// Records are paged, filtered and sorted in the database — the browser only
-	// ever holds the current page, so this stays fast as a patient's history grows.
+	// Resolve the patient: fetch + cache when online; offline fall back to the
+	// cached single patient, the cached patients list, or a queued (pending) patient.
+	async function loadPatient() {
+		if (navigator.onLine) {
+			try {
+				const res = await fetch(`/api/admin/patient/${patientId}`);
+				const json = await res.json();
+				if (json.response) {
+					patient = json.response;
+					cacheRefData(`patient:${patientId}`, patient);
+				}
+			} catch (e) {
+				/* fall through to cache */
+			}
+		}
+		if (!patient) {
+			patient = await getRefData(`patient:${patientId}`);
+		}
+		if (!patient) {
+			const list = (await getRefData('patients')) ?? [];
+			patient = list.find((p) => p._id === patientId) || null;
+		}
+		if (!patient) {
+			const pend = (await allPending()).find(
+				(r) => r.entity === 'patient' && r.endpoint.endsWith('/insert') && r.body?._id === patientId
+			);
+			if (pend) {
+				patient = {
+					...pend.body,
+					completeName: `${pend.body.firstName || ''} ${pend.body.lastName || ''}`.trim(),
+					_pending: true
+				};
+			}
+		}
+		age = patient?.birthDate ? calculateAge(patient.birthDate) : '';
+	}
+
+	// Records are paged/sorted in the DB; offline we read the last cached page and
+	// merge in any results queued for this patient so they show on the chart.
 	async function loadRecord() {
 		loading = true;
+		const cacheKey = `records:${patientId}`;
 		try {
-			let response = await fetch('/api/admin/record', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					patientId: patient._id,
-					page: currentPage,
-					pageSize,
-					sortBy,
-					sortOrder,
-					search,
-					status
-				})
-			});
-			let result = await response.json();
-			items = result.response ?? [];
-			itemSize = result.total ?? 0;
+			if (navigator.onLine) {
+				let response = await fetch('/api/admin/record', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ patientId, page: currentPage, pageSize, sortBy, sortOrder, search, status })
+				});
+				let result = await response.json();
+				items = result.response ?? [];
+				itemSize = result.total ?? 0;
+				// Cache the first, unfiltered page as the offline view.
+				if (currentPage === 1 && !search && status === 'all') {
+					cacheRefData(cacheKey, { items, total: itemSize });
+				}
+			} else {
+				const cached = (await getRefData(cacheKey)) ?? { items: [], total: 0 };
+				items = cached.items;
+				itemSize = cached.total;
+			}
 		} catch (error) {
-			console.error('error', error);
+			const cached = (await getRefData(cacheKey)) ?? { items: [], total: 0 };
+			items = cached.items;
+			itemSize = cached.total;
 		} finally {
+			items = await mergePendingRecords(items);
 			loading = false;
 		}
+	}
+
+	// Records created offline for this patient (still in the outbox).
+	async function mergePendingRecords(list) {
+		const pending = (await allPending()).filter(
+			(r) => r.entity === 'record' && r.endpoint.endsWith('/insert') && r.body?.patientId === patientId
+		);
+		const ids = new Set(list.map((r) => r._id));
+		const extra = pending
+			.filter((r) => r.body?._id && !ids.has(r.body._id))
+			.map((r) => ({ ...r.body, patient, isActive: true, _pending: true }));
+		return [...extra, ...list];
 	}
 
 	function handleSort(columnName) {
@@ -110,7 +167,10 @@
 	$: pageMinIndex = itemSize === 0 ? 0 : (currentPage - 1) * pageSize + 1;
 	$: pageMaxIndex = Math.min(currentPage * pageSize, itemSize);
 
-	onMount(loadRecord);
+	onMount(async () => {
+		await loadPatient();
+		await loadRecord();
+	});
 </script>
 
 <div class="animate-rise-in space-y-6">
@@ -230,19 +290,27 @@
 									<td class="whitespace-nowrap px-5 py-3 text-ink">{data?.medicalTechnologist?.profile?.displayName || '—'}</td>
 									<td class="whitespace-nowrap px-5 py-3 text-ink">{data?.pathologist?.profile?.displayName || '—'}</td>
 									<td class="px-5 py-3">
-										<span
-											class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium {data?.isActive
-												? 'bg-leaf-soft text-pine-700'
-												: 'bg-danger/10 text-danger'}"
-										>
-											<span class="h-1.5 w-1.5 rounded-full {data?.isActive ? 'bg-leaf' : 'bg-danger'}" />
-											{data?.isActive ? 'Active' : 'Inactive'}
-										</span>
+										{#if data?._pending}
+											<span class="inline-flex items-center gap-1.5 rounded-full bg-warning/10 px-2.5 py-1 text-xs font-medium text-warning" title="Saved on this device — will sync when back online">
+												<span class="h-1.5 w-1.5 rounded-full bg-warning" /> Pending sync
+											</span>
+										{:else}
+											<span
+												class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium {data?.isActive
+													? 'bg-leaf-soft text-pine-700'
+													: 'bg-danger/10 text-danger'}"
+											>
+												<span class="h-1.5 w-1.5 rounded-full {data?.isActive ? 'bg-leaf' : 'bg-danger'}" />
+												{data?.isActive ? 'Active' : 'Inactive'}
+											</span>
+										{/if}
 									</td>
 									<td class="px-5 py-3">
 										<div class="flex items-center justify-end gap-2">
 											<Button color="primary" text="View" padding="py-1.5 px-3" textSize="text-xs" on:click={handleViewModal} />
-											<Button color="warning" text="Update" type="link" href="/record/{data?._id}/update" padding="py-1.5 px-3" textSize="text-xs" />
+											{#if !data?._pending}
+												<Button color="warning" text="Update" type="link" href="/record/{data?._id}/update" padding="py-1.5 px-3" textSize="text-xs" />
+											{/if}
 										</div>
 									</td>
 								</tr>
