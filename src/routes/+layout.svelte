@@ -12,14 +12,16 @@
 	}
 </script>
 
-<main id="content">
+<div id="content" class="min-h-screen bg-paper text-ink">
 	{#if $page.data.user}
-		<Navbar />
 		<Sidebar />
-		<main class="mt-16 ml-[16.5rem]">
-			<slot />
+		<Navbar />
+		<main class="pt-16 sm:pl-64">
+			<div class="px-4 py-4 sm:px-5 lg:px-6">
+				<slot />
+			</div>
 		</main>
 	{:else}
 		<slot />
 	{/if}
-</main>
+</div>

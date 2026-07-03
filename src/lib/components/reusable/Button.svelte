@@ -6,100 +6,48 @@
 	export let text = 'Button';
 	export let href = '/';
 	export let color = '';
-	export let rounded = 'rounded-full';
+	export let rounded = 'rounded-lg';
 	export let textColor = 'text-white';
-	export let padding = 'py-2 px-5';
-	export let textSize = 'text-xs';
-	export let classes = 'text-center';
-	export let margin = 'm-auto';
+	export let padding = 'py-2 px-4';
+	export let textSize = 'text-sm';
+	export let classes = '';
+	export let margin = '';
 
 	const dispatch = createEventDispatcher();
 
-	let active = false;
-	let bgColor = '';
-	let hoverColor = '';
-	let activeColor = '';
-	let defaultColor = bgColor;
+	const palette = {
+		secondary: 'bg-secondary hover:bg-secondaryHover',
+		terciary: 'bg-terciary hover:bg-terciaryHover',
+		success: 'bg-success hover:bg-successHover',
+		danger: 'bg-danger hover:bg-dangerHover',
+		warning: 'bg-warning hover:bg-warningHover',
+		primary: 'bg-primary hover:bg-primaryHover'
+	};
+	$: colorClasses = palette[color] || palette.primary;
 
-	switch (color) {
-		case 'secondary':
-			defaultColor = 'bg-secondary';
-			bgColor = 'bg-secondary';
-			hoverColor = 'bg-secondaryHover';
-			activeColor = 'bg-secondaryActive';
-			break;
-		case 'terciary':
-			defaultColor = 'bg-terciary';
-			bgColor = 'bg-terciary';
-			hoverColor = 'bg-terciaryHover';
-			activeColor = 'bg-terciaryActive';
-			break;
-		case 'success':
-			defaultColor = 'bg-success';
-			bgColor = 'bg-success';
-			hoverColor = 'bg-successHover';
-			activeColor = 'bg-successActive';
-			break;
-		case 'danger':
-			defaultColor = 'bg-danger';
-			bgColor = 'bg-danger';
-			hoverColor = 'bg-dangerHover';
-			activeColor = 'bg-dangerActive';
-			break;
-		case 'warning':
-			defaultColor = 'bg-warning';
-			bgColor = 'bg-warning';
-			hoverColor = 'bg-warningHover';
-			activeColor = 'bg-warningActive';
-			break;
-		default:
-			defaultColor = 'bg-primary';
-			bgColor = 'bg-primary';
-			hoverColor = 'bg-primaryHover';
-			activeColor = 'bg-primaryActive';
-			break;
-	}
-	
+	const base =
+		'inline-flex items-center justify-center gap-1.5 font-medium no-underline shadow-card transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-leaf';
+
 	function click(event) {
 		dispatch('click', event.detail);
 	}
 </script>
+
 {#if type === 'button'}
-<button
-	type='submit'
-	class="{bgColor} {textColor} {textSize}  {padding} {rounded} {margin} {classes}"
-	on:mouseenter={() => {
-		active = true;
-		active ? (bgColor = hoverColor) : (bgColor = defaultColor);
-	  }}
-	  on:mouseleave={() => {
-		active = true;
-		active ? (bgColor = defaultColor) : (bgColor = hoverColor);
-	  }}
-	on:click={click}
->
-<span class="flex gap-1">
-
-	<slot /> {text} 
-</span>
-</button>
+	<button
+		type="submit"
+		class="{base} {colorClasses} {textColor} {textSize} {padding} {rounded} {margin} {classes}"
+		on:click={click}
+	>
+		<slot />
+		{text}
+	</button>
 {:else}
-<a
-    {href}
-    class="{bgColor} {textColor} {textSize}  {padding} {rounded} {margin} {classes}"
-    on:mouseenter={() => {
-      active = true;
-      active ? (bgColor = hoverColor) : (bgColor = defaultColor);
-    }}
-    on:mouseleave={() => {
-      active = true;
-      active ? (bgColor = defaultColor) : (bgColor = hoverColor);
-    }}
-    on:click={() => {
-      activeColor = activeColor;
-    }}
-  >
-    {text}
-  </a>
+	<a
+		{href}
+		class="{base} {colorClasses} {textColor} {textSize} {padding} {rounded} {margin} {classes}"
+	>
+		<slot />
+		{text}
+	</a>
 {/if}
-

@@ -102,127 +102,138 @@
     });
 </script>
 
-<div class="fixed z-10 inset-0 overflow-y-auto {isAddModalOpen? 'block': 'hidden'} pt-20">
+<svelte:window on:keydown={(e) => e.key === 'Escape' && isAddModalOpen && handleCloseModal()} />
+
+<div class="fixed z-10 inset-0 overflow-y-auto {isAddModalOpen? 'block': 'hidden'} pt-20" on:click={handleCloseModal}>
 	<div class="flex items-center justify-center min-h-screen">
-		<div class="fixed inset-0 bg-gray-500 bg-opacity-75" />
+		<div class="fixed inset-0 bg-ink/40 backdrop-blur-sm" />
 		<div
-			class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all max-w-lg w-full mx-auto"
+			class="relative w-full max-w-lg transform overflow-hidden rounded-xl border border-line bg-surface shadow-card-lg transition-all"
 			role="dialog"
 			aria-modal="true"
 			aria-labelledby="modal-headline"
+			on:click|stopPropagation
 		>
+			<button
+				type="button"
+				on:click={handleCloseModal}
+				class="absolute top-3 right-3 inline-flex items-center rounded-lg p-1.5 text-muted transition-colors hover:bg-paper hover:text-ink"
+			>
+				<svg aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+				<span class="sr-only">Close</span>
+			</button>
 			<div class="p-6">
-				<h2 class="text-lg font-medium leading-6 text-gray-900" id="modal-headline">
+				<h2 class="font-display text-lg font-bold text-ink" id="modal-headline">
 					{title}
 				</h2>
 				<div class="mt-4">
 					<form class="max-w-lg mx-auto" on:submit={handleSubmit}>
 						<div class="mb-4">
-							<label for="license" class="block mb-2 font-bold text-gray-700">License:</label>
+							<label for="license" class="mb-1.5 block text-sm font-medium text-ink">License:</label>
 							<input
 								type="text"
 								id="license"
 								name="license"
 								bind:value={license}
-								class="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+								class="field"
 							/>
 						</div>
 						<div class="mb-4">
-							<label for="firstName" class="block mb-2 font-bold text-gray-700">First Name:</label>
+							<label for="firstName" class="mb-1.5 block text-sm font-medium text-ink">First Name:</label>
 							<input
 								type="text"
 								id="firstName"
 								name="firstName"
 								bind:value={firstName}
-								class="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+								class="field"
 							/>
 						</div>
 						<div class="mb-4">
-							<label for="middleName" class="block mb-2 font-bold text-gray-700">Middle Name:</label>
+							<label for="middleName" class="mb-1.5 block text-sm font-medium text-ink">Middle Name:</label>
 							<input
 								type="text"
 								id="middleName"
 								name="middleName"
 								bind:value={middleName}
-								class="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+								class="field"
 							/>
 						</div>
 						<div class="mb-4">
-							<label for="lastName" class="block mb-2 font-bold text-gray-700">Last Name:</label>
+							<label for="lastName" class="mb-1.5 block text-sm font-medium text-ink">Last Name:</label>
 							<input
 								type="text"
 								id="lastName"
 								name="lastName"
 								bind:value={lastName}
-								class="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+								class="field"
 							/>
 						</div>
 						<div class="mb-4">
-							<label for="username" class="block mb-2 font-bold text-gray-700">Username:</label>
+							<label for="username" class="mb-1.5 block text-sm font-medium text-ink">Username:</label>
 							<input
 								type="text"
 								id="username"
 								name="username"
 								bind:value={username}
-								class="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+								class="field"
 							/>
 						</div>
 						<div class="mb-4">
-							<label for="password" class="block mb-2 font-bold text-gray-700">Password:</label>
+							<label for="password" class="mb-1.5 block text-sm font-medium text-ink">Password:</label>
 							<input
 								type="password"
 								id="password"
 								name="password"
 								bind:value={password}
-								class="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+								class="field"
 							/>
 						</div>
 						<div class="mb-4">
-							<label for="confirm-password" class="block mb-2 font-bold text-gray-700">Confirm Password:</label>
+							<label for="confirm-password" class="mb-1.5 block text-sm font-medium text-ink">Confirm Password:</label>
 							<input
 								type="password"
 								id="confirm-password"
 								name="confirmPassword"
 								bind:value={confirmPassword}
-								class="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+								class="field"
 							/>
 						</div>
 						<div class="mb-4">
-							<label for="email" class="block mb-2 font-bold text-gray-700">Email:</label>
+							<label for="email" class="mb-1.5 block text-sm font-medium text-ink">Email:</label>
 							<input
 								type="email"
 								id="email"
 								name="email"
 								bind:value={email}
-								class="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+								class="field"
 							/>
 						</div>
 						<div class="mb-4">
-							<label for="phone" class="block mb-2 font-bold text-gray-700">Phone Number:</label>
+							<label for="phone" class="mb-1.5 block text-sm font-medium text-ink">Phone Number:</label>
 							<input
 								type="tel"
 								id="phone"
 								name="phone"
 								bind:value={phone}
-								class="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+								class="field"
 							/>
 							<div class="mb-4">
-								<label for="province" class="block mb-2 font-bold text-gray-700">Province:</label>
+								<label for="province" class="mb-1.5 block text-sm font-medium text-ink">Province:</label>
 								<input
 									type="text"
 									id="province"
 									name="province"
 									bind:value={province}
-									class="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+									class="field"
 								/>
 							</div>
 							<div class="mb-4">
-								<label for="country" class="block mb-2 font-bold text-gray-700">Country:</label>
+								<label for="country" class="mb-1.5 block text-sm font-medium text-ink">Country:</label>
 								<select
 									id="country"
 									name="country"
 									bind:value={country}
-									class="w-48 px-4 py-2 text-gray-700 bg-white border rounded shadow appearance-none focus:outline-none focus:shadow-outline class:active:bg-gray-100 class:focus:outline-none class:focus:bg-gray-100"
+									class="field"
 								>
 									<option value="" disabled selected>Select an option</option>
 									<option value="Argentina">Argentina</option>
@@ -236,12 +247,12 @@
 								</select>
 							</div>
 							<div class="mb-4">
-								<label for="role" class="block mb-2 font-bold text-gray-700">Role:</label>
+								<label for="role" class="mb-1.5 block text-sm font-medium text-ink">Role:</label>
 								<select
 									id="role"
 									name="role"
 									bind:value={role}
-									class="w-48 px-4 py-2 text-gray-700 bg-white border rounded shadow appearance-none focus:outline-none focus:shadow-outline class:active:bg-gray-100 class:focus:outline-none class:focus:bg-gray-100"
+									class="field"
 								>
 									<option value="" disabled selected>Select an option</option>
 									{#key roles}
@@ -254,9 +265,15 @@
 								</select>
 							</div>
 						</div>
-						<div class="text-left">
-							<Button color='success' textSize='text-md' text='Submit' />
-                            <Button color='primary' textSize='text-md' text='Close' on:click={handleCloseModal} />
+						<div class="flex justify-end gap-2 pt-2">
+							<button
+								type="button"
+								on:click={handleCloseModal}
+								class="inline-flex items-center justify-center rounded-lg border border-line bg-surface px-4 py-2 text-sm font-medium text-ink shadow-card transition-colors hover:bg-paper"
+							>
+								Cancel
+							</button>
+							<Button color='success' text='Add user' />
 						</div>
 					</form>
 					{#if message}

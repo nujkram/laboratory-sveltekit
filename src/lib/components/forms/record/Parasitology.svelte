@@ -21,7 +21,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-color"
         >
             Color
@@ -29,7 +29,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-color"
             type="text"
             placeholder="Color"
@@ -41,7 +41,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-consistency"
         >
             Consistency
@@ -49,7 +49,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-consistency"
             type="text"
             placeholder="Consistency"
@@ -61,7 +61,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-ascaris-lumb"
         >
             Ascaris Lumbricoides
@@ -69,7 +69,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-ascaris-lumb"
             type="text"
             placeholder="Ascaris Lumbricoides"
@@ -78,13 +78,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
+        <h4 class="field-hint">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-hookworm"
         >
             Hookworm
@@ -92,7 +92,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-hookworm"
             type="text"
             placeholder="Hookworm"
@@ -101,13 +101,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
+        <h4 class="field-hint">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-trichuris-trichiura"
         >
             Trichuris Trichiura
@@ -115,7 +115,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-trichuris-trichiura"
             type="text"
             placeholder="Trichuris Trichiura"
@@ -124,13 +124,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
+        <h4 class="field-hint">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-strongyloides-stercoralis"
         >
             Strongyloides Stercoralis
@@ -138,7 +138,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-strongyloides-stercoralis"
             type="text"
             placeholder="Strongyloides Stercoralis"
@@ -147,13 +147,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
+        <h4 class="field-hint">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-entamoeba-coli-cyst"
         >
             Entamoeba Coli Cyst
@@ -161,7 +161,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-entamoeba-coli-cyst"
             type="text"
             placeholder="Entamoeba Coli Cyst"
@@ -170,13 +170,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
+        <h4 class="field-hint">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-entamoeba-coli-trophozoite"
         >
             Entamoeba Coli Trophozoite
@@ -184,7 +184,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-entamoeba-coli-trophozoite"
             type="text"
             placeholder="Entamoeba Coli Trophozoite"
@@ -193,13 +193,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
+        <h4 class="field-hint">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-entamoeba-histolytica-cyst"
         >
             Entamoeba Histolytica Cyst
@@ -207,7 +207,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-entamoeba-histolytica-cyst"
             type="text"
             placeholder="Entamoeba Histolytica Cyst"
@@ -216,13 +216,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
+        <h4 class="field-hint">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-entamoeba-histolytica-trophozoite"
         >
             Entamoeba Histolytica Trophozoite
@@ -230,7 +230,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-entamoeba-histolytica-trophozoite"
             type="text"
             placeholder="Entamoeba Histolytica Trophozoite"
@@ -239,13 +239,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
+        <h4 class="field-hint">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-pus-cells"
         >
             Pus Cells
@@ -253,7 +253,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-pus-cells"
             type="text"
             placeholder="Pus Cells"
@@ -262,13 +262,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
+        <h4 class="field-hint">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-rbc"
         >
             RBC
@@ -276,7 +276,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-rbc"
             type="text"
             placeholder="RBC"
@@ -285,13 +285,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
+        <h4 class="field-hint">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-yeast-cells"
         >
             Yeast Cells
@@ -299,7 +299,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-yeast-cells"
             type="text"
             placeholder="Yeast Cells"
@@ -311,7 +311,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-fat-globules"
         >
             Fat Globules
@@ -319,7 +319,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-fat-globules"
             type="text"
             placeholder="Fat Globules"
@@ -331,7 +331,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-bacteria"
         >
             Bacteria
@@ -339,7 +339,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-bacteria"
             type="text"
             placeholder="Bacteria"
@@ -351,7 +351,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-others"
         >
             Others
@@ -359,7 +359,7 @@
     </div>
     <div class="md:w-5/12">
         <textarea
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-others"
             rows="3"
             cols="50"
@@ -373,7 +373,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-remarks"
         >
             Remarks
@@ -381,7 +381,7 @@
     </div>
     <div class="md:w-5/12">
         <textarea
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-remarks"
             rows="3"
             cols="50"

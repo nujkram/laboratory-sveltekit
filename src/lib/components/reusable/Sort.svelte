@@ -3,18 +3,18 @@
     import { createEventDispatcher } from "svelte";
     const dispatch = createEventDispatcher();
     function handleClick(event) {
-        console.log('clicked')
         dispatch('click', event);
     }
 </script>
 <button
     type="button"
-    class="text-gray-400 justify-end bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
+    aria-label="Sort column"
+    class="inline-flex items-center rounded p-0.5 align-middle text-muted/60 transition-colors hover:bg-paper hover:text-pine-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-leaf"
     on:click={handleClick}
 >
     <svg
         fill="currentColor"
-        class="w-5 h-5 dark:text-gray-400"
+        class="h-4 w-4"
         viewBox="0 0 24 24"
         aria-hidden="true"
     >

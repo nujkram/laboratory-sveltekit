@@ -2,10 +2,172 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 
-! Don't import all the CSS from the previous project.
-? Lean on Tailwind to do the heavy lifting.
-*/
+@layer base {
+	:root {
+		color-scheme: light;
+	}
 
+	html {
+		-webkit-text-size-adjust: 100%;
+		text-rendering: optimizeLegibility;
+		-webkit-font-smoothing: antialiased;
+	}
 
+	body {
+		@apply bg-paper text-ink font-sans antialiased;
+		font-feature-settings: 'cv05', 'ss01';
+	}
 
+	h1,
+	h2,
+	h3,
+	h4 {
+		font-family: theme('fontFamily.display');
+		letter-spacing: -0.015em;
+	}
+
+	/* Tabular figures for anything numeric — lab values, IDs, dates line up in columns */
+	.tabular,
+	.font-mono {
+		font-variant-numeric: tabular-nums;
+	}
+
+	/* Visible, on-brand keyboard focus everywhere */
+	:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+		outline: 2px solid theme('colors.leaf.DEFAULT');
+		outline-offset: 2px;
+		border-radius: 4px;
+	}
+
+	::selection {
+		background: theme('colors.leaf.soft');
+		color: theme('colors.pine.800');
+	}
+}
+
+@layer components {
+	/* Shared form controls — swapped in across the record/patient/user forms */
+	.field {
+		@apply w-full rounded-lg border border-line bg-surface px-3.5 py-2.5 text-sm text-ink transition-colors placeholder:text-muted/60 focus:border-leaf focus:outline-none focus:ring-2 focus:ring-leaf/25;
+	}
+	.field-label {
+		@apply mb-1.5 block text-sm font-medium text-ink md:mb-0 md:pr-4 md:text-right;
+	}
+	/* Reference ranges read as data — mono keeps them scannable */
+	.field-hint {
+		@apply mt-1.5 block font-mono text-xs leading-relaxed text-muted;
+	}
+
+	/* The signature: a row of pine peaks echoing the logo, used sparingly as a divider */
+	.peak-edge {
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='11' viewBox='0 0 16 11'%3E%3Cpath d='M8 0 L16 11 L0 11 Z' fill='%2346A02E'/%3E%3C/svg%3E");
+		background-repeat: repeat-x;
+		background-position: center bottom;
+		background-size: 16px 11px;
+	}
+}
+
+/* Slim, on-brand scrollbars */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: #c3d2bc transparent;
+}
+*::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+	background: #c3d2bc;
+	border-radius: 999px;
+	border: 3px solid transparent;
+	background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+	background: #a9bda0;
+	background-clip: content-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.001ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.001ms !important;
+		scroll-behavior: auto !important;
+	}
+}
+
+@media print {
+	/* Lab results print on short bond paper (8.5in x 11in, portrait). */
+	@page {
+		size: 8.5in 11in;
+		margin: 0.4in;
+	}
+
+	html,
+	body {
+		background: #fff !important;
+	}
+
+	#logo-sidebar,
+	#app-topbar {
+		display: none !important;
+	}
+	#content main {
+		margin: 0 !important;
+		padding: 0 !important;
+	}
+
+	/* When a result report is open, print only that report — nothing else.
+	   The reveal selectors are prefixed to out-specify the :has() hide rule
+	   (:has() carries the #id specificity of its argument). */
+	body:has(#print-record-modal) * {
+		visibility: hidden !important;
+	}
+	body:has(#print-record-modal) #print-record-modal,
+	body:has(#print-record-modal) #print-record-modal * {
+		visibility: visible !important;
+	}
+	/* position: fixed anchors to the page box, ignoring the modal's on-screen
+	   centering / mt-[30%] so the report starts at the TOP of the sheet. */
+	body:has(#print-record-modal) #print-record-modal {
+		position: fixed !important;
+		left: 0 !important;
+		top: 0 !important;
+		right: 0 !important;
+		width: 100% !important;
+		max-width: none !important;
+		margin: 0 !important;
+		border: 0 !important;
+		border-radius: 0 !important;
+		box-shadow: none !important;
+		color: #000 !important;
+		/* The report occupies only the TOP HALF of the short-bond sheet (~8.5in x
+		   5.5in), leaving the bottom blank. Compact type + tightened gaps keep even
+		   a full CBC within that band while staying legible. */
+		zoom: 0.8 !important;
+		font-size: 9px !important;
+		line-height: 1.08 !important;
+	}
+	/* Hide the on-screen Print / Close controls in the printout. */
+	body:has(#print-record-modal) #nav-modal {
+		display: none !important;
+	}
+	/* Tighten the on-screen modal spacing so the report fits the top half. */
+	body:has(#print-record-modal) #print-record-modal .px-6.py-6 {
+		padding: 2px 12px !important;
+	}
+	body:has(#print-record-modal) #print-record-modal .gap-4 {
+		gap: 1px !important;
+	}
+	body:has(#print-record-modal) #print-record-modal .mt-8 {
+		margin-top: 5px !important;
+	}
+	body:has(#print-record-modal) #print-record-modal .mt-4 {
+		margin-top: 2px !important;
+	}
+	body:has(#print-record-modal) #print-record-modal .mt-1 {
+		margin-top: 1px !important;
+	}
+}

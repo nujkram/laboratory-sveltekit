@@ -23,7 +23,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-exam"
         >
             Exam Desired
@@ -33,7 +33,7 @@
         <select
             id="inline-exam"
             name="exam"
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             placeholder="Select an option"
             bind:value={exam}
         >
@@ -46,7 +46,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-specimen"
         >
             Specimen
@@ -54,7 +54,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-specimen"
             type="text"
             placeholder="Specimen"
@@ -66,7 +66,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-result"
         >
             Result
@@ -74,7 +74,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-result"
             type="text"
             placeholder="Result"
@@ -86,7 +86,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-remarks"
         >
             Remarks
@@ -94,7 +94,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-remarks"
             type="text"
             placeholder="Remarks"
@@ -106,7 +106,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-notes"
         >
             Notes
@@ -114,7 +114,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-notes"
             type="text"
             placeholder="Notes"

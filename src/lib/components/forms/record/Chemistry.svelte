@@ -21,7 +21,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-stat"
         >
             Stat
@@ -29,7 +29,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-stat"
             type="text"
             placeholder="Stat"
@@ -41,7 +41,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-fasting-blood-sugar"
         >
             Fasting Blood Sugar
@@ -49,7 +49,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-fasting-blood-sugar"
             placeholder="Fasting Blood Sugar"
             type="text"
@@ -58,13 +58,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">3.89-5.83 mmol/L</h4>
+        <h4 class="field-hint">3.89-5.83 mmol/L</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-random-blood-sugar"
         >
             Random Blood Sugar
@@ -72,7 +72,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-random-blood-sugar"
             placeholder="Random Blood Sugar"
             type="text"
@@ -81,13 +81,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">2.47-7.17 mmol/L</h4>
+        <h4 class="field-hint">2.47-7.17 mmol/L</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-post-prandial-blood-sugar"
         >
             Post Prandial Blood Sugar
@@ -95,7 +95,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-post-prandial-blood-sugar"
             placeholder="Post Prandial Blood Sugar"
             type="text"
@@ -104,13 +104,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">Less than 7.8 mmol/L</h4>
+        <h4 class="field-hint">Less than 7.8 mmol/L</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-hba1c"
         >
             HBa1c
@@ -118,7 +118,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-hba1c"
             placeholder="HBa1c"
             type="text"
@@ -127,13 +127,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">4.5-6.3 percent</h4>
+        <h4 class="field-hint">4.5-6.3 percent</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-urea"
         >
             Urea
@@ -141,7 +141,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-urea"
             placeholder="Urea"
             type="text"
@@ -150,13 +150,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">2.8-7.2 mmol/L</h4>
+        <h4 class="field-hint">2.8-7.2 mmol/L</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-creatinine"
         >
             Creatinine
@@ -164,7 +164,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-creatinine"
             placeholder="Creatinine"
             type="text"
@@ -173,13 +173,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">F: 53-97 mmol/L | M:80-115 mmol/L</h4>
+        <h4 class="field-hint">F: 53-97 mmol/L | M:80-115 mmol/L</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-uric-acid"
         >
             Uric Acid
@@ -187,7 +187,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-uric-acid"
             placeholder="Uric Acid"
             type="text"
@@ -196,13 +196,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">F: 137-363 mmol/L | M:214-488 mmol/L</h4>
+        <h4 class="field-hint">F: 137-363 mmol/L | M:214-488 mmol/L</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-cholesterol"
         >
             Cholesterol
@@ -210,7 +210,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-cholesterol"
             placeholder="Cholesterol"
             type="text"
@@ -219,13 +219,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">Up to 5.2 mmol/L</h4>
+        <h4 class="field-hint">Up to 5.2 mmol/L</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-triglycerides"
         >
             Triglycerides
@@ -233,7 +233,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-triglycerides"
             placeholder="Triglycerides"
             type="text"
@@ -242,13 +242,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">Up to 2.28 mmol/L</h4>
+        <h4 class="field-hint">Up to 2.28 mmol/L</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-hdl-cholesterol"
         >
             HDL - Cholesterol
@@ -256,7 +256,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-hdl-cholesterol"
             placeholder="HDL - Cholesterol"
             type="text"
@@ -265,13 +265,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">Greater than 0.90 mmol/L</h4>
+        <h4 class="field-hint">Greater than 0.90 mmol/L</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-ldl-cholesterol"
         >
             LDL - Cholesterol
@@ -279,7 +279,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-ldl-cholesterol"
             placeholder="LDL - Cholesterol"
             type="text"
@@ -288,13 +288,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">Less than 3.40 mmol/L</h4>
+        <h4 class="field-hint">Less than 3.40 mmol/L</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-sgot-ast"
         >
             SGOT/AST
@@ -302,7 +302,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-sgot-ast"
             placeholder="SGOT/AST"
             type="text"
@@ -311,13 +311,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">F: up to 31 U/L | M: up to 37 U/L</h4>
+        <h4 class="field-hint">F: up to 31 U/L | M: up to 37 U/L</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-sgpt-alt"
         >
             SGPT/ALT
@@ -325,7 +325,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-sgpt-alt"
             placeholder="SGPT/ALT"
             type="text"
@@ -334,13 +334,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">F: up to 32 U/L | M: up to 42 U/L</h4>
+        <h4 class="field-hint">F: up to 32 U/L | M: up to 42 U/L</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-sodium"
         >
             Soduim
@@ -348,7 +348,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-sodium"
             placeholder="Soduim"
             type="text"
@@ -357,13 +357,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">135-148 mmol/L</h4>
+        <h4 class="field-hint">135-148 mmol/L</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-potassium"
         >
             Potassium
@@ -371,7 +371,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-potassium"
             placeholder="Potassium"
             type="text"
@@ -380,13 +380,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">3.5-5.3 mmol/L</h4>
+        <h4 class="field-hint">3.5-5.3 mmol/L</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-calcium"
         >
             Calcium
@@ -394,7 +394,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-calcium"
             placeholder="Calcium"
             type="text"
@@ -403,6 +403,6 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">2.15-2.57 mmol/L</h4>
+        <h4 class="field-hint">2.15-2.57 mmol/L</h4>
     </div>
 </div>

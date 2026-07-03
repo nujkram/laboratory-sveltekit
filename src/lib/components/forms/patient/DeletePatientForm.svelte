@@ -33,13 +33,13 @@
 
 <div class="fixed z-10 inset-0 overflow-y-auto {isConfirmModalOpen? 'block': 'hidden'}">
 	<div class="flex items-center justify-center min-h-screen">
-		<div class="fixed inset-0 bg-gray-800 bg-opacity-25" />
+		<div class="fixed inset-0 bg-ink/40 backdrop-blur-sm" />
         <div id="confirm-modal" tabindex="-1" class="fixed inset-0 z-50 w-full flex items-center justify-center p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">
             <div class="relative w-full h-full max-w-md md:h-auto">
-                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                    <button 
-                        class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white" 
-                        type="button" 
+                <div class="relative rounded-xl border border-line bg-surface shadow-card-lg">
+                    <button
+                        class="absolute top-3 right-2.5 inline-flex items-center rounded-lg p-1.5 text-muted transition-colors hover:bg-paper hover:text-ink"
+                        type="button"
                         data-modal-hide="confirm-modal"
                         on:click={handleCloseModal}
                         >
@@ -47,11 +47,15 @@
                         <span class="sr-only">Close modal</span>
                     </button>
                     <div class="p-6 text-center">
-                        <svg aria-hidden="true" class="mx-auto mb-4 text-gray-400 w-14 h-14 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" ><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <h2 class="mb-2 text-lg font-normal text-gray-800 dark:text-gray-400">{currentPatient?.completeName}</h2>
-                        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete this patient?</h3>
-                        <Button color='danger' textSize='text-md' text='Yes' on:click={handleConfirmDelete} />
-                        <Button color='primary' textSize='text-md' text='Cancel' on:click={handleCloseModal} />
+                        <span class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-danger/10 text-danger">
+                            <svg aria-hidden="true" class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </span>
+                        <h2 class="mb-1 font-display text-lg font-bold text-ink">{currentPatient?.completeName}</h2>
+                        <h3 class="mb-6 text-sm text-muted">Delete this patient? This can't be undone.</h3>
+                        <div class="flex justify-center gap-2">
+                            <Button color='secondary' text='Cancel' on:click={handleCloseModal} />
+                            <Button color='danger' text='Delete patient' on:click={handleConfirmDelete} />
+                        </div>
                     </div>
                 </div>
             </div>

@@ -2,6 +2,7 @@
     // @ts-nocheck
 	import { calculateAge } from "$lib/utils/ageHelper";
     import { formatDateMDY } from '$lib/utils/dateHelper.js';
+    import Logo from '$lib/components/Logo.svelte';
     export let isViewModalOpen = false;
     export let data;
     let age = calculateAge(data?.patient?.birthDate);
@@ -10,17 +11,25 @@
     function printModal() {
         const printModal = document.querySelector('nav');
         const navModal = document.querySelector('#nav-modal');
+        const sidebar = document.querySelector('#logo-sidebar');
+        
         printModal.classList.toggle('hidden');
         navModal.classList.toggle('hidden');
+        sidebar.classList.toggle('hidden');
+        
         window.print();
+        
         printModal.classList.toggle('hidden');
         navModal.classList.toggle('hidden');
+        sidebar.classList.toggle('hidden');
     }
 </script>
 
-<div class="fixed z-10 inset-0 overflow-y-auto {isViewModalOpen ? 'block': 'hidden'}">
+<svelte:window on:keydown={(e) => e.key === 'Escape' && isViewModalOpen && handleCloseModal()} />
+
+<div class="fixed z-10 inset-0 overflow-y-auto {isViewModalOpen ? 'block': 'hidden'}" on:click={handleCloseModal}>
     <div class="flex items-center justify-center min-h-screen">
-		<div class="fixed inset-0 bg-gray-800 bg-opacity-25" />
+		<div class="fixed inset-0 bg-ink/40 backdrop-blur-sm" />
         <div 
             class="fixed inset-0 z-50 w-full flex items-center justify-center p-4 mt-8 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full"
             
@@ -28,10 +37,10 @@
             aria-hidden="true" >
             <div class="relative w-full h-full max-w-4xl md:h-auto">
                 <!-- Modal content -->
-                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700" id="print-record-modal" on:click|stopPropagation>
                     <div id="nav-modal">
                         <button
-                        class="absolute top-3 left-2.5 bg-blue-500 text-white px-4 py-2 rounded"
+                        class="absolute top-3 left-2.5 inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-primaryHover"
                         on:click={printModal}
                         >
                         Print Modal
@@ -42,13 +51,13 @@
                     </button>
                     </div>
                     <div class="px-6 py-6 lg:px-8"> 
-                        <div class="flex flex-col justify-center items-center gap-0">
+                        <div class="flex flex-col justify-center items-center gap-0"><span class="mb-1 text-pine-700"><Logo size={40} /></span>
                             <div class="text-m uppercase font-semibold text-gray-900 dark:text-white leading-none m-0 p-0">Medical Mission Group</div>
                             <div class="text-xs font-normal text-gray-900 dark:text-white leading-none m-0 p-0">Services Cooperative of Roxas City and Capiz</div>
                             <div class="text-xs font-normal text-gray-900 dark:text-white leading-none m-0 p-0">Washington St., Roxas City Tel. No. (036) 6215-798</div>
                             <div class="text-xs font-semibold text-gray-900 dark:text-white leading-none m-0 p-0">LABORATORY DEPARTMENT</div>
                         </div>
-                        <div class="text-center bg-yellow-400 mt-1 uppercase font-semibold">
+                        <div class="mt-2 border-y-2 border-pine-700 py-1 text-center font-semibold uppercase tracking-wide text-pine-700">
                             {data?.category}
                         </div>
                         <div class="grid grid-cols-12 px-2">

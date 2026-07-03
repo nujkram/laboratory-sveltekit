@@ -1,79 +1,97 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
-	darkMode: 'class', // or 'media' or 'class'
+	darkMode: 'class',
 	theme: {
-		scale: {},
 		extend: {
-			height: {},
-			maxWidth: {},
+			fontFamily: {
+				display: ['"Bricolage Grotesque"', 'system-ui', 'sans-serif'],
+				sans: ['"IBM Plex Sans"', 'system-ui', 'sans-serif'],
+				mono: ['"IBM Plex Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace']
+			},
 			colors: {
-				primary: '#06C3EC',
-				secondary: '#113EEE',
-				terciary: '#26D470',
-				primaryHover: '#1AADCD',
-				secondaryHover: '#1532A6',
-				terciaryHover: '#1CAC59',
-				primaryActive: '#88D4E4',
-				secondaryActive: '#4D71FF',
-				terciaryActive: '#66E49C',
-				success: '#26D470',
-				successHover: '#1CAC59',
-				successActive: '#66E49C',
-				danger: '#F32F2F',
-				dangerHover: '#D40F0F',
-				dangerActive: '#F36C6C',
-				warning: '#FF6C36',
-				warningHover: '#E74C3C',
-				warningActive: '#FF9C6C',
-				native: {
-					'gray-400': '#9CA3AF',
-					'gray-500': '#6B7280',
-					'blue-500': '#3B82F6',
-					'yellow-300': '#FDE047',
-					'violet-400': '#A78BFA',
-					'orange-500': '#F97316',
-					'amber-500': '#F59E0B'
+				/* --- Brand system (derived from the est. 1997 pine-peak logo) --- */
+				pine: {
+					900: '#0F2E1D',
+					800: '#143823',
+					700: '#1B5E3F',
+					600: '#22704B',
+					500: '#2E8457'
 				},
+				leaf: {
+					DEFAULT: '#46A02E',
+					hover: '#3B8A27',
+					active: '#63B94C',
+					soft: '#EAF3E6'
+				},
+				paper: '#F4F7F1',
+				surface: '#FFFFFF',
+				ink: '#142218',
+				muted: '#5B6B60',
+				line: '#E1E8DE',
+
+				/* --- Semantic tokens (names kept so existing pages adopt the brand automatically) --- */
+				primary: '#1B5E3F',
+				secondary: '#28382D',
+				terciary: '#46A02E',
+				primaryHover: '#154C33',
+				secondaryHover: '#1B271F',
+				terciaryHover: '#3B8A27',
+				primaryActive: '#2E7A54',
+				secondaryActive: '#3B4F42',
+				terciaryActive: '#63B94C',
+				success: '#2F9E44',
+				successHover: '#26802F',
+				successActive: '#54C266',
+				danger: '#D33A2C',
+				dangerHover: '#B32B20',
+				dangerActive: '#E4685C',
+				warning: '#D8880F',
+				warningHover: '#B87209',
+				warningActive: '#EBA637',
+
+				/* --- Result-flag colors for clinical values --- */
+				flag: {
+					high: '#C42B1C',
+					low: '#1D6FB8',
+					normal: '#2F9E44'
+				},
+
 				custom: {
-					green: '#62D0AD',
-					red: '#F32F2F',
+					green: '#46A02E',
+					red: '#D33A2C',
 					blue: '#2E8ACF',
-					orange: '#FF6C36',
+					orange: '#D8880F',
 					pink: '#FF418B',
 					brown: '#B26500',
 					violet: '#AF7CD4'
-				},
-				background: {
-					base: '#15151B',
-					card: '#231F29',
-					field: '#E5E7EB'
 				}
 			},
+			borderRadius: {
+				xl: '0.875rem'
+			},
 			boxShadow: {
+				card: '0 1px 2px rgba(16, 46, 30, 0.04), 0 4px 16px -8px rgba(16, 46, 30, 0.12)',
+				'card-lg': '0 2px 4px rgba(16, 46, 30, 0.05), 0 12px 32px -12px rgba(16, 46, 30, 0.18)',
 				'3xl': '-5px 20px 15px 5px rgba(0, 0, 0, 0.3)'
 			},
 			keyframes: {
-				rightToLeft: {
-					'0%': { transform: 'translateX(400px)' },
-					'20%': { transform: 'translateX(300px)' },
-					'40%': { transform: 'translateX(200px)' },
-					'60%': { transform: 'translateX(100px)' },
-					'80%': { transform: 'rotate(20deg)' },
-					'100%': {}
+				'rise-in': {
+					'0%': { opacity: '0', transform: 'translateY(12px)' },
+					'100%': { opacity: '1', transform: 'translateY(0)' }
+				},
+				'fade-in': {
+					'0%': { opacity: '0' },
+					'100%': { opacity: '1' }
 				}
 			},
 			animation: {
-				gallop: 'rightToLeft 1.5s linear'
+				'rise-in': 'rise-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both',
+				'fade-in': 'fade-in 0.6s ease both'
+			},
+			backgroundImage: {
+				'pine-fade': 'linear-gradient(180deg, #1B5E3F 0%, #143823 100%)'
 			}
-		},
-		backgroundImage: {
-			'gradient-base': 'linear-gradient(270deg, #2D89CF 0%, #5BC7B2 100%)',
-			'gradient-purple': 'linear-gradient(270deg, #2A85D0 0%, #AF7CD4 100%)',
-			'gradient-orange': 'linear-gradient(270deg, #E74C3C 0%, #F39C12 100%)',
-			'gradient-brightorange': 'linear-gradient(270deg, #F39C12 100%, #E74C3C 100%)',
-			'gradient-white':
-				'linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0.55%, rgba(255, 255, 255, 0.01) 100%)'
 		}
 	},
 	variants: {

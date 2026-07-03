@@ -28,7 +28,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-exam"
         >
             Exam Desired
@@ -36,7 +36,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-exam"
             type="text"
             placeholder="Exam Desired"
@@ -48,7 +48,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-color"
         >
             Color
@@ -56,7 +56,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-color"
             type="text"
             placeholder="Color"
@@ -68,7 +68,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-transparency"
         >
             Transparency
@@ -76,7 +76,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-transparency"
             type="text"
             placeholder="Transparency"
@@ -88,7 +88,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-reaction"
         >
             Reaction
@@ -96,7 +96,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-reaction"
             type="text"
             placeholder="Reaction"
@@ -108,7 +108,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-specific-gravity"
         >
             Specific Gravity
@@ -116,7 +116,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-specific-gravity"
             type="text"
             placeholder="Specific Gravity"
@@ -128,7 +128,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-protein"
         >
             Protein
@@ -136,7 +136,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-protein"
             type="text"
             placeholder="Protein"
@@ -148,7 +148,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-sugar"
         >
             Sugar
@@ -156,7 +156,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-sugar"
             type="text"
             placeholder="Sugar"
@@ -168,7 +168,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-fine-granular-cast"
         >
             Fine Granular Cast
@@ -176,7 +176,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-fine-granular-cast"
             type="text"
             placeholder="Fine Granular Cast"
@@ -185,13 +185,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
+        <h4 class="field-hint">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-coarse-granular-cast"
         >
             Coarse Granular Cast
@@ -199,7 +199,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-coarse-granular-cast"
             type="text"
             placeholder="Coarse Granular Cast"
@@ -208,13 +208,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
+        <h4 class="field-hint">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-pus-cell-cast"
         >
             Pus Cell Cast
@@ -222,7 +222,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-pus-cell-cast"
             type="text"
             placeholder="Pus Cell Cast"
@@ -231,13 +231,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
+        <h4 class="field-hint">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-hyaline-cast"
         >
             Hyaline Cast
@@ -245,7 +245,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-hyaline-cast"
             type="text"
             placeholder="Hyaline Cast"
@@ -254,13 +254,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
+        <h4 class="field-hint">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-rbc"
         >
             RBC
@@ -268,7 +268,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-rbc"
             type="text"
             placeholder="RBC"
@@ -277,13 +277,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
+        <h4 class="field-hint">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-pus-cells"
         >
             Pus Cells
@@ -291,7 +291,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-pus-cells"
             type="text"
             placeholder="Pus Cells"
@@ -300,13 +300,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">lpf</h4>
+        <h4 class="field-hint">lpf</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-uri-acid"
         >
             Uric Acid
@@ -314,7 +314,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-uri-acid"
             type="text"
             placeholder="Uric Acid"
@@ -326,7 +326,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-calcium-oxolate"
         >
             Calcium Oxolate
@@ -334,7 +334,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-calcium-oxolate"
             type="text"
             placeholder="Calcium Oxolate"
@@ -346,7 +346,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-amorphous-urates"
         >
             Amorphous Urates
@@ -354,7 +354,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-amorphous-urates"
             type="text"
             placeholder="Amorphous Urates"
@@ -366,7 +366,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-triple-phosphates"
         >
             Triple Phosphates
@@ -374,7 +374,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-triple-phosphates"
             type="text"
             placeholder="Triple Phosphates"
@@ -386,7 +386,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-squamous-epithelial-cells"
         >
             Squamous Epithelial Cells
@@ -394,7 +394,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-squamous-epithelial-cells"
             type="text"
             placeholder="Squamous Epithelial Cells"
@@ -406,7 +406,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-bacteria"
         >
             Bacteria
@@ -414,7 +414,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-bacteria"
             type="text"
             placeholder="Bacteria"
@@ -426,7 +426,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-mucous-threads"
         >
             Mucous Threads
@@ -434,7 +434,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-mucous-threads"
             type="text"
             placeholder="Mucous Threads"
@@ -446,7 +446,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-round-epithelial-cells"
         >
             Round Epithelial Cells
@@ -454,7 +454,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-round-epithelial-cells"
             type="text"
             placeholder="Round Epithelial Cells"
@@ -466,7 +466,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-yeast-cells"
         >
             Yeast Cells
@@ -474,7 +474,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-yeast-cells"
             type="text"
             placeholder="Yeast Cells"
@@ -486,7 +486,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-trichomonas-vaginalis"
         >
             Trichomonas Vaginalis
@@ -494,7 +494,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-trichomonas-vaginalis"
             type="text"
             placeholder="Trichomonas Vaginalis"
@@ -506,7 +506,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-trichomonas-hominis"
         >
             Trichomonas Hominis
@@ -514,7 +514,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-trichomonas-hominis"
             type="text"
             placeholder="Trichomonas Hominis"

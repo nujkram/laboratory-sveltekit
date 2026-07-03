@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { SHA256 } from 'crypto-js';
+	import Logo from '$lib/components/Logo.svelte';
 
 	export let data;
 	const { user, settings } = data;
@@ -58,34 +59,55 @@
 	};
 </script>
 
-<div class="relative overflow-hidden h-52 text-center translate-y-50 animate-slide-down">
-	<div
-		class="absolute top-0 right-0 bottom-0 left-0 h-full w-full overflow-hidden bg-fixed"
-		style="background-color: rgba(0, 0, 0, 0.6)"
+<svelte:head>
+	<title>Sign in · Laboratory Information System</title>
+</svelte:head>
+
+<div class="grid min-h-screen lg:grid-cols-[1.05fr_1fr]">
+	<!-- Brand panel -->
+	<section
+		class="relative hidden flex-col justify-between overflow-hidden bg-pine-fade px-10 py-12 text-white lg:flex xl:px-16"
 	>
-		<div class="flex h-full items-center justify-center">
-			<div class="text-white">
-				<h2 class="mb-4 text-4xl font-semibold">{settings?.name || 'Laboratory Management System'}</h2>
-				<h4>{settings?.location || ''}</h4>
-				<p>{settings?.mobile || ''}</p>
+		<div class="flex items-center gap-3 text-leaf-active">
+			<Logo size={40} year={false} />
+			<span class="text-xs font-semibold uppercase tracking-[0.22em]">Est. 1997</span>
+		</div>
+
+		<div class="max-w-md">
+			<p class="mb-4 text-sm font-medium uppercase tracking-[0.18em] text-leaf-active">
+				Laboratory Information System
+			</p>
+			<h2 class="font-display text-4xl font-bold leading-[1.1] xl:text-5xl">
+				{settings?.name || 'Diagnostic laboratory serving the community'}
+			</h2>
+			<p class="mt-5 text-base leading-relaxed text-white/70">
+				Enter and read patient results with the same care you bring to the bench — clearly, and
+				without error.
+			</p>
+			<div class="mt-8 space-y-1.5 text-sm text-white/60">
+				{#if settings?.location}<p>{settings.location}</p>{/if}
+				{#if settings?.mobile}<p class="font-mono">{settings.mobile}</p>{/if}
 			</div>
 		</div>
-	</div>
-</div>
 
-<section class="text-gray-600 body-font">
-	<div class="container px-5 py-24 mx-auto flex flex-wrap items-center">
-		<div class="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0 translate-x-full animate-fade-in-left">
-			<h1 class="title-font font-bold text-5xl text-gray-900">Laboratory Records</h1>
-			<p class="leading-relaxed mt-4 text-sm">
-				Laboratory Management System (LMS) is a software application that is designed to help manage the day-to-day operations of a laboratory.
-			</p>
-		</div>
+		<!-- Signature: a row of pine peaks echoing the logo -->
+		<div class="peak-edge h-[11px] w-44" aria-hidden="true" />
+	</section>
 
-		<div
-			class="lg:w-2/6 md:w-1/2 bg-gray-100 rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0 translate-x-full animate-fade-in-right"
-		>
+	<!-- Sign-in panel -->
+	<section class="flex flex-col justify-center bg-paper px-6 py-12 sm:px-12">
+		<div class="mx-auto w-full max-w-sm animate-rise-in">
+			<!-- Compact brand for mobile, where the pine panel is hidden -->
+			<div class="mb-8 flex items-center gap-3 text-pine-700 lg:hidden">
+				<Logo size={40} year={false} />
+				<span class="font-display text-lg font-bold text-ink">Laboratory<br />Information System</span>
+			</div>
+
+			<h1 class="font-display text-2xl font-bold text-ink">Sign in</h1>
+			<p class="mt-1.5 text-sm text-muted">Welcome back. Enter your credentials to continue.</p>
+
 			<form
+				class="mt-8 space-y-5"
 				method="POST"
 				autocomplete="off"
 				on:submit={(e) => {
@@ -96,97 +118,67 @@
 					}
 				}}
 			>
-				<div class="relative mb-4">
-					<label for="email" class="leading-7 text-sm text-gray-600">Email</label>
+				<div>
+					<label for="email" class="mb-1.5 block text-sm font-medium text-ink">Email</label>
 					<input
 						type="email"
 						id="email"
 						bind:value={email}
 						name="email"
-						class="w-full bg-white rounded border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+						autocomplete="username"
+						placeholder="you@laboratory.ph"
+						class="w-full rounded-lg border border-line bg-surface px-3.5 py-2.5 text-sm text-ink placeholder:text-muted/60 focus:border-leaf focus:ring-2 focus:ring-leaf/25"
 					/>
 				</div>
-				<div class="relative mb-4">
-					<label for="password" class="leading-7 text-sm text-gray-600">Password</label>
+				<div>
+					<label for="password" class="mb-1.5 block text-sm font-medium text-ink">Password</label>
 					<input
 						type="password"
 						id="password"
 						bind:value={password}
 						name="password"
-						class="w-full rounded border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-base"
+						autocomplete="current-password"
+						class="w-full rounded-lg border border-line bg-surface px-3.5 py-2.5 text-sm text-ink focus:border-leaf focus:ring-2 focus:ring-leaf/25"
 					/>
 				</div>
+
+				{#if error}
+					<p class="flex items-start gap-2 rounded-lg bg-danger/8 px-3 py-2 text-sm text-danger">
+						<svg class="mt-0.5 h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+							<path
+								fill-rule="evenodd"
+								d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 6a1 1 0 112 0v4a1 1 0 11-2 0V6zm1 8.5a1.25 1.25 0 100-2.5 1.25 1.25 0 000 2.5z"
+								clip-rule="evenodd"
+							/>
+						</svg>
+						{error}
+					</p>
+				{/if}
+
 				<button
-					class="text-white bg-blue-500 border-0 py-2 px-8 focus:outline-none hover:bg-blue-600 rounded text-lg"
-					>Login</button
+					type="submit"
+					disabled={loggingIn}
+					class="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-card transition-colors hover:bg-primaryHover disabled:cursor-not-allowed disabled:opacity-70"
 				>
-				<div class="text-custom-red h-1">{error}</div>
-				<p class="text-xs text-gray-500 mt-3">
-					Forgot password? Contact administrator for a reset.
-				</p>
+					{#if loggingIn}
+						<svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+							<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+							<path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+						</svg>
+						Signing in…
+					{:else}
+						Sign in
+					{/if}
+				</button>
 			</form>
+
+			<p class="mt-6 text-xs text-muted">
+				Forgot your password? Contact your administrator for a reset.
+			</p>
+
+			<p class="mt-10 border-t border-line pt-6 text-xs text-muted">
+				© {new Date().getFullYear()} {settings?.name || 'Laboratory Information System'} · Est. 1997
+			</p>
 		</div>
-	</div>
-</section>
-
-<footer
-	class="fixed bottom-0 left-0 z-20 w-full p-4 bg-white border-t border-gray-200 shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800 dark:border-gray-600"
->
-	<span class="text-sm text-gray-500 sm:text-center dark:text-gray-400"
-		>© 2023 <a href="https://flowbite.com/" class="hover:underline">Maveous Galley™</a>. All Rights
-		Reserved.
-	</span>
-</footer>
-
-<style>
-	@keyframes fade-in-left {
-		0% {
-			opacity: 0;
-			transform: translateX(-100%);
-		}
-		100% {
-			opacity: 1;
-			transform: translateX(0);
-		}
-	}
-
-	@keyframes fade-in-right {
-		0% {
-			opacity: 0;
-			transform: translateX(0);
-		}
-		100% {
-			opacity: 1;
-			transform: translateX(-20%);
-		}
-	}
-
-	@keyframes slide-down {
-		0% {
-			opacity: 0;
-			transform: translateY(-50%);
-		}
-		100% {
-			opacity: 1;
-			transfrom: translateY(0);
-		}
-	}
-
-	.animate-fade-in-left {
-		animation-name: fade-in-left;
-		animation-duration: 1s;
-		animation-fill-mode: both;
-	}
-
-	.animate-fade-in-right {
-		animation-name: fade-in-right;
-		animation-duration: 1s;
-		animation-fill-mode: both;
-	}
-
-	.animate-slide-down {
-		animation: slide-down;
-		animation-duration: 1s;
-		animation-fill-mode: both;
-	}
-</style>
+	</section>
+</div>

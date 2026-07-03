@@ -25,7 +25,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-stat"
         >
             Stat
@@ -33,7 +33,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-stat"
             type="text"
             placeholder="Stat"
@@ -45,7 +45,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-exam"
         >
             Exam Desired
@@ -53,7 +53,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-exam"
             type="text"
             placeholder="Exam Desired"
@@ -65,7 +65,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-hemoglobin-concentration-mass"
         >
             Hemoglobin Concentration Mass
@@ -73,7 +73,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-hemoglobin-concentration-mass"
             type="text"
             placeholder="Hemoglobin Concentration Mass"
@@ -82,13 +82,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">F: 120-150 gms/L | M: 130-170 gms/L</h4>
+        <h4 class="field-hint">F: 120-150 gms/L | M: 130-170 gms/L</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-erythrocyte-volume-fraction"
         >
             Erythrocyte Volume Fraction
@@ -96,7 +96,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-erythrocyte-volume-fraction"
             type="text"
             placeholder="Erythrocyte Volume Fraction"
@@ -105,13 +105,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">F: 0.37-0.45 gms/L | M: 0.40-0.50 gms/L</h4>
+        <h4 class="field-hint">F: 0.37-0.45 gms/L | M: 0.40-0.50 gms/L</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-erythrocyte-number-concentration"
         >
             Erythrocyte Number Concentration
@@ -119,7 +119,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-erythrocyte-number-concentration"
             type="text"
             placeholder="Erythrocyte Number Concentration"
@@ -128,13 +128,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">F: 4.0-5.0 xⁱ²10/L | M: 4.5-5.50 xⁱ²10/L</h4>
+        <h4 class="field-hint">F: 4.0-5.0 xⁱ²10/L | M: 4.5-5.50 xⁱ²10/L</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-leukocyte-number-concentration"
         >
             Leukocyte Number Concentration
@@ -142,7 +142,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-leukocyte-number-concentration"
             type="text"
             placeholder="Leukocyte Number Concentration"
@@ -151,13 +151,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">5.0-10 x⁹10/L</h4>
+        <h4 class="field-hint">5.0-10 x⁹10/L</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-neutrophil-number-fraction"
         >
             Neutrophil Number Fraction
@@ -165,7 +165,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-neutrophil-number-fraction"
             type="text"
             placeholder="Neutrophil Number Fraction"
@@ -174,13 +174,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">0.60-0.70</h4>
+        <h4 class="field-hint">0.60-0.70</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-segmenters"
         >
             Segmenters
@@ -188,7 +188,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-segmenters"
             type="text"
             placeholder="Segmenters"
@@ -197,13 +197,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">0.60-0.70</h4>
+        <h4 class="field-hint">0.60-0.70</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-stab"
         >
             Stab
@@ -211,7 +211,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-stab"
             type="text"
             placeholder="Stab"
@@ -220,13 +220,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">0.02-0.06</h4>
+        <h4 class="field-hint">0.02-0.06</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-eosinophil"
         >
             Eosinophil
@@ -234,7 +234,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-eosinophil"
             type="text"
             placeholder="Eosinophil"
@@ -243,13 +243,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">0.02-0.06</h4>
+        <h4 class="field-hint">0.02-0.06</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-basophil"
         >
             Basophil
@@ -257,7 +257,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-basophil"
             type="text"
             placeholder="Basophil"
@@ -266,13 +266,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">0.00-0.01</h4>
+        <h4 class="field-hint">0.00-0.01</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-lymphocyte"
         >
             Lymphocyte
@@ -280,7 +280,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-lymphocyte"
             type="text"
             placeholder="Lymphocyte"
@@ -289,13 +289,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">Adult: 0.18-0.30 | Infant: 0.22-0.44</h4>
+        <h4 class="field-hint">Adult: 0.18-0.30 | Infant: 0.22-0.44</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-monocyte"
         >
             Monocyte
@@ -303,7 +303,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-monocyte"
             type="text"
             placeholder="Monocyte"
@@ -312,13 +312,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">0.04-0.08</h4>
+        <h4 class="field-hint">0.04-0.08</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-total"
         >
             Total
@@ -326,7 +326,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-total"
             type="text"
             placeholder="Total"
@@ -338,7 +338,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-erythrocyte-sedimentation"
         >
             Erythrocyte Sedimentation Rate
@@ -346,7 +346,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-erythrocyte-sedimentation"
             type="text"
             placeholder="Erythrocyte Sedimentation Rate"
@@ -355,13 +355,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">F: 0-20 mm/hr | M: 0-9 mm/hr</h4>
+        <h4 class="field-hint">F: 0-20 mm/hr | M: 0-9 mm/hr</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-thrombocyte-number"
         >
             Thrombocyte Number Fraction
@@ -369,7 +369,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-thrombocyte-number"
             type="text"
             placeholder="Thrombocyte Number Fraction"
@@ -378,13 +378,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">150-350 x⁹10/L</h4>
+        <h4 class="field-hint">150-350 x⁹10/L</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-bleeding-time"
         >
             Bleeding Time
@@ -392,7 +392,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-bleeding-time"
             type="text"
             placeholder="Bleeding Time"
@@ -401,13 +401,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">1-5 minutes</h4>
+        <h4 class="field-hint">1-5 minutes</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-clotting-time"
         >
             Clotting Time
@@ -415,7 +415,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-clotting-time"
             type="text"
             placeholder="Clotting Time"
@@ -424,13 +424,13 @@
         />
     </div>
     <div class="md:w-3/12">
-        <h4 class="mx-4 text-gray-500 italic text-sm">2-6 minutes</h4>
+        <h4 class="field-hint">2-6 minutes</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-blood-type"
         >
             Blood Type
@@ -438,7 +438,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-blood-type"
             type="text"
             placeholder="Blood Type"
@@ -450,7 +450,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-rh"
         >
             RH
@@ -458,7 +458,7 @@
     </div>
     <div class="md:w-5/12">
         <input
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-rh"
             type="text"
             placeholder="RH"
@@ -470,7 +470,7 @@
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
         <label
-            class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+            class="field-label"
             for="inline-others"
         >
             Others
@@ -478,7 +478,7 @@
     </div>
     <div class="md:w-5/12">
         <textarea
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-green-500"
+            class="field"
             id="inline-others"
             rows="3"
             cols="50"
