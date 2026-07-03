@@ -3,14 +3,17 @@ import clientPromise from "$lib/server/mongo";
 /** @type {import('./$types').RequestHandler} */
 export async function POST({request, locals}: any) {
     if(!locals?.user) {
-		return new Response(JSON.stringify({ messsage:'Invalid access.' }), { status: 200 });
+		return new Response(
+			JSON.stringify({ status: 'Error', code: 'AUTH', message: 'Your session has expired. Please sign in again.' }),
+			{ status: 401 }
+		);
 	}
 
     const data  = await request.json();
     const db = await clientPromise();
     const Setting = db.collection('settings');
 
-    const settings = await Setting.updateOne(
+    await Setting.updateOne(
         { _id: data._id },
         {
             $set: {
@@ -21,5 +24,5 @@ export async function POST({request, locals}: any) {
         }
     )
 
-    return new Response(JSON.stringify({success: true, message: 'Record Updated'}), {headers: {'content-type': 'application/json'}, status: 200})
+    return new Response(JSON.stringify({ status: 'Success', message: 'Settings updated.' }), {headers: {'content-type': 'application/json'}, status: 200})
 }

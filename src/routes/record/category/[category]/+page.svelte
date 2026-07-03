@@ -10,6 +10,8 @@
 	import UrinalysisModal from '$lib/components/modals/UrinalysisModal.svelte';
 	import ParasitologyModal from '$lib/components/modals/ParasitologyModal.svelte';
 	import HematologyModal from '$lib/components/modals/HematologyModal.svelte';
+	import { getRefData, cacheRefData } from '$lib/client/refdata.js';
+	import { allPending } from '$lib/client/outbox.js';
 
 	$: category = $page.params.category;
 
@@ -30,20 +32,57 @@
 
 	async function loadRecords() {
 		loading = true;
+		const cacheKey = `catrecords:${category}`;
 		try {
-			const response = await fetch('/api/admin/record', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ category, page: currentPage, pageSize, sortBy, sortOrder, search, status })
-			});
-			const result = await response.json();
-			items = result.response ?? [];
-			itemSize = result.total ?? 0;
+			if (navigator.onLine) {
+				const response = await fetch('/api/admin/record', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ category, page: currentPage, pageSize, sortBy, sortOrder, search, status })
+				});
+				const result = await response.json();
+				items = result.response ?? [];
+				itemSize = result.total ?? 0;
+				if (currentPage === 1 && !search && status === 'all') {
+					cacheRefData(cacheKey, { items, total: itemSize });
+				}
+			} else {
+				const cached = (await getRefData(cacheKey)) ?? { items: [], total: 0 };
+				items = cached.items;
+				itemSize = cached.total;
+			}
 		} catch (error) {
-			console.error('error', error);
+			const cached = (await getRefData(cacheKey)) ?? { items: [], total: 0 };
+			items = cached.items;
+			itemSize = cached.total;
 		} finally {
+			items = await mergePendingRecords(items);
 			loading = false;
 		}
+	}
+
+	// Results queued offline for this category, with patient name resolved from cache.
+	async function mergePendingRecords(list) {
+		const pending = (await allPending()).filter(
+			(r) => r.entity === 'record' && r.endpoint.endsWith('/insert') && r.body?.category === category
+		);
+		if (!pending.length) return list;
+		const cachedPatients = (await getRefData('patients')) ?? [];
+		const nameById = {};
+		for (const p of cachedPatients) nameById[p._id] = p.completeName || `${p.firstName || ''} ${p.lastName || ''}`.trim();
+		for (const r of await allPending()) {
+			if (r.entity === 'patient' && r.body?._id) nameById[r.body._id] = `${r.body.firstName || ''} ${r.body.lastName || ''}`.trim();
+		}
+		const ids = new Set(list.map((r) => r._id));
+		const extra = pending
+			.filter((r) => r.body?._id && !ids.has(r.body._id))
+			.map((r) => ({
+				...r.body,
+				patient: { _id: r.body.patientId, completeName: nameById[r.body.patientId] || '' },
+				isActive: true,
+				_pending: true
+			}));
+		return [...extra, ...list];
 	}
 
 	function handleSort(column) {
@@ -199,19 +238,27 @@
 								<td class="whitespace-nowrap px-5 py-3 text-ink">{data?.medicalTechnologist?.profile?.displayName || '—'}</td>
 								<td class="whitespace-nowrap px-5 py-3 text-ink">{data?.pathologist?.profile?.displayName || '—'}</td>
 								<td class="px-5 py-3">
-									<span
-										class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium {data?.isActive
-											? 'bg-leaf-soft text-pine-700'
-											: 'bg-danger/10 text-danger'}"
-									>
-										<span class="h-1.5 w-1.5 rounded-full {data?.isActive ? 'bg-leaf' : 'bg-danger'}" />
-										{data?.isActive ? 'Active' : 'Inactive'}
-									</span>
+									{#if data?._pending}
+										<span class="inline-flex items-center gap-1.5 rounded-full bg-warning/10 px-2.5 py-1 text-xs font-medium text-warning" title="Saved on this device — will sync when back online">
+											<span class="h-1.5 w-1.5 rounded-full bg-warning" /> Pending sync
+										</span>
+									{:else}
+										<span
+											class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium {data?.isActive
+												? 'bg-leaf-soft text-pine-700'
+												: 'bg-danger/10 text-danger'}"
+										>
+											<span class="h-1.5 w-1.5 rounded-full {data?.isActive ? 'bg-leaf' : 'bg-danger'}" />
+											{data?.isActive ? 'Active' : 'Inactive'}
+										</span>
+									{/if}
 								</td>
 								<td class="px-5 py-3">
 									<div class="flex items-center justify-end gap-2">
 										<Button color="primary" text="View" padding="py-1.5 px-3" textSize="text-xs" on:click={handleViewModal} />
-										<Button color="warning" text="Update" type="link" href="/record/{data?._id}/update" padding="py-1.5 px-3" textSize="text-xs" />
+										{#if !data?._pending}
+											<Button color="warning" text="Update" type="link" href="/record/{data?._id}/update" padding="py-1.5 px-3" textSize="text-xs" />
+										{/if}
 									</div>
 								</td>
 							</tr>

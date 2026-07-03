@@ -3,6 +3,7 @@
 	import Button from "$lib/components/reusable/Button.svelte";
 	import { DateInput } from 'date-picker-svelte';
     import { onMount } from "svelte";
+    import { saveOrQueue } from '$lib/client/saveOrQueue.js';
 
     export let isEditModalOpen = false;
     export let currentPatient;
@@ -16,6 +17,8 @@
     let address = '';
     let birthDate = null;
     let saving = false;
+    const minDob = new Date(1900, 0, 1);
+    const maxDob = new Date();
 
     function setEditValues() {
         if (!currentPatient) return;
@@ -34,14 +37,14 @@
         event?.preventDefault();
         saving = true;
         try {
-            const response = await fetch('/api/admin/patient/update', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ _id, firstName, middleName, lastName, gender, birthDate, address })
+            const res = await saveOrQueue({
+                endpoint: '/api/admin/patient/update',
+                entity: 'patient',
+                isCreate: false,
+                body: { _id, firstName, middleName, lastName, gender, birthDate, address, baseUpdated: currentPatient?.updated ?? null }
             });
-            const result = await response.json();
-            if (result.status === 'Success') {
-                loadPatient();
+            if (res.ok) {
+                if (res.synced) loadPatient(); // offline: list refreshes after sync
                 isEditModalOpen = false;
             }
         } catch (error) {
@@ -96,7 +99,7 @@
 						</div>
 						<div>
 							<label for="birthDate" class="mb-1.5 block text-sm font-medium text-ink">Birth date</label>
-							<DateInput bind:value={birthDate} format="yyyy-MM-dd" placeholder="Select date" />
+							<DateInput bind:value={birthDate} min={minDob} max={maxDob} format="yyyy-MM-dd" placeholder="Select date" />
 						</div>
 					</div>
 					<div>

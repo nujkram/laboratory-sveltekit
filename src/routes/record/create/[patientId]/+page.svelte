@@ -9,9 +9,15 @@
 	import Button from "$lib/components/reusable/Button.svelte";
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
-	
+	import { loadRefList } from '$lib/client/refdata.js';
+	import { saveOrQueue } from '$lib/client/saveOrQueue.js';
+
 	export let data;
-	let { patientId, medTechs, pathologists, caseNumber } = data;
+	let { patientId } = data;
+	let medTechs = [];
+	let pathologists = [];
+	let caseNumber = '';
+	let provisionalCase = false;
 	let category = '';
 	let message = null;
 	let statusMessages = {
@@ -96,28 +102,39 @@
 	let total = '1.0';
 
 	let options = [];
-
-    async function loadCategories() {
-		try {
-			let response = await fetch('/api/admin/record/categories', {
-				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			});
-			let result = await response.json();
-			options = result.response;
-			selectedOption = options.length > 0 ? options[0].name : '';
-		} catch (error) {
-			console.error('error', error);
-		}
-	}
-
 	let selectedOption = '';
 
-    onMount(() => {
-		loadCategories();
-    });
+	onMount(async () => {
+		// Reference lists: fresh when online, last-cached when offline.
+		const [cats, mts, paths] = await Promise.all([
+			loadRefList('categories', '/api/admin/record/categories'),
+			loadRefList('medTechs', '/api/admin/user/med-tech'),
+			loadRefList('pathologists', '/api/admin/user/pathologist')
+		]);
+		options = cats;
+		medTechs = mts;
+		pathologists = paths;
+		selectedOption = options.length > 0 ? options[0].name : '';
+		category = selectedOption;
+		await loadCaseNumber();
+	});
+
+	async function loadCaseNumber() {
+		if (navigator.onLine) {
+			try {
+				const res = await fetch('/api/admin/record/next-case-number');
+				const json = await res.json();
+				caseNumber = json.response.next;
+				provisionalCase = false;
+				return;
+			} catch (e) {
+				/* fall through to provisional */
+			}
+		}
+		// Offline: real number is assigned by the server at sync time.
+		caseNumber = 'pending';
+		provisionalCase = true;
+	}
 
 	const handleOnChange = (e) => {
 		selectedOption = e.target.value;
@@ -125,28 +142,25 @@
 	};
 
 	async function handleSubmit(e) {
-		console.log('clicked')
 		const form = e.currentTarget;
-		const formData = new FormData(form);
-		let data = Object.fromEntries(formData);
+		const body = Object.fromEntries(new FormData(form));
+		if (provisionalCase) delete body.caseNumber; // let the server assign it
 		message = statusMessages.sending;
 		try {
-			let result = await fetch('/api/admin/record/insert', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(data),
+			const res = await saveOrQueue({
+				endpoint: '/api/admin/record/insert',
+				entity: 'record',
+				body
 			});
-			const response = await result.json();
-			if (response.status === 'Success') {
-				message = statusMessages.sent;
+			if (res.ok) {
+				message = res.synced ? statusMessages.sent : 'Saved offline — will sync automatically.';
 				setTimeout(() => {
 					message = null;
-					goto(`/patients/${patientId}`);
-				}, 3000);
+					// Patient chart needs the server; offline, go to the Pending list instead.
+					goto(res.synced ? `/patients/${patientId}` : '/pending');
+				}, res.synced ? 1500 : 2500);
 			} else {
-				message = statusMessages.error;
+				message = res.result?.message || statusMessages.error;
 			}
 		} catch (error) {
 			message = statusMessages.error;

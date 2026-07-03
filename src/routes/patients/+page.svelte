@@ -9,6 +9,8 @@
 	import Sort from "$lib/components/reusable/Sort.svelte";
 	import Edit from "$lib/components/icons/Edit.svelte";
 	import Trash from "$lib/components/icons/Trash.svelte";
+	import { getRefData, cacheRefData } from '$lib/client/refdata.js';
+	import { allPending } from '$lib/client/outbox.js';
 
     let status = 'all'
     let search;
@@ -45,20 +47,42 @@
     async function loadPatient() {
 		loading = true;
 		try {
-			let response = await fetch('/api/admin/patient', {
-				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			});
-			let result = await response.json();
-			items = result.response;
-			sortItems();
+			if (navigator.onLine) {
+				let response = await fetch('/api/admin/patient', {
+					method: 'GET',
+					headers: { 'Content-Type': 'application/json' }
+				});
+				let result = await response.json();
+				items = result.response ?? [];
+				cacheRefData('patients', items); // keep a copy for offline
+			} else {
+				items = (await getRefData('patients')) ?? [];
+			}
 		} catch (error) {
-			console.error('error', error);
+			items = (await getRefData('patients')) ?? [];
 		} finally {
+			items = await mergePendingPatients(items);
+			sortItems();
 			loading = false;
 		}
+	}
+
+	// Surface patients created offline (still in the outbox) so they can be
+	// opened and used right away — before they've synced to the server.
+	async function mergePendingPatients(list) {
+		const pending = (await allPending()).filter(
+			(r) => r.entity === 'patient' && r.endpoint.endsWith('/insert')
+		);
+		const ids = new Set(list.map((p) => p._id));
+		const extra = pending
+			.filter((r) => r.body?._id && !ids.has(r.body._id))
+			.map((r) => ({
+				...r.body,
+				completeName: `${r.body.firstName || ''} ${r.body.lastName || ''}`.trim(),
+				isActive: true,
+				_pending: true
+			}));
+		return [...extra, ...list];
 	}
 
 	function sortItems() {
@@ -219,25 +243,34 @@
 									<td class="whitespace-nowrap px-5 py-3 text-ink">{data.firstName || '—'}</td>
 									<td class="whitespace-nowrap px-5 py-3 text-muted">{data.middleName || '—'}</td>
 									<td class="px-5 py-3">
-										<span
-											class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium {data.isActive
-												? 'bg-leaf-soft text-pine-700'
-												: 'bg-danger/10 text-danger'}"
-										>
-											<span class="h-1.5 w-1.5 rounded-full {data.isActive ? 'bg-leaf' : 'bg-danger'}" />
-											{data.isActive ? 'Active' : 'Inactive'}
-										</span>
+										{#if data._pending}
+											<span class="inline-flex items-center gap-1.5 rounded-full bg-warning/10 px-2.5 py-1 text-xs font-medium text-warning" title="Saved on this device — will sync when back online">
+												<span class="h-1.5 w-1.5 rounded-full bg-warning" />
+												Pending sync
+											</span>
+										{:else}
+											<span
+												class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium {data.isActive
+													? 'bg-leaf-soft text-pine-700'
+													: 'bg-danger/10 text-danger'}"
+											>
+												<span class="h-1.5 w-1.5 rounded-full {data.isActive ? 'bg-leaf' : 'bg-danger'}" />
+												{data.isActive ? 'Active' : 'Inactive'}
+											</span>
+										{/if}
 									</td>
 									<td class="px-5 py-3">
 										<div class="flex items-center justify-end gap-2">
-											<Button color="primary" text="View" type="link" href="/patients/{data._id}" padding="py-1.5 px-3" textSize="text-xs" />
 											<Button color="terciary" text="Add result" type="link" href="/record/create/{data._id}" padding="py-1.5 px-3" textSize="text-xs" />
-											<Button color="warning" text="" padding="py-1.5 px-2.5" textSize="text-xs" on:click={handleEditModal}>
-												<Edit />
-											</Button>
-											<Button color="danger" text="" padding="py-1.5 px-2.5" textSize="text-xs" on:click={handleConfirmDeleteModal}>
-												<Trash />
-											</Button>
+											{#if !data._pending}
+												<Button color="primary" text="View" type="link" href="/patients/{data._id}" padding="py-1.5 px-3" textSize="text-xs" />
+												<Button color="warning" text="" padding="py-1.5 px-2.5" textSize="text-xs" on:click={handleEditModal}>
+													<Edit />
+												</Button>
+												<Button color="danger" text="" padding="py-1.5 px-2.5" textSize="text-xs" on:click={handleConfirmDeleteModal}>
+													<Trash />
+												</Button>
+											{/if}
 										</div>
 									</td>
 								</tr>

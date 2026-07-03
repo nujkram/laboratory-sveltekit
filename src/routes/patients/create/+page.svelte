@@ -4,12 +4,16 @@
 	import Button from "$lib/components/reusable/Button.svelte";
 	import { DateInput} from 'date-picker-svelte';
 	import { goto } from '$app/navigation';
+	import { saveOrQueue } from '$lib/client/saveOrQueue.js';
 
     let firstName, middleName, lastName, address, message;
 	let gender = '';
 	// Not defaulted to today — an unset DOB would otherwise be saved as the
 	// creation date and compute a wrong age. The field is required below.
 	let birthDate = null;
+	// Allow any realistic birth date; never a future date.
+	const minDob = new Date(1900, 0, 1);
+	const maxDob = new Date();
 </script>
 <div class="animate-rise-in mx-auto max-w-2xl space-y-5">
 	<div>
@@ -31,27 +35,22 @@
 				return;
 			}
 			try {
-				let response = await fetch('/api/admin/patient/insert', {
-					method: 'POST',
-					headers: {
-						'content-type': 'application/json'
-					},
-					body: JSON.stringify({
-						firstName: firstName,
-						middleName: middleName,
-						lastName: lastName,
-						gender: gender,
-						birthDate: birthDate,
-						address: address
-					})
+				const res = await saveOrQueue({
+					endpoint: '/api/admin/patient/insert',
+					entity: 'patient',
+					body: { firstName, middleName, lastName, gender, birthDate, address }
 				});
-
-                let result = await response.json();
-                message = result.message;
-				setTimeout(() => {
-					message = null;
-					goto('/patients')
-				}, 3000);
+				if (res.ok) {
+					message = res.synced
+						? (res.result?.message || 'Patient saved.')
+						: 'Saved offline — will sync automatically.';
+					setTimeout(() => {
+						message = null;
+						goto('/patients'); // patients list works offline (shows pending)
+					}, res.synced ? 1500 : 2500);
+				} else {
+					message = res.result?.message || 'An error occurred. Please try again.';
+				}
 			} catch (error) {
 				console.error('error', error);
 			}
@@ -141,7 +140,7 @@
 				</label>
 			</div>
 			<div class="md:w-9/12">
-				<DateInput class="" bind:value={birthDate} />
+				<DateInput bind:value={birthDate} min={minDob} max={maxDob} format="yyyy-MM-dd" placeholder="Select birth date" />
 			</div>
 		</div>
 		<div class="md:flex md:items-center mb-6">
