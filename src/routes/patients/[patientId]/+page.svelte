@@ -4,7 +4,6 @@
     import {formatDateMDY} from '$lib/utils/dateHelper.js';
 	import { goto } from '$app/navigation';
     import { onMount } from 'svelte';
-    import { paginate } from 'svelte-paginate';
 	import Button from "$lib/components/reusable/Button.svelte";
 	import EditPatientForm from "$lib/components/forms/patient/EditPatientForm.svelte";
 	import Sort from "$lib/components/reusable/Sort.svelte";
@@ -15,329 +14,297 @@
 	import ParasitologyModal from '$lib/components/modals/ParasitologyModal.svelte';
 	import HematologyModal from '$lib/components/modals/HematologyModal.svelte';
 
-	
+
 	export let data;
-    
-	let status = 'all'
-    let search;
-    let items = [];
+
+	let status = 'all';
+	let search = '';
+	let items = [];
 	let currentPage = 1;
 	let pageSize = 10;
-	let itemSize;
-	let paginatedItems = [];
+	let itemSize = 0;
 	let currentRecord;
-	let pageMinIndex = 1;
-	let pageMaxIndex = pageSize;
-	let sortOrder = 'asc';
-	let sortBy = 'code';
+	let sortOrder = 'desc';
+	let sortBy = 'created';
 	let isViewModalOpen = false;
+	let loading = true;
+	let searchTimer;
 
 	let { patient } = data;
-    let age = calculateAge(patient?.birthDate);
+	let age = calculateAge(patient?.birthDate);
 
 	// Modals
-    const handleViewModal = () => (isViewModalOpen = !isViewModalOpen);
+	const handleViewModal = () => (isViewModalOpen = !isViewModalOpen);
 
-    async function loadRecord() {
+	// Records are paged, filtered and sorted in the database — the browser only
+	// ever holds the current page, so this stays fast as a patient's history grows.
+	async function loadRecord() {
+		loading = true;
 		try {
 			let response = await fetch('/api/admin/record', {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ patientId: patient._id })
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					patientId: patient._id,
+					page: currentPage,
+					pageSize,
+					sortBy,
+					sortOrder,
+					search,
+					status
+				})
 			});
 			let result = await response.json();
-			items = result.response;
-			console.log('items', items);
-
-			sortItems();
+			items = result.response ?? [];
+			itemSize = result.total ?? 0;
 		} catch (error) {
 			console.error('error', error);
+		} finally {
+			loading = false;
 		}
-	}
-
-	function sortItems() {
-		let order = sortOrder === 'asc' ? 1 : -1;
-		items = items.sort((a, b) => {
-			if (a[sortBy] < b[sortBy]) return -1 * order;
-			if (a[sortBy] > b[sortBy]) return 1 * order;
-			return 0;
-		});
 	}
 
 	function handleSort(columnName) {
 		if (columnName === sortBy) {
-			sortOrder = sortOrder === 'asc' ? 'des' : 'asc';
-			console.warn(sortOrder);
+			sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
 		} else {
 			sortBy = columnName;
+			sortOrder = 'asc';
 		}
-		sortItems();
+		currentPage = 1;
+		loadRecord();
 	}
 
-    const handleOverFlow = () => {
-		if (pageMinIndex > itemSize) currentPage = 1;
+	function handleFilterChange() {
+		currentPage = 1;
+		loadRecord();
+	}
+
+	function handleSearch() {
+		clearTimeout(searchTimer);
+		searchTimer = setTimeout(() => {
+			currentPage = 1;
+			loadRecord();
+		}, 300);
+	}
+
+	const handleOverFlow = () => {
+		if (pageSize < 1) pageSize = 1;
+		currentPage = 1;
+		loadRecord();
 	};
 
-    const decrementPageNumber = () => {
-		if (currentPage > 1) currentPage -= 1;
+	const decrementPageNumber = () => {
+		if (currentPage > 1) {
+			currentPage -= 1;
+			loadRecord();
+		}
 	};
 	const incrementPageNumber = () => {
-		if (pageMaxIndex < itemSize) currentPage += 1;
+		if (currentPage * pageSize < itemSize) {
+			currentPage += 1;
+			loadRecord();
+		}
 	};
 
-	onMount(async () => {
-		loadRecord();
-	});
-    $: {
-		// Prevent user to input below the minimum or beyond the maximum value of pagesize.
-		if (pageSize < 1) pageSize = 1;
-		// reactive statement to automatically filter data based on status.
-		paginatedItems = search
-			? items.filter((record) => {
-					return status !== 'all'
-						? (record.lastName.match(RegExp(search, 'gi')) ||
-								record.firstName.match(RegExp(search, 'gi'))) &&
-								record.isActive === (status === 'active')
-						: record.lastName.match(RegExp(search, 'gi')) ||
-								record.firstName.match(RegExp(search, 'gi'));
-			  })
-			: items.filter((record) => {
-					return status !== 'all' ? record.isActive === (status === 'active') : items;
-			  });
-		if (paginatedItems.length) {
-			itemSize = paginatedItems.length;
-			paginatedItems = paginate({ items: paginatedItems, pageSize, currentPage });
-		}
-		pageMinIndex = paginatedItems.length == 0 ? 0 : 1 + (currentPage - 1) * pageSize;
-		pageMaxIndex =
-			pageSize * currentPage > paginatedItems.length
-				? paginatedItems.length
-				: pageSize * currentPage;
-	}
-</script>
-<div class="border-2 border-gray-100 rounded-lg h-auto dark:border-gray-700 mt-12">
-	<div class="p-8 bg-white mt-24">
-		<div class="grid grid-cols-1">
-		
-			<div class="relative">
-				<div
-					class="w-24 h-24 bg-indigo-100 mx-auto rounded-full shadow-2xl absolute inset-x-0 top-0 -mt-24 flex items-center justify-center text-indigo-500"
-				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="h-12 w-12"
-						viewBox="0 0 20 20"
-						fill="currentColor"
-					>
-						<path
-							fill-rule="evenodd"
-							d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-							clip-rule="evenodd"
-						/></svg
-					>
-				</div>
-			</div>
-			
-		</div>
-		<div class="mt-6 text-center border-b pb-12">
-			<h1 class="text-4xl font-medium text-gray-700">
-				{patient?.completeName}, <span class="font-light text-gray-500">{age}</span>
-			</h1>
-			<p class="font-light text-gray-600 mt-3">{patient?.address}</p>
-			<p class="mt-8 text-gray-500">Created Date - {formatDateMDY(patient?.created)}</p>
-			<p class="mt-2 text-gray-500">Created By - {patient?.createdBy?.profile?.displayName}</p>
-		</div>
-		<div class=" flex flex-col">
-			<div class="flex flex-col justify-center border-b h-fit rounded bg-blue-600 dark:bg-gray-800">
-				<div class="flex flex-col px-5 justify-center py-4">
-					<span class="text-xl font-semibold" style="color:white">Manage Records</span>
-				</div>
-				<div class="flex gap-4 h-auto px-5 py-5 bg-white dark:bg-gray-800">
-					<div class="flex flex-col w-full h-auto ">
-						<label
-							for="status"
-							class="block mb-2 pl-1 text-m font-semibold text-gray-900 dark:text-white">Status</label
-						>
-						<div class="grid grid-cols-9">
-							<select
-								id="status"
-								bind:value={status}
-								class=" bg-gray-50 border border-gray-300 font-semibold text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-							>
-								<option class="text-gray-900 text-sm font-semibold" value="all" selected>All</option>
-								<option class="text-green-600 text-sm font-semibold" value="active"> Active</option>
-								<option class="text-red-500 text-sm font-semibold" value="inactive">Inactive</option>
-							</select>
-							<div class="flex ml-2">
-								<Button color='success' textSize='text-md' text='Create' type='link' href='/record/create/{patient?._id}' />
-							</div>
-							<div class="col-start-7 col-span-3 rounded ">
-								<form class="flex items-center">
-									<label for="search" class="sr-only">Search</label>
-									<div class="relative w-full">
-										<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-											<svg
-												aria-hidden="true"
-												class="w-5 h-5 text-gray-500 dark:text-gray-400"
-												fill="currentColor"
-												viewBox="0 0 20 20"
-												><path
-													fill-rule="evenodd"
-													d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-													clip-rule="evenodd"
-												/></svg
-											>
-										</div>
-										<input
-											type="search"
-											bind:value={search}
-											id="search"
-											class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-											placeholder="Search"
-											required
-										/>
-									</div>
-								</form>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="flex items-center justify-center h-fit mb-1 rounded bg-gray-50 dark:bg-gray-800">
-				<table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 table-auto">
-					<thead class="text-m  text-gray-700 border-b bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
-						<tr>
-							<th scope="col" class="pl-6">
-								Category
-								<Sort on:click={() => handleSort('category')} />
-							</th>
-							<th scope="col" class="pl-6">
-								Created
-								<Sort on:click={() => handleSort('created')} />
-							</th>
-							<th scope="col" class="pl-6">
-								Medical Tech.
-								<Sort on:click={() => handleSort('medicalTechnologist')} />
-							</th>
-							<th scope="col" class="pl-6">
-								Pathologist 
-								<Sort on:click={() => handleSort('pathologist')} />
-							</th>
-							<th scope="col" class="pl-6">
-								Status 
-								<Sort on:click={() => handleSort('isActive')} />
-							</th>
-							<th scope="col" class="pl-6">
-								<div class="flex gap-2 w-max">
-									<label for="items" class="block text-m font-semibold text-gray-900 dark:text-white"
-										>No. of Entries</label
-									>
-									<input
-										type="number"
-										id="items"
-										bind:value={pageSize}
-										on:change={handleOverFlow}
-										class="w-16 h-4 text-sm text-center text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600"
-										placeholder=" "
-									/>
-								</div>
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-						{#key paginatedItems}
-							{#if paginatedItems.length}
-								{#each paginatedItems as data}
-									<tr
-										class=" bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
-										on:mouseenter={() => {
-											if (currentRecord !== data) {
-												currentRecord = data;
-											}
-										}}
-									>
-										<td
-											class="px-6 py-4 text-gray-700 whitespace-nowrap dark:text-white text-m font-medium"
-										>
-											{data?.category || ''}
-										</td>
-										<td class="px-6 py-4 text-gray-700 whitespace-nowrap dark:text-white text-m font-medium">
-											{formatDateMDY(data?.created) || ''}
-										</td>
-										<td class="px-6 py-4 text-gray-700 whitespace-nowrap dark:text-white text-m font-medium">
-											{data?.medicalTechnologist?.profile?.displayName || ''}
-										</td>
-										<td class="px-6 py-4 text-gray-700 whitespace-nowrap dark:text-white text-m font-medium">
-											{data?.pathologist?.profile?.displayName || ''}
-										</td>
-										<td class="flex items-center px-6 py-4">
-											<div class="flex items-center ">
-												<div
-													class={data?.isActive
-														? 'h-2.5 w-2.5 rounded-full bg-green-500 mr-2'
-														: 'h-2.5 w-2.5 rounded-full bg-red-500 mr-2'}
-												/>
-												<div class="text-sm text-gray-700 font-medium">
-													{data?.isActive ? 'Active' : 'Inactive'}
-												</div>
-											</div>
-										</td>
-		
-										<td class="px-6 py-4 col-span-3">
-											<Button
-												color='primary' textSize='text-md' text='View'
-												on:click={handleViewModal}
+	$: pageMinIndex = itemSize === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+	$: pageMaxIndex = Math.min(currentPage * pageSize, itemSize);
 
-											/>
-											<Button
-												color='warning' textSize='text-md' text='Update'
-												type='link' href='/record/{data?._id}/update'
-												padding='py-2.5 px-5'
-											/>
-										</td>
-									</tr>
-								{/each}
-							{/if}
-						{/key}
-					</tbody>
-					<div class="flex flex-col items-center mt-2">
-						<span class="text-sm text-gray-700 dark:text-gray-400">
-							Showing <span class="font-semibold text-gray-900 dark:text-white">{pageMinIndex}</span> to
-							<span class="font-semibold text-gray-900 dark:text-white">{pageMaxIndex}</span>
-							of <span class="font-semibold text-gray-900 dark:text-white">{itemSize}</span> Entries
-						</span>
-						<div class="inline-flex mt-2 xs:mt-0">
-							<button
-								on:click={decrementPageNumber}
-								class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-l hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-							>
-								<svg aria-hidden="true" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-									<path
-										fill-rule="evenodd"
-										d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z"
-										clip-rule="evenodd"
-									/>
-								</svg>
-								Prev
-							</button>
-							<button
-								on:click={incrementPageNumber}
-								class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-800 border-0 border-l border-gray-700 rounded-r hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-							>
-								Next
-								<svg aria-hidden="true" class="w-5 h-5 ml-2" fill="currentColor" viewBox="0 0 20 20">
-									<path
-										fill-rule="evenodd"
-										d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
-										clip-rule="evenodd"
-									/>
-								</svg>
-							</button>
-						</div>
-					</div>
-				</table>
+	onMount(loadRecord);
+</script>
+
+<div class="animate-rise-in space-y-6">
+	<a
+		href="/patients"
+		class="inline-flex items-center gap-1.5 text-sm font-medium text-muted no-underline transition-colors hover:text-pine-700"
+	>
+		<svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+			<path fill-rule="evenodd" d="M12.7 15.7a1 1 0 01-1.4 0l-5-5a1 1 0 010-1.4l5-5a1 1 0 011.4 1.4L8.42 10l4.3 4.3a1 1 0 010 1.4z" clip-rule="evenodd" />
+		</svg>
+		All patients
+	</a>
+
+	<!-- Patient header -->
+	<div class="overflow-hidden rounded-xl border border-line bg-surface shadow-card">
+		<div class="flex flex-wrap items-center gap-5 bg-pine-fade px-6 py-6 text-white">
+			<span class="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-white/10 text-leaf-active ring-2 ring-white/15">
+				<svg class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+					<path d="M10 2a3.5 3.5 0 100 7 3.5 3.5 0 000-7zM3.5 16.5a6.5 6.5 0 0113 0 .5.5 0 01-.5.5H4a.5.5 0 01-.5-.5z" />
+				</svg>
+			</span>
+			<div class="min-w-0">
+				<h2 class="font-display text-2xl font-bold leading-tight">
+					{patient?.completeName}
+					<span class="font-mono text-lg font-medium text-leaf-active">· {age}</span>
+				</h2>
+				{#if patient?.address}
+					<p class="mt-1 text-sm text-white/70">{patient.address}</p>
+				{/if}
+			</div>
+		</div>
+		<dl class="grid grid-cols-1 divide-y divide-line sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+			<div class="px-6 py-3">
+				<dt class="text-xs font-semibold uppercase tracking-wide text-muted">Created</dt>
+				<dd class="mt-0.5 font-mono text-sm text-ink">{formatDateMDY(patient?.created) || '—'}</dd>
+			</div>
+			<div class="px-6 py-3">
+				<dt class="text-xs font-semibold uppercase tracking-wide text-muted">Created by</dt>
+				<dd class="mt-0.5 text-sm text-ink">{patient?.createdBy?.profile?.displayName || '—'}</dd>
+			</div>
+		</dl>
+	</div>
+
+	<!-- Records -->
+	<div class="overflow-hidden rounded-xl border border-line bg-surface shadow-card">
+		<div class="flex flex-wrap items-center gap-3 border-b border-line px-4 py-3">
+			<h3 class="mr-auto font-display text-base font-bold text-ink">Records</h3>
+			<div class="relative min-w-[10rem] flex-1 sm:max-w-xs">
+				<span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-muted">
+					<svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+						<path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+					</svg>
+				</span>
+				<input
+					type="search"
+					bind:value={search}
+					on:input={handleSearch}
+					id="search"
+					placeholder="Search category or case no.…"
+					class="w-full rounded-lg border-line bg-surface py-2 pl-9 pr-3 text-sm text-ink placeholder:text-muted/60 focus:border-leaf focus:ring-2 focus:ring-leaf/25"
+				/>
+			</div>
+			<Button color="primary" text="New result" type="link" href="/record/create/{patient?._id}" padding="py-2 px-4">
+				<svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+					<path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
+				</svg>
+			</Button>
+		</div>
+
+		<div class="overflow-x-auto">
+			<table class="w-full text-sm">
+				<thead class="border-b border-line bg-paper text-left text-xs uppercase tracking-wide text-muted">
+					<tr>
+						<th scope="col" class="px-5 py-3 font-semibold">
+							<span class="inline-flex items-center gap-1">Category <Sort on:click={() => handleSort('category')} /></span>
+						</th>
+						<th scope="col" class="px-5 py-3 font-semibold">
+							<span class="inline-flex items-center gap-1">Created <Sort on:click={() => handleSort('created')} /></span>
+						</th>
+						<th scope="col" class="px-5 py-3 font-semibold">Medical tech.</th>
+						<th scope="col" class="px-5 py-3 font-semibold">Pathologist</th>
+						<th scope="col" class="px-5 py-3 font-semibold">Status</th>
+						<th scope="col" class="px-5 py-3 text-right font-semibold">Actions</th>
+					</tr>
+				</thead>
+				<tbody class="divide-y divide-line">
+					{#if loading}
+						<tr>
+							<td colspan="6" class="px-5 py-14 text-center">
+								<div class="flex items-center justify-center gap-3 text-muted">
+									<svg class="h-5 w-5 animate-spin text-leaf" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+										<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+										<path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+									</svg>
+									<span class="text-sm font-medium">Loading records…</span>
+								</div>
+							</td>
+						</tr>
+					{:else}
+						{#key items}
+						{#if items.length}
+							{#each items as data}
+								<tr
+									class="transition-colors hover:bg-paper"
+									on:mouseenter={() => {
+										if (currentRecord !== data) {
+											currentRecord = data;
+										}
+									}}
+								>
+									<td class="whitespace-nowrap px-5 py-3">
+										<span class="inline-flex items-center rounded-full bg-leaf-soft px-2.5 py-1 text-xs font-medium text-pine-700">
+											{data?.category || '—'}
+										</span>
+									</td>
+									<td class="whitespace-nowrap px-5 py-3 font-mono text-xs text-muted">{formatDateMDY(data?.created) || '—'}</td>
+									<td class="whitespace-nowrap px-5 py-3 text-ink">{data?.medicalTechnologist?.profile?.displayName || '—'}</td>
+									<td class="whitespace-nowrap px-5 py-3 text-ink">{data?.pathologist?.profile?.displayName || '—'}</td>
+									<td class="px-5 py-3">
+										<span
+											class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium {data?.isActive
+												? 'bg-leaf-soft text-pine-700'
+												: 'bg-danger/10 text-danger'}"
+										>
+											<span class="h-1.5 w-1.5 rounded-full {data?.isActive ? 'bg-leaf' : 'bg-danger'}" />
+											{data?.isActive ? 'Active' : 'Inactive'}
+										</span>
+									</td>
+									<td class="px-5 py-3">
+										<div class="flex items-center justify-end gap-2">
+											<Button color="primary" text="View" padding="py-1.5 px-3" textSize="text-xs" on:click={handleViewModal} />
+											<Button color="warning" text="Update" type="link" href="/record/{data?._id}/update" padding="py-1.5 px-3" textSize="text-xs" />
+										</div>
+									</td>
+								</tr>
+							{/each}
+						{:else}
+							<tr>
+								<td colspan="6" class="px-5 py-14 text-center">
+									<p class="font-display text-base font-semibold text-ink">
+										{search ? 'No matching records' : 'No records yet'}
+									</p>
+									<p class="mt-1 text-sm text-muted">
+										{search ? 'Try a different category or case number.' : "Add this patient's first laboratory result."}
+									</p>
+								</td>
+							</tr>
+						{/if}
+					{/key}
+					{/if}
+				</tbody>
+			</table>
+		</div>
+
+		<div class="flex flex-wrap items-center justify-between gap-3 border-t border-line px-4 py-3">
+			<div class="flex items-center gap-4 text-sm text-muted">
+				<label class="flex items-center gap-2">
+					Rows
+					<input
+						type="number"
+						min="1"
+						bind:value={pageSize}
+						on:change={handleOverFlow}
+						class="w-16 rounded-lg border-line bg-surface py-1 text-center text-sm text-ink focus:border-leaf focus:ring-2 focus:ring-leaf/25"
+					/>
+				</label>
+				<span>
+					<span class="font-mono font-semibold text-ink">{pageMinIndex}</span>–<span
+						class="font-mono font-semibold text-ink">{pageMaxIndex}</span
+					>
+					of <span class="font-mono font-semibold text-ink">{itemSize || 0}</span>
+				</span>
+			</div>
+			<div class="inline-flex gap-1">
+				<button
+					on:click={decrementPageNumber}
+					class="inline-flex items-center gap-1 rounded-lg border border-line bg-surface px-3 py-1.5 text-sm font-medium text-ink transition-colors hover:bg-paper disabled:opacity-40"
+					disabled={pageMinIndex <= 1}
+				>
+					<svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+						<path fill-rule="evenodd" d="M12.7 15.7a1 1 0 01-1.4 0l-5-5a1 1 0 010-1.4l5-5a1 1 0 011.4 1.4L8.42 10l4.3 4.3a1 1 0 010 1.4z" clip-rule="evenodd" />
+					</svg>
+					Prev
+				</button>
+				<button
+					on:click={incrementPageNumber}
+					class="inline-flex items-center gap-1 rounded-lg border border-line bg-surface px-3 py-1.5 text-sm font-medium text-ink transition-colors hover:bg-paper disabled:opacity-40"
+					disabled={pageMaxIndex >= (itemSize || 0)}
+				>
+					Next
+					<svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+						<path fill-rule="evenodd" d="M7.3 4.3a1 1 0 011.4 0l5 5a1 1 0 010 1.4l-5 5a1 1 0 01-1.4-1.4l4.3-4.3-4.3-4.3a1 1 0 010-1.4z" clip-rule="evenodd" />
+					</svg>
+				</button>
 			</div>
 		</div>
 	</div>

@@ -24,6 +24,27 @@ if (dev && uri?.includes('Test')) {
 	console.info('🚨 You are using Test database in development mode 🚨');
 }
 
+// Create the indexes that back our hottest queries. createIndex is idempotent,
+// so this is safe to call on every cold start; it runs once per process because
+// connectToDatabase caches the db. Failures are logged, never fatal.
+async function ensureIndexes(db: any) {
+	try {
+		await Promise.all([
+			// patient detail: match by patientId, sort by created desc
+			db.collection('records').createIndex({ patientId: 1, created: -1 }),
+			db.collection('records').createIndex({ created: -1 }),
+			db.collection('records').createIndex({ category: 1 }),
+			// patient/user lists: sort by created desc, filter/sort by name & status
+			db.collection('patients').createIndex({ created: -1 }),
+			db.collection('patients').createIndex({ lastName: 1 }),
+			db.collection('patients').createIndex({ isActive: 1 }),
+			db.collection('users').createIndex({ created: -1 })
+		]);
+	} catch (error) {
+		console.error('ensureIndexes failed (non-fatal):', error);
+	}
+}
+
 async function connectToDatabase() {
 	if (cachedDb) return cachedDb;
 
@@ -37,6 +58,7 @@ async function connectToDatabase() {
 
 	const db = await client.db(currentDb);
 	cachedDb = db;
+	await ensureIndexes(db);
 	return db;
 }
 const clientPromise = async () => await connectToDatabase();
