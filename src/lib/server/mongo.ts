@@ -54,7 +54,7 @@ async function connectToDatabase() {
 		? 'labStaging'
 		: uri?.includes('Test')
 		? 'labStagingTest'
-		: 'labStaging';
+		: 'lab';
 
 	const db = await client.db(currentDb);
 	cachedDb = db;
