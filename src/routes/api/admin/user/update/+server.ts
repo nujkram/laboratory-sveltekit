@@ -11,7 +11,7 @@ export async function POST({ request, locals }: any) {
 	}
 
 	const data = await request.json();
-	const { _id, firstName, middleName, lastName, phone, province, country, email, license, role, newPassword } = data;
+	const { _id, firstName, middleName, lastName, phone, province, country, email, license, title, role, newPassword } = data;
 
 	if (!_id) {
 		return new Response(JSON.stringify({ status: 'Error', message: 'User id is required.' }), { status: 400 });
@@ -24,7 +24,10 @@ export async function POST({ request, locals }: any) {
 		'profile.firstName': firstName || '',
 		'profile.middleName': middleName || '',
 		'profile.lastName': lastName || '',
-		'profile.displayName': `${firstName || ''} ${lastName || ''}`.trim(),
+		'profile.title': title || '',
+		'profile.displayName': title
+			? `${`${firstName || ''} ${lastName || ''}`.trim()}, ${title}`
+			: `${firstName || ''} ${lastName || ''}`.trim(),
 		'profile.phone': phone || '',
 		'profile.province': province || '',
 		'profile.country': country || '',
@@ -33,8 +36,11 @@ export async function POST({ request, locals }: any) {
 		role: role || ''
 	};
 
-	// Keep the primary login email in sync with the profile email.
-	if (email) set['emails.0.address'] = email;
+	// Keep the primary login email in sync with the profile email. Replace the whole
+	// `emails` array rather than `emails.0.address` — some records store it in a
+	// non-standard shape (e.g. an array of plain strings), which the dotted path
+	// can't write into (Mongo error 28: "Cannot create field 'address' …").
+	if (email) set['emails'] = [{ address: email, verified: true }];
 
 	// Optional admin password reset. The client sends SHA256(newPassword) to match
 	// the app's bcrypt(SHA256(plaintext)) scheme; no current password is required

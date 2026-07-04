@@ -23,6 +23,7 @@
 	let province = '';
 	let country = '';
 	let license = '';
+	let title = '';
 	let role = '';
 	let newPassword = '';
 	let confirmNewPassword = '';
@@ -39,6 +40,12 @@
 		country = currentUser.profile?.country || '';
 		license = currentUser.license || '';
 		role = currentUser.role || '';
+		// Prefill credentials. Older records bake them into displayName (after a
+		// comma) rather than a title field — recover them so a save doesn't drop them.
+		title = currentUser.profile?.title || '';
+		if (!title && currentUser.profile?.displayName?.includes(',')) {
+			title = currentUser.profile.displayName.split(',').slice(1).join(',').trim();
+		}
 	}
 
 	const handleCloseModal = () => (isEditModalOpen = false);
@@ -81,6 +88,7 @@
 					province,
 					country,
 					license,
+					title,
 					role,
 					newPassword: newPassword ? SHA256(newPassword).toString() : undefined
 				})
@@ -175,11 +183,16 @@
 					<div class="grid grid-cols-2 gap-3">
 						<div>
 							<label for="edit-license" class="mb-1.5 block text-sm font-medium text-ink">License</label>
-							<input id="edit-license" type="text" class="field" bind:value={license} />
+							<input id="edit-license" type="text" class="field" bind:value={license} placeholder="Lic# 0000000" />
 						</div>
 						<div>
-							<label for="edit-role" class="mb-1.5 block text-sm font-medium text-ink">Role</label>
-							<select id="edit-role" class="field" bind:value={role}>
+							<label for="edit-title" class="mb-1.5 block text-sm font-medium text-ink">Title / Credentials</label>
+							<input id="edit-title" type="text" class="field" bind:value={title} placeholder="MD, FPSP · RMT · DTA" />
+						</div>
+					</div>
+					<div>
+						<label for="edit-role" class="mb-1.5 block text-sm font-medium text-ink">Role</label>
+						<select id="edit-role" class="field" bind:value={role}>
 								<option value="" disabled>Select an option</option>
 								{#key roles}
 									{#if roles.length}
@@ -190,7 +203,6 @@
 								{/key}
 							</select>
 						</div>
-					</div>
 
 					<div class="border-t border-line pt-4">
 						<p class="mb-1 text-sm font-semibold text-ink">Reset password</p>

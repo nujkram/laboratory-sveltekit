@@ -13,11 +13,14 @@ export async function POST({ request, locals }: any) {
 	const data = await request.json();
 	const db = await clientPromise();
 	const User = db.collection('users');
+	const fullName = `${data.firstName} ${data.lastName}`.trim();
 	let profile = {
 		firstName: data.firstName,
 		middleName: data.middleName,
 		lastName: data.lastName,
-		displayName: `${data.firstName} ${data.lastName}`,
+		title: data.title || '',
+		// Credentials (MD, FPSP, RMT, DTA…) are appended so reports show them after the name.
+		displayName: data.title ? `${fullName}, ${data.title}` : fullName,
 		phone: data.phone,
 		country: data.country,
 		province: data.province,

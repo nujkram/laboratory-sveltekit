@@ -51,8 +51,10 @@ const months = [
 	'December'
 ];
 
-// Month Day, Year
+// Month Day, Year — returns '' for a missing/invalid date instead of throwing.
 export const formatDateMDY = (dateString) => {
+	if (!dateString) return '';
 	const date = new Date(dateString);
+	if (isNaN(date.getTime())) return '';
 	return `${months[date.getMonth()].slice(0, 3)} ${date.getDate()}, ${date.getFullYear()}`;
 };

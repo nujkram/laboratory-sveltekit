@@ -12,6 +12,7 @@
 	let message = null;
 	let alertColor = 'green';
     let license = '',
+		credential = '',
 		firstName = '',
 		middleName = '',
 		lastName = '',
@@ -57,6 +58,7 @@
 			},
 			body: JSON.stringify({
 				license,
+				title: credential,
 				firstName,
 				middleName,
 				lastName,
@@ -128,15 +130,15 @@
 				</h2>
 				<div class="mt-4">
 					<form class="max-w-lg mx-auto" on:submit={handleSubmit}>
-						<div class="mb-4">
-							<label for="license" class="mb-1.5 block text-sm font-medium text-ink">License:</label>
-							<input
-								type="text"
-								id="license"
-								name="license"
-								bind:value={license}
-								class="field"
-							/>
+						<div class="mb-4 grid grid-cols-2 gap-3">
+							<div>
+								<label for="license" class="mb-1.5 block text-sm font-medium text-ink">License</label>
+								<input type="text" id="license" name="license" bind:value={license} placeholder="Lic# 0000000" class="field" />
+							</div>
+							<div>
+								<label for="title" class="mb-1.5 block text-sm font-medium text-ink">Title / Credentials</label>
+								<input type="text" id="title" name="title" bind:value={credential} placeholder="MD, FPSP · RMT · DTA" class="field" />
+							</div>
 						</div>
 						<div class="mb-4">
 							<label for="firstName" class="mb-1.5 block text-sm font-medium text-ink">First Name:</label>
