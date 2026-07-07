@@ -1,24 +1,22 @@
+import { json } from '@sveltejs/kit';
 import clientPromise from '$lib/server/mongo';
+import { peekNextCaseNumber } from '$lib/server/caseNumber';
 
 /**
- * Next case number = highest existing caseNumber + 1. Used to prefill the create
- * form and cached for offline (where it's shown as provisional; the authoritative
- * value is assigned at insert time).
+ * Peek at the next case number (without allocating it). Used to prefill the
+ * create form and cached for offline, where it's shown as provisional; the
+ * authoritative value is assigned atomically at insert time.
  * @type {import('./$types').RequestHandler}
  */
-export async function GET() {
+export async function GET({ locals }: any) {
+	if (!locals?.user) {
+		return json(
+			{ status: 'Error', code: 'AUTH', message: 'Your session has expired. Please sign in again.' },
+			{ status: 401 }
+		);
+	}
+
 	const db = await clientPromise();
-	const [row] = await db
-		.collection('records')
-		.aggregate([
-			{
-				$group: {
-					_id: null,
-					max: { $max: { $convert: { input: '$caseNumber', to: 'int', onError: 0, onNull: 0 } } }
-				}
-			}
-		])
-		.toArray();
-	const next = (row?.max || 0) + 1;
-	return new Response(JSON.stringify({ status: 'Success', response: { next } }));
+	const next = await peekNextCaseNumber(db);
+	return json({ status: 'Success', response: { next } });
 }

@@ -26,7 +26,8 @@ export async function POST({ request, locals }: any) {
 		return new Response(JSON.stringify({ error: true, message: 'User not found.' }), { status: 404 });
 	}
 
-	const passwordMatches = await bcrypt.compare(currentPassword, user?.services?.password?.bcrypt);
+	const storedHash = user?.services?.password?.bcrypt;
+	const passwordMatches = storedHash && (await bcrypt.compare(currentPassword, storedHash));
 
 	if (!passwordMatches) {
 		return new Response(

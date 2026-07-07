@@ -1,13 +1,6 @@
-import cryptoJS from 'crypto-js';
-const { SHA256 } = cryptoJS;
 import bcrypt from 'bcryptjs';
 import { createMachine } from 'xstate';
 import { writable } from 'svelte/store';
-import type { users } from '@prisma/client';
-
-export async function generateDisplayName(user: users) {
-	return user?.profile?.displayname || user?.profile.firstname + ' ' + user?.profile.lastname;
-}
 
 /**
  * @name Random.id
@@ -18,82 +11,35 @@ export async function generateDisplayName(user: users) {
  *   (defaults to 17)
  */
 export function id(charsCount = 17) {
-	// 17 characters is around 96 bits of entropy, which is the amount of
-	// state in the Alea PRNG.
-	if (charsCount === undefined) {
-		charsCount = 17;
-	}
-
 	return _randomString(charsCount, UNMISTAKABLE_CHARS);
 }
 
 const UNMISTAKABLE_CHARS = '23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz';
+
+// Runs on both the browser (offline outbox ids) and the server. Prefer the
+// WebCrypto RNG; the Math.random fallback only exists for runtimes without a
+// global crypto. The tiny modulo bias is fine for ids (these are not secrets).
 function _randomString(charsCount: number, alphabet: string) {
 	let result = '';
-	for (let i = 0; i < charsCount; i++) {
-		result += choice(alphabet);
+	const cryptoObj = (globalThis as any).crypto;
+	if (cryptoObj?.getRandomValues) {
+		const values = new Uint32Array(charsCount);
+		cryptoObj.getRandomValues(values);
+		for (let i = 0; i < charsCount; i++) {
+			result += alphabet[values[i] % alphabet.length];
+		}
+	} else {
+		for (let i = 0; i < charsCount; i++) {
+			result += alphabet[Math.floor(Math.random() * alphabet.length)];
+		}
 	}
 	return result;
 }
 
-/**
- * @name Random.choice
- * @summary Return a random element of the given array or string.
- * @locus Anywhere
- * @param {Array|String} arrayOrString Array or string to choose from
- */
-function choice(arrayOrString: string | any[]) {
-	const index = Math.floor(Math.random() * arrayOrString.length);
-	if (typeof arrayOrString === 'string') {
-		return arrayOrString.substr(index, 1);
-	}
-	return arrayOrString[index];
-}
-
-// Extract the number of rounds used in the specified bcrypt hash.
-export const getRoundsFromBcryptHash = (hash: string) => {
-	let rounds;
-	if (hash) {
-		const hashSegments = hash.split('$');
-		if (hashSegments.length > 2) {
-			rounds = parseInt(hashSegments[2], 10);
-		}
-	}
-	return rounds;
-};
-
-// Given a 'password' from the client, extract the string that we should
-// bcrypt. 'password' can be one of:
-//  - String (the plaintext password)
-//  - Object with 'digest' and 'algorithm' keys. 'algorithm' must be "sha-256".
-//
-export const getPasswordString = (
-	password:
-		| string
-		| {
-				digest: string;
-				algorithm: string;
-		  }
-) => {
-	let pw;
-	if (typeof password === 'string') {
-		pw = SHA256(password);
-	} else {
-		// 'password' is an object
-		if (password.algorithm !== 'sha-256') {
-			throw new Error('Invalid password hash algorithm. ' + "Only 'sha-256' is allowed.");
-		}
-		pw = password.digest;
-	}
-	return pw;
-};
-
-// Use bcrypt to hash the password for storage in the database.
-// `password` can be a string (in which case it will be run through
-// SHA256 before bcrypt) or an object with properties `digest` and
-// `algorithm` (in which case we bcrypt `password.digest`).
-//
-
+// Hash a password for storage. The client sends SHA256(plaintext) — never the
+// plaintext itself — so what's stored is bcrypt(SHA256(plaintext)). Every
+// caller (login, self-service change, admin reset, user creation) must follow
+// that same contract or the resulting account can't sign in.
 export const hashPassword = async (password: string) => {
 	return await bcrypt.hash(password, 10);
 };
@@ -150,42 +96,3 @@ export const loginAction = createMachine({
 });
 
 export const error = writable('');
-
-/**
- * @description Converts a period-delimited string of keys into a nested object of is statements
- * @param str Period-delimited string of keys
- * @param defaultValue Final value to set for the final key in the hierarchy
- * @returns nested object
- */
-export function convertToNestedObject(str: string, defaultValue: string) {
-	// Split the input string on the "." character to create an array of keys
-	const keys = str.split('.');
-
-	// Create an empty object to hold the nested structure
-	const nestedObj: any = {};
-
-	// Create a reference to the current position in the object hierarchy
-	let currentLevel = nestedObj;
-
-	// Iterate over the keys array, creating new objects at each level of the hierarchy
-	for (const key of keys) {
-		currentLevel[key] = { is: {} };
-		currentLevel = currentLevel[key].is;
-	}
-
-	// Set the default value for the final key in the hierarchy
-	currentLevel.token = defaultValue;
-
-	// Return the nested object
-	return nestedObj;
-}
-
-export async function secretGenerator(length: number) {
-	let result = '';
-	const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-	const charactersLength = characters.length;
-	for (let i = 0; i < length; i++) {
-		result += characters.charAt(Math.floor(Math.random() * charactersLength));
-	}
-	return result;
-}

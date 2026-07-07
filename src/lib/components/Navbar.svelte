@@ -2,7 +2,6 @@
 	// @ts-nocheck
 	import AccountProfileForm from '$lib/components/forms/account/AccountProfileForm.svelte';
 	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
 	import { isOnline, pendingCount, syncBlocked } from '$lib/stores/connectivity.js';
 	import { sidebarOpen, toggleSidebar } from '$lib/stores/ui.js';
 
@@ -32,8 +31,15 @@
 		isAccountProfileOpen = !isAccountProfileOpen;
 		handleToggleDropDown();
 	}
-	function handleLogout() {
-		goto('auth/logout/');
+	async function handleLogout() {
+		// POST so the server revokes the session token, not just the cookie.
+		try {
+			await fetch('/api/auth/logout', { method: 'POST' });
+		} catch {
+			// Offline or network error — the cookie is cleared server-side next
+			// time; still leave the app so the UI doesn't look signed in.
+		}
+		window.location.href = '/auth/login';
 	}
 </script>
 

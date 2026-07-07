@@ -1,71 +1,92 @@
 import { dev } from '$app/environment';
 import dotenv from 'dotenv';
 dotenv.config();
-import { MongoClient } from 'mongodb';
+import { MongoClient, type Db } from 'mongodb';
 
 const uri = process.env['DATABASE_URL'];
 
-const options = {
-	useUnifiedTopology: true,
-	useNewUrlParser: true
-};
-
-let cachedDb: any;
-
 if (!uri) {
-	throw new Error('Please DATABASE_URL to your environment');
+	throw new Error('Missing DATABASE_URL environment variable');
 }
 
-if (dev && !uri?.includes('Staging') && !uri?.includes('Test')) {
-	console.info('🚨 You are using Production database in development mode 🚨');
+// Prefer an explicit DATABASE_NAME. The legacy fallback sniffs the connection
+// string, which is brittle (a cluster name or password containing "Test"
+// silently reroutes traffic) — set DATABASE_NAME to opt out of it.
+const dbName =
+	process.env['DATABASE_NAME'] ||
+	(uri.includes('Staging') ? 'labStaging' : uri.includes('Test') ? 'labStagingTest' : 'lab');
+
+if (dev && dbName === 'lab') {
+	console.error('🚨 You are using the PRODUCTION database in development mode 🚨');
 }
 
-if (dev && uri?.includes('Test')) {
-	console.info('🚨 You are using Test database in development mode 🚨');
+if (dev && dbName === 'labStagingTest') {
+	console.info('You are using the Test database in development mode');
 }
 
-// Create the indexes that back our hottest queries. createIndex is idempotent,
-// so this is safe to call on every cold start; it runs once per process because
-// connectToDatabase caches the db. Failures are logged, never fatal.
-async function ensureIndexes(db: any) {
-	try {
-		await Promise.all([
-			// patient detail: match by patientId, sort by created desc
-			db.collection('records').createIndex({ patientId: 1, created: -1 }),
-			db.collection('records').createIndex({ created: -1 }),
-			db.collection('records').createIndex({ category: 1 }),
-			// patient/user lists: sort by created desc, filter/sort by name & status
-			db.collection('patients').createIndex({ created: -1 }),
-			db.collection('patients').createIndex({ lastName: 1 }),
-			db.collection('patients').createIndex({ isActive: 1 }),
-			db.collection('users').createIndex({ created: -1 })
-		]);
-	} catch (error) {
-		console.error('ensureIndexes failed (non-fatal):', error);
+// Create the indexes that back our hottest queries and enforce invariants.
+// createIndex is idempotent; failures are logged per-index, never fatal
+// (the unique indexes can fail on legacy duplicate data — that's expected
+// until the data is cleaned up, and everything else must still start).
+async function ensureIndexes(db: Db) {
+	const attempts: Array<[string, Promise<unknown>]> = [
+		// every authenticated request: session token lookup (hooks.server.ts)
+		[
+			'users.loginTokens',
+			db.collection('users').createIndex({ 'services.resume.loginTokens.hashedToken': 1 })
+		],
+		// login lookup + uniqueness backstop for user creation
+		[
+			'users.emails unique',
+			db.collection('users').createIndex({ 'emails.address': 1 }, { unique: true, sparse: true })
+		],
+		// uniqueness backstop for the atomic case-number counter
+		[
+			'records.caseNumber unique',
+			db.collection('records').createIndex({ caseNumber: 1 }, { unique: true, sparse: true })
+		],
+		// patient detail: match by patientId, sort by created desc
+		['records.patient', db.collection('records').createIndex({ patientId: 1, created: -1 })],
+		['records.created', db.collection('records').createIndex({ created: -1 })],
+		['records.category', db.collection('records').createIndex({ category: 1 })],
+		// patient/user lists: sort by created desc, filter/sort by name & status
+		['patients.created', db.collection('patients').createIndex({ created: -1 })],
+		['patients.lastName', db.collection('patients').createIndex({ lastName: 1 })],
+		['patients.isActive', db.collection('patients').createIndex({ isActive: 1 })],
+		['users.created', db.collection('users').createIndex({ created: -1 })]
+	];
+	const results = await Promise.allSettled(attempts.map(([, p]) => p));
+	results.forEach((result, i) => {
+		if (result.status === 'rejected') {
+			console.error(`ensureIndexes: ${attempts[i][0]} failed (non-fatal):`, result.reason);
+		}
+	});
+}
+
+// Cache the *promise*, not the resolved handle — otherwise N concurrent
+// requests on a cold start each open their own MongoClient. A failed connect
+// clears the cache so the next request retries instead of failing forever.
+let connectionPromise: Promise<{ client: MongoClient; db: Db }> | null = null;
+
+function connect() {
+	if (!connectionPromise) {
+		connectionPromise = (async () => {
+			const client = await MongoClient.connect(uri as string);
+			const db = client.db(dbName);
+			await ensureIndexes(db);
+			return { client, db };
+		})().catch((error) => {
+			connectionPromise = null;
+			throw error;
+		});
 	}
+	return connectionPromise;
 }
 
-async function connectToDatabase() {
-	if (cachedDb) return cachedDb;
+/** Shared database handle. */
+const clientPromise = async (): Promise<Db> => (await connect()).db;
 
-	const client = await MongoClient.connect(uri, options);
+/** The underlying MongoClient — needed for sessions/transactions. */
+export const getClient = async (): Promise<MongoClient> => (await connect()).client;
 
-	const currentDb = uri?.includes('Staging')
-		? 'labStaging'
-		: uri?.includes('Test')
-		? 'labStagingTest'
-		: 'lab';
-
-	const db = await client.db(currentDb);
-	cachedDb = db;
-	await ensureIndexes(db);
-	return db;
-}
-const clientPromise = async () => await connectToDatabase();
-// cachedDb = new MongoClient(uri, options);
-// clientPromise = cachedDb.connect();
-
-// Export a module-scoped MongoClient promise.
-// By doing this in a separate module,
-// the client can be shared across functions.
 export default clientPromise;
