@@ -20,6 +20,9 @@
 	let provisionalCase = false;
 	let category = '';
 	let message = null;
+	// Blocks a second submit while the first request is in flight — otherwise a
+	// double-click queues two records, each with its own client _id (no dedupe).
+	let submitting = false;
 	let statusMessages = {
 		sending: 'Sending...',
 		sent: 'Record Saved!',
@@ -142,10 +145,12 @@
 	};
 
 	async function handleSubmit(e) {
+		if (submitting) return;
 		const form = e.currentTarget;
 		const body = Object.fromEntries(new FormData(form));
 		if (provisionalCase) delete body.caseNumber; // let the server assign it
 		message = statusMessages.sending;
+		submitting = true;
 		try {
 			const res = await saveOrQueue({
 				endpoint: '/api/admin/record/insert',
@@ -161,9 +166,11 @@
 				}, res.synced ? 1500 : 2500);
 			} else {
 				message = res.result?.message || statusMessages.error;
+					submitting = false;
 			}
 		} catch (error) {
 			message = statusMessages.error;
+			submitting = false;
 		}
 	}
 </script>
@@ -300,7 +307,7 @@
 				{#if message}
 					<span transition:fade class="text-sm font-medium text-muted">{@html message}</span>
 				{/if}
-				<Button type="button" color="primary" text="Save result" padding="py-2.5 px-5" />
+				<Button type="button" color="primary" text={submitting ? 'Saving…' : 'Save result'} disabled={submitting} padding="py-2.5 px-5" />
 			</div>
 		</form>
 	</div>

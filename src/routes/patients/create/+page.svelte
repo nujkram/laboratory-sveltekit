@@ -8,6 +8,9 @@
 
     let firstName, middleName, lastName, address, message;
 	let gender = '';
+	// Guards against double-submit — a second click before the first request
+	// resolves would otherwise queue a second patient with a new client _id.
+	let submitting = false;
 	// Not defaulted to today — an unset DOB would otherwise be saved as the
 	// creation date and compute a wrong age. The field is required below.
 	let birthDate = null;
@@ -24,6 +27,7 @@
     <form
 		class="space-y-5 px-6 py-6"
 		on:submit|preventDefault={async () => {
+				if (submitting) return;
 			if (!birthDate) {
 				message = 'Please enter the patient’s birth date.';
 				setTimeout(() => (message = null), 3000);
@@ -34,6 +38,7 @@
 				setTimeout(() => (message = null), 3000);
 				return;
 			}
+			submitting = true;
 			try {
 				const res = await saveOrQueue({
 					endpoint: '/api/admin/patient/insert',
@@ -50,9 +55,11 @@
 					}, res.synced ? 1500 : 2500);
 				} else {
 					message = res.result?.message || 'An error occurred. Please try again.';
+						submitting = false;
 				}
 			} catch (error) {
 				console.error('error', error);
+					submitting = false;
 			}
 		}}
 	>
@@ -167,7 +174,7 @@
 			{#if message}
 				<span transition:fade class="text-sm font-medium text-muted">{@html message}</span>
 			{/if}
-			<Button type="button" color="primary" text="Save patient" padding="py-2.5 px-5" />
+			<Button type="button" color="primary" text={submitting ? 'Saving…' : 'Save patient'} disabled={submitting} padding="py-2.5 px-5" />
 		</div>
 	</form>
 	</div>

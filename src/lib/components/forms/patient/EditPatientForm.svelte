@@ -35,6 +35,7 @@
 
     async function handleSubmit(event) {
         event?.preventDefault();
+        if (saving) return;
         saving = true;
         try {
             const res = await saveOrQueue({
@@ -114,7 +115,7 @@
 						>
 							Cancel
 						</button>
-						<Button color="success" text={saving ? 'Saving…' : 'Save changes'} />
+						<Button color="success" text={saving ? 'Saving…' : 'Save changes'} disabled={saving} />
 					</div>
 				</form>
 			</div>

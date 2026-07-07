@@ -12,6 +12,7 @@
 	export let textSize = 'text-sm';
 	export let classes = '';
 	export let margin = '';
+	export let disabled = false;
 
 	const dispatch = createEventDispatcher();
 
@@ -29,6 +30,7 @@
 		'inline-flex items-center justify-center gap-1.5 font-medium no-underline shadow-card transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-leaf';
 
 	function click(event) {
+		if (disabled) return;
 		dispatch('click', event.detail);
 	}
 </script>
@@ -36,7 +38,10 @@
 {#if type === 'button'}
 	<button
 		type="submit"
-		class="{base} {colorClasses} {textColor} {textSize} {padding} {rounded} {margin} {classes}"
+		{disabled}
+		class="{base} {colorClasses} {textColor} {textSize} {padding} {rounded} {margin} {classes} {disabled
+			? 'cursor-not-allowed opacity-60'
+			: ''}"
 		on:click={click}
 	>
 		<slot />

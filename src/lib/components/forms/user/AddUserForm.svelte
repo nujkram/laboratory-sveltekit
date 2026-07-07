@@ -11,6 +11,8 @@
 	let roles = [];
 	let message = null;
 	let alertColor = 'green';
+	// Prevents a double-click from POSTing twice and creating duplicate users.
+	let submitting = false;
     let license = '',
 		credential = '',
 		firstName = '',
@@ -29,6 +31,7 @@
 
     async function handleSubmit(event) {
 		event?.preventDefault();
+		if (submitting) return;
 		if (password !== confirmPassword) {
 			message = 'Passwords do not match';
 			alertColor = 'red';
@@ -49,6 +52,7 @@
 
 		// const salt = await bcrypt.genSalt(saltCount);
 		const hashedPassword = await SHA256(password).toString();
+		submitting = true;
 		// const bcryptPass = await bcrypt.hash(hashedPassword, salt);
 
 		const response = await fetch('/api/admin/user/insert', {
@@ -72,6 +76,14 @@
 			})
 		});
 		let result = await response.json();
+
+		if (result.status !== 'Success') {
+			alertColor = 'red';
+			message = result.message || 'Could not create user. Please try again.';
+			submitting = false;
+			setTimeout(() => (message = null), 4000);
+			return;
+		}
 
 		if (result.status === 'Success') {
 			alertColor = 'green';
@@ -275,7 +287,7 @@
 							>
 								Cancel
 							</button>
-							<Button color='success' text='Add user' />
+							<Button color='success' text={submitting ? 'Adding…' : 'Add user'} disabled={submitting} />
 						</div>
 					</form>
 					{#if message}

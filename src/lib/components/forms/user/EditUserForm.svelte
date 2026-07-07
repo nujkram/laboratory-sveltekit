@@ -60,6 +60,7 @@
 
 	async function handleSubmit(event) {
 		event?.preventDefault();
+		if (saving) return;
 
 		// Password reset is optional — only validate/send it when a value is entered.
 		if (newPassword || confirmNewPassword) {
@@ -221,7 +222,7 @@
 
 					<div class="flex justify-end gap-2 pt-2">
 						<Button color="secondary" text="Cancel" on:click={handleCloseModal} />
-						<Button color="success" text={saving ? 'Saving…' : 'Save changes'} />
+						<Button color="success" text={saving ? 'Saving…' : 'Save changes'} disabled={saving} />
 					</div>
 				</form>
 				{#if message}
