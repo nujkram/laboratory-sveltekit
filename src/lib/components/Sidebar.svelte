@@ -4,13 +4,35 @@
 	import SidebarItem from './SidebarItem.svelte';
 	import Dashboard from './icons/Dashboard.svelte';
 	import Users from './icons/Users.svelte';
+	import { sidebarOpen, closeSidebar } from '$lib/stores/ui.js';
+
+	// On small screens the sidebar overlays content, so close it after a nav tap.
+	function maybeCloseOnMobile() {
+		if (typeof window !== 'undefined' && window.innerWidth < 640) closeSidebar();
+	}
 </script>
 
 <aside
 	id="logo-sidebar"
-	class="fixed top-0 left-0 z-40 flex h-screen w-64 -translate-x-full flex-col bg-pine-fade text-white transition-transform sm:translate-x-0"
+	class="fixed top-0 left-0 z-40 flex h-screen w-64 flex-col bg-pine-fade text-white transition-transform duration-300 ease-in-out {$sidebarOpen
+		? 'translate-x-0'
+		: '-translate-x-full'}"
 	aria-label="Main navigation"
+	aria-hidden={!$sidebarOpen}
 >
+	<!-- Collapse control -->
+	<button
+		type="button"
+		on:click={closeSidebar}
+		class="absolute top-4 right-3 inline-flex items-center justify-center rounded-lg p-1.5 text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+		aria-label="Collapse sidebar"
+		title="Collapse sidebar"
+	>
+		<svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+			<path fill-rule="evenodd" d="M12.7 15.7a1 1 0 01-1.4 0l-5-5a1 1 0 010-1.4l5-5a1 1 0 011.4 1.4L8.42 10l4.3 4.3a1 1 0 010 1.4z" clip-rule="evenodd" />
+		</svg>
+	</button>
+
 	<!-- Brand lockup -->
 	<a
 		href="/"
@@ -32,7 +54,7 @@
 	<!-- Signature: a row of pine peaks echoing the logo -->
 	<div class="peak-edge mx-5 h-[11px] opacity-70" aria-hidden="true" />
 
-	<nav class="mt-4 flex-1 overflow-y-auto px-3">
+	<nav class="mt-4 flex-1 overflow-y-auto px-3" on:click={maybeCloseOnMobile}>
 		<p class="px-3 pb-2 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-white/40">
 			Workspace
 		</p>

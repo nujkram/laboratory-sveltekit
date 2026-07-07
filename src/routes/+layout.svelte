@@ -8,6 +8,8 @@
 	import Navbar from '$lib/components/Navbar.svelte';
 	import Sidebar from '$lib/components/Sidebar.svelte';
 	import { isOnline } from '$lib/stores/connectivity.js';
+	import { sidebarOpen, closeSidebar } from '$lib/stores/ui.js';
+	import { fade } from 'svelte/transition';
 	import { cacheRefData, getRefData, loadRefList, prefetchWorkingSet } from '$lib/client/refdata.js';
 	import { startAutoSync } from '$lib/client/sync.js';
 
@@ -51,8 +53,17 @@
 <div id="content" class="min-h-screen bg-paper text-ink">
 	{#if user}
 		<Sidebar />
+		<!-- Backdrop: only on small screens, where the open sidebar overlays content. -->
+		{#if $sidebarOpen}
+			<div
+				class="fixed inset-0 z-30 bg-ink/40 backdrop-blur-sm sm:hidden"
+				transition:fade={{ duration: 200 }}
+				on:click={closeSidebar}
+				aria-hidden="true"
+			/>
+		{/if}
 		<Navbar {user} />
-		<main class="pt-16 sm:pl-64">
+		<main class="pt-16 transition-[padding] duration-300 ease-in-out {$sidebarOpen ? 'sm:pl-64' : 'sm:pl-0'}">
 			<div class="px-4 py-4 sm:px-5 lg:px-6">
 				<slot />
 			</div>

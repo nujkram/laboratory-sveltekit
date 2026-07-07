@@ -4,6 +4,7 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { isOnline, pendingCount, syncBlocked } from '$lib/stores/connectivity.js';
+	import { sidebarOpen, toggleSidebar } from '$lib/stores/ui.js';
 
 	// Passed from the layout so it survives offline (cached user fallback).
 	export let user = null;
@@ -40,10 +41,24 @@
 
 <header
 	id="app-topbar"
-	class="fixed top-0 left-0 right-0 z-30 h-16 border-b border-line bg-surface/85 backdrop-blur sm:left-64"
+	class="fixed top-0 left-0 right-0 z-30 h-16 border-b border-line bg-surface/85 backdrop-blur transition-[left] duration-300 ease-in-out {$sidebarOpen
+		? 'sm:left-64'
+		: 'sm:left-0'}"
 >
 	<div class="flex h-full items-center justify-between px-5 lg:px-7">
 		<div class="flex items-center gap-3">
+			<button
+				type="button"
+				on:click|stopPropagation={toggleSidebar}
+				class="-ml-1.5 inline-flex items-center justify-center rounded-lg p-2 text-muted transition-colors hover:bg-paper hover:text-ink"
+				aria-label={$sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+				aria-expanded={$sidebarOpen}
+				title={$sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+			>
+				<svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+					<path fill-rule="evenodd" d="M3 5.75A.75.75 0 013.75 5h12.5a.75.75 0 010 1.5H3.75A.75.75 0 013 5.75zm0 4.25a.75.75 0 01.75-.75h12.5a.75.75 0 010 1.5H3.75A.75.75 0 013 10zm0 4.25a.75.75 0 01.75-.75h12.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
+				</svg>
+			</button>
 			<div class="flex flex-col leading-none">
 				<span class="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-leaf">Workspace</span
 				>
