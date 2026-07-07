@@ -25,9 +25,20 @@ export async function POST({ request, locals }: any) {
 				{ status: 403 }
 			);
 		}
+		// Cascade: remove the patient's lab records too, so none are orphaned.
+		const recordsResult = await db.collection('records').deleteMany({ patientId: _id });
 		const response = await Patient.deleteOne({ _id });
+		const recordCount = recordsResult?.deletedCount ?? 0;
 		return new Response(
-			JSON.stringify({ status: 'Success', message: 'Patient permanently deleted.', response })
+			JSON.stringify({
+				status: 'Success',
+				message:
+					recordCount > 0
+						? `Patient and ${recordCount} record${recordCount === 1 ? '' : 's'} permanently deleted.`
+						: 'Patient permanently deleted.',
+				response,
+				recordsDeleted: recordCount
+			})
 		);
 	}
 

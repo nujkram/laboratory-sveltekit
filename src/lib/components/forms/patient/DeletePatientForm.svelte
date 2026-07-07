@@ -78,14 +78,14 @@
 					<Button color="danger" text={saving ? 'Deactivating…' : 'Deactivate'} on:click={() => handleConfirmDelete(false)} disabled={saving} />
 				</div>
 
-				<!-- Irreversible cleanup path (e.g. removing a duplicate patient). Note: this
-				     removes the patient only — their lab records are not deleted. -->
+				<!-- Irreversible cleanup path (e.g. removing a duplicate patient). This also
+				     cascades to their lab records so none are left orphaned. -->
 				{#if isAdmin}
 				<details class="mt-5 border-t border-line pt-4 text-left">
 					<summary class="cursor-pointer text-xs font-semibold text-danger">Delete permanently instead</summary>
 					<p class="mt-2 text-xs text-muted">
-						Permanently removes this patient. This <span class="font-semibold text-danger">cannot be undone</span>,
-						and does not remove their lab records.
+						Permanently removes this patient <span class="font-semibold text-ink">and all of their lab records</span>.
+						This <span class="font-semibold text-danger">cannot be undone</span>.
 					</p>
 					<label for="patient-hard-confirm" class="mt-3 mb-1.5 block text-xs font-medium text-muted">
 						Type <span class="font-mono font-semibold text-ink">DELETE</span> to confirm
