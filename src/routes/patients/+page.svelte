@@ -1,6 +1,7 @@
 <script>
     // @ts-nocheck
 	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
     import { onMount } from 'svelte';
     import { paginate } from 'svelte-paginate';
 	import Button from "$lib/components/reusable/Button.svelte";
@@ -344,6 +345,6 @@
 		<EditPatientForm bind:isEditModalOpen bind:currentPatient {loadPatient} />
 	{/if}
 	{#if isConfirmModalOpen}
-		<DeletePatientForm bind:isConfirmModalOpen {currentPatient} {loadPatient} />
+		<DeletePatientForm bind:isConfirmModalOpen {currentPatient} {loadPatient} isAdmin={$page.data.user?.role === 'Administrator'} />
 	{/if}
 {/if}

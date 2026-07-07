@@ -10,8 +10,15 @@
 	let saving = false;
 	let message = null;
 	let alertColor = 'red';
+	let typed = '';
 
-	const handleCloseModal = () => (isConfirmModalOpen = false);
+	$: canHardDelete = typed.trim().toUpperCase() === 'DELETE' && !saving;
+
+	const handleCloseModal = () => {
+		if (saving) return;
+		typed = '';
+		isConfirmModalOpen = false;
+	};
 
 	$: fullName =
 		[currentUser?.profile?.firstName, currentUser?.profile?.lastName].filter(Boolean).join(' ') ||
@@ -26,16 +33,18 @@
 		}, 3000);
 	}
 
-	async function handleDelete() {
+	async function handleDelete(hard = false) {
+		if (hard && !canHardDelete) return;
 		saving = true;
 		try {
 			const response = await fetch('/api/admin/user/delete', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ _id: currentUser?._id })
+				body: JSON.stringify({ _id: currentUser?._id, hard })
 			});
 			const result = await response.json();
 			if (result.status === 'Success') {
+				typed = '';
 				loadUsers();
 				isConfirmModalOpen = false;
 			} else {
@@ -74,9 +83,31 @@
 				{/if}
 
 				<div class="mt-6 flex justify-center gap-2">
-					<Button color="secondary" text="Cancel" on:click={handleCloseModal} />
-					<Button color="danger" text={saving ? 'Deactivating…' : 'Deactivate'} on:click={handleDelete} />
+					<Button color="secondary" text="Cancel" on:click={handleCloseModal} disabled={saving} />
+					<Button color="danger" text={saving ? 'Deactivating…' : 'Deactivate'} on:click={() => handleDelete(false)} disabled={saving} />
 				</div>
+
+				<!-- Irreversible cleanup path (e.g. removing a duplicate account). -->
+				<details class="mt-5 border-t border-line pt-4 text-left">
+					<summary class="cursor-pointer text-xs font-semibold text-danger">Delete permanently instead</summary>
+					<p class="mt-2 text-xs text-muted">
+						Permanently removes the account. This <span class="font-semibold text-danger">cannot be undone</span>.
+					</p>
+					<label for="user-hard-confirm" class="mt-3 mb-1.5 block text-xs font-medium text-muted">
+						Type <span class="font-mono font-semibold text-ink">DELETE</span> to confirm
+					</label>
+					<input
+						id="user-hard-confirm"
+						type="text"
+						autocomplete="off"
+						bind:value={typed}
+						class="field"
+						placeholder="DELETE"
+					/>
+					<div class="mt-3 flex justify-end">
+						<Button color="danger" text={saving ? 'Deleting…' : 'Delete permanently'} disabled={!canHardDelete} on:click={() => handleDelete(true)} />
+					</div>
+				</details>
 			</div>
 		</div>
 	</div>

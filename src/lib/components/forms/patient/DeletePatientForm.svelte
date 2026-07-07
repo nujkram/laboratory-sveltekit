@@ -1,64 +1,109 @@
 <script>
     // @ts-nocheck
-	import Button from "$lib/components/reusable/Button.svelte";
+	import { fade } from 'svelte/transition';
+	import Button from '$lib/components/reusable/Button.svelte';
 
-    export let isConfirmModalOpen = false;
-    export let currentPatient;
-    export let loadPatient = () => {};
+	export let isConfirmModalOpen = false;
+	export let currentPatient;
+	export let loadPatient = () => {};
+	// Deactivate is open to all staff; permanent delete is admin-only (also
+	// enforced server-side). Hides the permanent-delete path for non-admins.
+	export let isAdmin = false;
 
-    const patient = currentPatient;
-    const _id = patient._id;
-    console.log('currentPatient', currentPatient)
-    const handleCloseModal = () => isConfirmModalOpen = false;
-    
+	let saving = false;
+	let message = null;
+	let typed = '';
 
-    async function handleConfirmDelete(event)
-    {
-		event?.preventDefault();
-		const response = await fetch('/api/admin/patient/delete', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({_id})
-		});
-		let result = await response.json();
+	$: _id = currentPatient?._id;
+	$: canHardDelete = typed.trim().toUpperCase() === 'DELETE' && !saving;
+
+	const handleCloseModal = () => {
+		if (saving) return;
+		typed = '';
 		isConfirmModalOpen = false;
-		if (result.status === 'Success') {
-            loadPatient();
-		}
-    }
+	};
 
+	async function handleConfirmDelete(hard = false) {
+		if (hard && !canHardDelete) return;
+		saving = true;
+		message = null;
+		try {
+			const response = await fetch('/api/admin/patient/delete', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ _id, hard })
+			});
+			const result = await response.json();
+			if (result.status === 'Success') {
+				typed = '';
+				isConfirmModalOpen = false;
+				loadPatient();
+			} else {
+				message = result.message || 'Something went wrong.';
+			}
+		} catch (error) {
+			message = 'Something went wrong. Please try again.';
+		} finally {
+			saving = false;
+		}
+	}
 </script>
 
-<div class="fixed z-10 inset-0 overflow-y-auto {isConfirmModalOpen? 'block': 'hidden'}">
-	<div class="flex items-center justify-center min-h-screen">
-		<div class="fixed inset-0 bg-ink/40 backdrop-blur-sm" />
-        <div id="confirm-modal" tabindex="-1" class="fixed inset-0 z-50 w-full flex items-center justify-center p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">
-            <div class="relative w-full h-full max-w-md md:h-auto">
-                <div class="relative rounded-xl border border-line bg-surface shadow-card-lg">
-                    <button
-                        class="absolute top-3 right-2.5 inline-flex items-center rounded-lg p-1.5 text-muted transition-colors hover:bg-paper hover:text-ink"
-                        type="button"
-                        data-modal-hide="confirm-modal"
-                        on:click={handleCloseModal}
-                        >
-                        <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" ><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-                        <span class="sr-only">Close modal</span>
-                    </button>
-                    <div class="p-6 text-center">
-                        <span class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-danger/10 text-danger">
-                            <svg aria-hidden="true" class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        </span>
-                        <h2 class="mb-1 font-display text-lg font-bold text-ink">{currentPatient?.completeName}</h2>
-                        <h3 class="mb-6 text-sm text-muted">Delete this patient? This can't be undone.</h3>
-                        <div class="flex justify-center gap-2">
-                            <Button color='secondary' text='Cancel' on:click={handleCloseModal} />
-                            <Button color='danger' text='Delete patient' on:click={handleConfirmDelete} />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<svelte:window on:keydown={(e) => e.key === 'Escape' && isConfirmModalOpen && handleCloseModal()} />
+
+<div class="fixed z-10 inset-0 overflow-y-auto {isConfirmModalOpen ? 'block' : 'hidden'}">
+	<div class="flex items-center justify-center min-h-screen p-4">
+		<div class="fixed inset-0 bg-ink/40 backdrop-blur-sm" on:click={handleCloseModal} />
+		<div class="relative z-50 w-full max-w-md rounded-xl border border-line bg-surface shadow-card-lg">
+			<div class="px-6 py-6 text-center">
+				<span class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-danger/10 text-danger">
+					<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0 3.75h.008M10.34 3.94l-7.5 12.99A1.5 1.5 0 004.14 19.5h15.72a1.5 1.5 0 001.3-2.57l-7.5-12.99a1.5 1.5 0 00-2.62 0z" />
+					</svg>
+				</span>
+				<h3 class="mt-4 font-display text-lg font-bold text-ink">Deactivate patient</h3>
+				<p class="mt-2 text-sm text-muted">
+					Deactivate <span class="font-semibold text-ink">{currentPatient?.completeName}</span>? They will be
+					hidden from the active list. You can reactivate them later.
+				</p>
+
+				{#if message}
+					<div transition:fade class="mt-4 flex items-center justify-center rounded bg-danger/10 px-4 py-3 text-sm font-medium text-danger" role="alert">
+						<p>{message}</p>
+					</div>
+				{/if}
+
+				<div class="mt-6 flex justify-center gap-2">
+					<Button color="secondary" text="Cancel" on:click={handleCloseModal} disabled={saving} />
+					<Button color="danger" text={saving ? 'Deactivating…' : 'Deactivate'} on:click={() => handleConfirmDelete(false)} disabled={saving} />
+				</div>
+
+				<!-- Irreversible cleanup path (e.g. removing a duplicate patient). Note: this
+				     removes the patient only — their lab records are not deleted. -->
+				{#if isAdmin}
+				<details class="mt-5 border-t border-line pt-4 text-left">
+					<summary class="cursor-pointer text-xs font-semibold text-danger">Delete permanently instead</summary>
+					<p class="mt-2 text-xs text-muted">
+						Permanently removes this patient. This <span class="font-semibold text-danger">cannot be undone</span>,
+						and does not remove their lab records.
+					</p>
+					<label for="patient-hard-confirm" class="mt-3 mb-1.5 block text-xs font-medium text-muted">
+						Type <span class="font-mono font-semibold text-ink">DELETE</span> to confirm
+					</label>
+					<input
+						id="patient-hard-confirm"
+						type="text"
+						autocomplete="off"
+						bind:value={typed}
+						class="field"
+						placeholder="DELETE"
+					/>
+					<div class="mt-3 flex justify-end">
+						<Button color="danger" text={saving ? 'Deleting…' : 'Delete permanently'} disabled={!canHardDelete} on:click={() => handleConfirmDelete(true)} />
+					</div>
+				</details>
+				{/if}
+			</div>
+		</div>
+	</div>
 </div>

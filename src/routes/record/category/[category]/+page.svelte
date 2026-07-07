@@ -12,8 +12,47 @@
 	import HematologyModal from '$lib/components/modals/HematologyModal.svelte';
 	import { getRefData, cacheRefData } from '$lib/client/refdata.js';
 	import { allPending } from '$lib/client/outbox.js';
+	import ConfirmHardDelete from '$lib/components/modals/ConfirmHardDelete.svelte';
 
 	$: category = $page.params.category;
+	$: isAdmin = $page.data.user?.role === 'Administrator';
+
+	// Permanent record deletion (admin-only) — for cleaning up duplicates.
+	let isDeleteOpen = false;
+	let deleteTarget = null;
+	let deleting = false;
+	let deleteError = null;
+
+	function askDelete(record) {
+		deleteTarget = record;
+		deleteError = null;
+		isDeleteOpen = true;
+	}
+
+	async function confirmDelete() {
+		if (!deleteTarget?._id) return;
+		deleting = true;
+		deleteError = null;
+		try {
+			const res = await fetch('/api/admin/record/delete', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ _id: deleteTarget._id })
+			});
+			const result = await res.json();
+			if (result.status === 'Success') {
+				isDeleteOpen = false;
+				deleteTarget = null;
+				await loadRecords();
+			} else {
+				deleteError = result.message || 'Could not delete the record.';
+			}
+		} catch (e) {
+			deleteError = 'Something went wrong. Please try again.';
+		} finally {
+			deleting = false;
+		}
+	}
 
 	let items = [];
 	let itemSize = 0;
@@ -258,6 +297,9 @@
 										<Button color="primary" text="View" padding="py-1.5 px-3" textSize="text-xs" on:click={handleViewModal} />
 										{#if !data?._pending}
 											<Button color="warning" text="Update" type="link" href="/record/{data?._id}/update" padding="py-1.5 px-3" textSize="text-xs" />
+											{#if isAdmin}
+												<Button color="danger" text="Delete" padding="py-1.5 px-3" textSize="text-xs" on:click={() => askDelete(data)} />
+											{/if}
 										{/if}
 									</div>
 								</td>
@@ -338,3 +380,12 @@
 		<MiscModal bind:isViewModalOpen data={currentRecord} />
 	{/if}
 {/if}
+
+<ConfirmHardDelete
+	bind:open={isDeleteOpen}
+	title="Delete record"
+	name={`${deleteTarget?.patient?.completeName || 'this patient'}'s ${deleteTarget?.category || ''} record (${deleteTarget?.caseNumber || 'no case #'})`}
+	busy={deleting}
+	error={deleteError}
+	on:confirm={confirmDelete}
+/>
