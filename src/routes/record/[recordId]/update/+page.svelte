@@ -61,12 +61,18 @@
 		basophil,
 		lympocyte,
 		monocyte,
+		total = '1.0',
 		erythrocyteSedimentation,
 		thrombocyteNumber,
 		bleedingTime,
 		clottingTime,
 		bloodType,
 		rh,
+		mcv,
+		mch,
+		mchc,
+		rdwCv,
+		mpv,
 		color,
 		consistency,
 		ascarisLumb,
@@ -102,9 +108,19 @@
 		specimen,
 		result,
 		others,
-		remarks
+		requestedBy,
+		remarks,
+		analyzer,
+		ns1,
+		igm,
+		igg,
+		tsh,
+		ft3,
+		ft4,
+		t3,
+		t4,
+		psa
 	} = record ?? {});
-	let total = '1.0';
 	let options = [];
 
 	// Load the record (fetch + cache online; offline read cache or the queued copy),
@@ -298,7 +314,13 @@
 					{clottingTime}
 					{bloodType}
 					{rh}
+					{mcv}
+					{mch}
+					{mchc}
+					{rdwCv}
+					{mpv}
 					{others}
+					{remarks}
 				/>
 			{:else if selectedOption == 'Parasitology'}
 				<Parasitology
@@ -347,9 +369,29 @@
 					{hominis}
 				/>
 			{:else if selectedOption == 'Miscellaneous'}
-				<Miscellaneous {exam} {specimen} {result} {others} {remarks} />
+				<Miscellaneous {exam} {specimen} {result} {others} {remarks} {analyzer} {ns1} {igm} {igg} {tsh} {ft3} {ft4} {t3} {t4} {psa} />
 			{/if}
 			<hr class="border-line" />
+			<div class="md:flex md:items-center mb-6">
+				<div class="md:w-3/12">
+					<label
+						class="field-label"
+						for="inline-requestedBy"
+					>
+						Requested by
+					</label>
+				</div>
+				<div class="md:w-5/12">
+					<input
+						class="field"
+						id="inline-requestedBy"
+						placeholder="e.g. DR. SANTOS"
+						type="text"
+						name="requestedBy"
+						value={requestedBy ?? ''}
+					/>
+				</div>
+			</div>
 			<div class="md:flex md:items-center mb-6">
 				<div class="md:w-3/12">
 					<label

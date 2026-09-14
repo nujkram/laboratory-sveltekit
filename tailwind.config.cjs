@@ -50,6 +50,17 @@ module.exports = {
 				warningHover: '#B87209',
 				warningActive: '#EBA637',
 
+				/* --- Printed report banner fills (match the paper forms) --- */
+				report: {
+					/* Exact w:shd fills lifted from the client's Word templates. */
+					misc: '#548DD4',
+					miscQuant: '#C6D9F1',
+					urinalysis: '#FFFF00',
+					parasitology: '#FBD4B4',
+					chemistry: '#92D050',
+					hematology: '#FF0000'
+				},
+
 				/* --- Result-flag colors for clinical values --- */
 				flag: {
 					high: '#C42B1C',

@@ -64,6 +64,11 @@
 		clottingTime,
 		bloodType,
 		rh,
+		mcv,
+		mch,
+		mchc,
+		rdwCv,
+		mpv,
 		color,
 		consistency,
 		ascarisLumb,
@@ -101,7 +106,18 @@
 		others,
 		pathologist,
 		medicalTechnologist,
-		remarks;
+		requestedBy,
+		remarks,
+		analyzer,
+		ns1,
+		igm,
+		igg,
+		tsh,
+		ft3,
+		ft4,
+		t3,
+		t4,
+		psa;
 	let total = '1.0';
 
 	let options = [];
@@ -248,15 +264,35 @@
 			{#if selectedOption == 'Chemistry'}
 				<Chemistry {stat} {fastingBloodSugar} {randomBloodSugar} {postPrandial} {hba1c} {urea} {creatinine} {uricAcid} {cholesterol} {triglycerides} {hdlCholesterol} {ldlCholesterol} {sgotAst} {sgptAlt} {sodium} {potassium} {calcium} />
 			{:else if selectedOption == 'Hematology'}
-				<Hematology {stat} {exam} {hemoglobin} {erythrocyteVolume} {erythrocyteNumber} {leukocyteNumber} {neutrophilNumber} {segmenters} {stab} {eosinophil} {basophil} {lympocyte} {monocyte} {total} {erythrocyteSedimentation} {thrombocyteNumber} {bleedingTime} {clottingTime} {bloodType} {rh} {others} />
+				<Hematology {stat} {exam} {hemoglobin} {erythrocyteVolume} {erythrocyteNumber} {leukocyteNumber} {neutrophilNumber} {segmenters} {stab} {eosinophil} {basophil} {lympocyte} {monocyte} {total} {erythrocyteSedimentation} {thrombocyteNumber} {bleedingTime} {clottingTime} {bloodType} {rh} {mcv} {mch} {mchc} {rdwCv} {mpv} {others} {remarks} />
 			{:else if selectedOption == 'Parasitology'}
 				<Parasitology {color} {consistency} {ascarisLumb} {hookworm} {trichuris} {strongyloides} {entamoebaColiCyst} {entamoebaColiTroph} {entamoebaHistCyst} {entamoebaHistTroph} {pusCell} {rbc} {yeastCell} {fatGlobules} {bacteria} {others} {remarks} />
 			{:else if selectedOption == 'Urinalysis'}
 				<Urinalysis {exam} {color} {transparency} {reaction} {specificGravity} {protein} {sugar} {fineGran} {coarseGran} {pusCellCast} {hyaline} {rbc} {pusCell} {uricAcid} {calciumOxolate} {amorphous} {tripPhosphates} {squamous} {mucous} {roundEpithelial} {yeastCell} {vaginalis} {hominis} />
 			{:else if selectedOption == 'Miscellaneous'}
-				<Miscellaneous {exam} {specimen} {result} {others} {remarks} />
+				<Miscellaneous {exam} {specimen} {result} {others} {remarks} {analyzer} {ns1} {igm} {igg} {tsh} {ft3} {ft4} {t3} {t4} {psa} />
 			{/if}
 			<hr class="border-line" />
+			<div class="md:flex md:items-center mb-6">
+				<div class="md:w-3/12">
+					<label
+						class="field-label"
+						for="inline-requestedBy"
+					>
+						Requested by
+					</label>
+				</div>
+				<div class="md:w-5/12">
+					<input
+						class="field"
+						id="inline-requestedBy"
+						placeholder="e.g. DR. SANTOS"
+						type="text"
+						name="requestedBy"
+						bind:value={requestedBy}
+					/>
+				</div>
+			</div>
 			<div class="md:flex md:items-center mb-6">
 				<div class="md:w-3/12">
 					<label

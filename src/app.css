@@ -58,6 +58,37 @@
 		@apply mt-1.5 block font-mono text-xs leading-relaxed text-muted;
 	}
 
+	/* --- Printed report type scale ---
+	   The report sheet's base size comes from the paper preset (10pt on the
+	   short-bond/A4 forms, 12pt on the long-bond thyroid/PSA forms), so every
+	   size inside it is expressed in `em` and scales with the paper. Tailwind's
+	   text-* utilities are rem-based and would pin the long-bond forms back to
+	   short-bond type, so report markup uses these instead. */
+	.rpt-head {
+		font-size: var(--sheet-head, 8pt);
+	}
+	.rpt-tiny {
+		font-size: 0.7em;
+	}
+	.rpt-xs {
+		font-size: 0.8em;
+	}
+	.rpt-sm {
+		font-size: 0.9em;
+	}
+	.rpt-md {
+		font-size: 1em;
+	}
+	.rpt-lg {
+		font-size: 1.1em;
+	}
+	.rpt-xl {
+		font-size: 1.3em;
+	}
+	.rpt-2xl {
+		font-size: 1.6em;
+	}
+
 	/* The signature: a row of pine peaks echoing the logo, used sparingly as a divider */
 	.peak-edge {
 		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='11' viewBox='0 0 16 11'%3E%3Cpath d='M8 0 L16 11 L0 11 Z' fill='%2346A02E'/%3E%3C/svg%3E");
@@ -99,12 +130,9 @@
 }
 
 @media print {
-	/* Lab results print on short bond paper (8.5in x 11in, portrait). */
-	@page {
-		size: 8.5in 11in;
-		margin: 0.4in;
-	}
-
+	/* Page size and margins are published per-report by setPageSize() in
+	   src/lib/utils/printHelper.js — each report prints at the exact paper size
+	   of its original Word form (see src/lib/constants/reportPapers.js). */
 	html,
 	body {
 		background: #fff !important;
@@ -119,55 +147,44 @@
 		padding: 0 !important;
 	}
 
-	/* When a result report is open, print only that report — nothing else.
-	   The reveal selectors are prefixed to out-specify the :has() hide rule
-	   (:has() carries the #id specificity of its argument). */
-	body:has(#print-record-modal) * {
-		visibility: hidden !important;
+	/* The open report is portalled to <body> (src/lib/actions/portal.js), so
+	   isolating it is just a matter of hiding its siblings. display:none rather
+	   than visibility:hidden so the hidden boxes leave the layout entirely. */
+	body > *:not(#print-record-modal) {
+		display: none !important;
 	}
-	body:has(#print-record-modal) #print-record-modal,
-	body:has(#print-record-modal) #print-record-modal * {
-		visibility: visible !important;
-	}
-	/* position: fixed anchors to the page box, ignoring the modal's on-screen
-	   centering / mt-[30%] so the report starts at the TOP of the sheet. */
-	body:has(#print-record-modal) #print-record-modal {
-		position: fixed !important;
-		left: 0 !important;
-		top: 0 !important;
-		right: 0 !important;
-		width: 100% !important;
+
+	/* position:static puts the report back in normal flow so a long CBC or the
+	   16-row chemistry sheet paginates instead of being clipped to one page. */
+	#print-record-modal {
+		position: static !important;
+		width: auto !important;
 		max-width: none !important;
 		margin: 0 !important;
 		border: 0 !important;
 		border-radius: 0 !important;
 		box-shadow: none !important;
+		background: #fff !important;
 		color: #000 !important;
-		/* The report occupies only the TOP HALF of the short-bond sheet (~8.5in x
-		   5.5in), leaving the bottom blank. Compact type + tightened gaps keep even
-		   a full CBC within that band while staying legible. */
-		zoom: 0.8 !important;
-		font-size: 9px !important;
-		line-height: 1.08 !important;
+		/* Keep the paper forms' banner fills and shading in the printout. */
+		print-color-adjust: exact !important;
+		-webkit-print-color-adjust: exact !important;
 	}
+
 	/* Hide the on-screen Print / Close controls in the printout. */
-	body:has(#print-record-modal) #nav-modal {
+	#nav-modal {
 		display: none !important;
 	}
-	/* Tighten the on-screen modal spacing so the report fits the top half. */
-	body:has(#print-record-modal) #print-record-modal .px-6.py-6 {
-		padding: 2px 12px !important;
+
+	/* @page already supplies the paper margins — don't apply them twice. */
+	#report-sheet {
+		padding: 0 !important;
+		margin: 0 !important;
 	}
-	body:has(#print-record-modal) #print-record-modal .gap-4 {
-		gap: 1px !important;
-	}
-	body:has(#print-record-modal) #print-record-modal .mt-8 {
-		margin-top: 5px !important;
-	}
-	body:has(#print-record-modal) #print-record-modal .mt-4 {
-		margin-top: 2px !important;
-	}
-	body:has(#print-record-modal) #print-record-modal .mt-1 {
-		margin-top: 1px !important;
+
+	/* Never split a signature block across pages. */
+	.report-no-break {
+		break-inside: avoid;
+		page-break-inside: avoid;
 	}
 }
