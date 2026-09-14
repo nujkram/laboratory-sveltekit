@@ -20,7 +20,8 @@
 		clottingTime,
 		bloodType,
 		rh,
-		others;
+		others,
+		remarks;
 </script>
 <div class="md:flex md:items-center mb-6">
     <div class="md:w-3/12">
@@ -486,6 +487,27 @@
             placeholder="Others"
             name="others"
             bind:value={others}
+        />
+    </div>
+</div>
+<div class="md:flex md:items-start mb-6">
+    <div class="md:w-3/12">
+        <label
+            class="field-label"
+            for="inline-remarks"
+        >
+            Note
+        </label>
+    </div>
+    <div class="md:w-5/12">
+        <textarea
+            class="field"
+            id="inline-remarks"
+            rows="3"
+            cols="50"
+            placeholder="Printed as a boxed note on the report"
+            name="remarks"
+            bind:value={remarks}
         />
     </div>
 </div>
