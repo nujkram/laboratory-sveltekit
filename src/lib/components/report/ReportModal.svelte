@@ -96,12 +96,16 @@
 		justify-content: center;
 		align-items: flex-start;
 	}
+	/* Some Word tables deliberately run up to 0.5in past the sheet's edge
+	   (the CBC index box, the parasitology cell counts), so the on-screen
+	   card carries that much side padding to show them the way the paper
+	   does. In print the padding is zeroed and @page margins take over. */
 	.report-card {
 		position: relative;
 		background: #fff;
 		border-radius: 0.5rem;
 		box-shadow: 0 10px 25px rgb(0 0 0 / 0.25);
-		padding: 3rem 0.75rem 1.5rem;
+		padding: 3rem 0.5in 1.5rem;
 	}
 
 	/* The paper forms are set in Arial — the report sheet matches on screen and

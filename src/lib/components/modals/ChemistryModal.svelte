@@ -20,6 +20,7 @@
 		created={data?.created}
 		requestedBy={data?.requestedBy}
 		requestedByLabel="Requesting Physician"
+		caseLabel="Case No.:"
 		exam={null}
 		thirdRow={{ label: 'Stat/Routine', value: data?.stat }}
 	/>

@@ -1,6 +1,7 @@
 // Hematology report rows in paper-form order. `ref` is a plain string or
 // { f, m } printed with bold "F:" / "M:" prefixes. Field names match the
 // stored record fields (`lympocyte` is the record's real, misspelled key).
+// Widths are the Word table grids from HEMA FORM.docx, in inches.
 export const hematologyMainRows = [
 	{
 		label: 'Hemoglobin Concentration Mass:',
@@ -28,19 +29,63 @@ export const hematologyMainRows = [
 	}
 ];
 
+// Leukocyte differential. On the paper form every underline ends at the same
+// right edge (3.32in) but the label cells narrow row by row, so the rules get
+// longer down the table — `labelWidth` / `valueWidth` reproduce that staircase,
+// and `indent` the leading spaces Word uses to inset "Segmenters:" and "Stab:".
 export const leukocyteRows = [
-	{ label: 'Neutrophil Number Fraction:', field: 'neutrophilNumber', ref: '0.60 - 0.70' },
-	{ label: 'Segmenters:', field: 'segmenters', ref: '0.60 - 0.70' },
-	{ label: 'Stab:', field: 'stab', ref: '0.02 - 0.06' },
-	{ label: 'Eosinophil:', field: 'eosinophil', ref: '0.02 - 0.03' },
-	{ label: 'Basophil:', field: 'basophil', ref: '0.00 - 0.01' },
+	{
+		label: 'Neutrophil Number Fraction:',
+		field: 'neutrophilNumber',
+		ref: '0.60 - 0.70',
+		labelWidth: '1.83in',
+		valueWidth: '1.49in'
+	},
+	{
+		label: 'Segmenters:',
+		field: 'segmenters',
+		ref: '0.60 - 0.70',
+		labelWidth: '1.51in',
+		valueWidth: '1.81in',
+		indent: '0.45in'
+	},
+	{
+		label: 'Stab:',
+		field: 'stab',
+		ref: '0.02 - 0.06',
+		labelWidth: '1.07in',
+		valueWidth: '2.25in',
+		indent: '0.45in'
+	},
+	{
+		label: 'Eosinophil:',
+		field: 'eosinophil',
+		ref: '0.02 - 0.03',
+		labelWidth: '0.88in',
+		valueWidth: '2.44in'
+	},
+	{
+		label: 'Basophil:',
+		field: 'basophil',
+		ref: '0.00 - 0.01',
+		labelWidth: '0.88in',
+		valueWidth: '2.44in'
+	},
 	{
 		label: 'Lymphocyte:',
 		field: 'lympocyte',
 		ref: 'Adult: 0.18 - 0.30',
-		ref2: 'Infant: 0.22 - 0.40'
+		ref2: 'Infant: 0.22 - 0.40',
+		labelWidth: '0.88in',
+		valueWidth: '2.44in'
 	},
-	{ label: 'Monocyte:', field: 'monocyte', ref: '0.04 - 0.08' }
+	{
+		label: 'Monocyte:',
+		field: 'monocyte',
+		ref: '0.04 - 0.08',
+		labelWidth: '0.88in',
+		valueWidth: '2.44in'
+	}
 ];
 
 // The paper form's OTHERS box (red-cell indices).

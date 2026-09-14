@@ -11,11 +11,13 @@
 	export let bannerClass = 'bg-report-misc';
 	/** 'compact' | 'tall' */
 	export let variant = 'compact';
+	/** point-size override for the hospital block — RS FORM sets it at 9pt where the others use 8pt */
+	export let headSize = '';
 </script>
 
 <div class="flex items-center justify-center gap-2">
 	<img src="/mmg-logo.png" alt="" class="shrink-0" style="width: 0.65in; height: auto;" />
-	<div class="rpt-head text-center leading-tight">
+	<div class="rpt-head text-center leading-tight" style={headSize ? `font-size: ${headSize}` : ''}>
 		<div class="font-bold uppercase">Medical Mission Group Hospital &amp; Health</div>
 		<div>Services Cooperative of Roxas City and Capiz</div>
 		{#if variant === 'tall'}

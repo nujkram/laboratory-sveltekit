@@ -1,16 +1,15 @@
 <script>
 	// @ts-nocheck
-	// Parasitology report, in the order the paper form (RS FORM.docx) prints it:
-	// COLOR / CONSISTENCY with the values set large, then the "Others:" block
-	// over the microscopic cell counts, then the RESULTS line and the ruled
-	// lines beneath it. The paper form doesn't itemize species, so positive
-	// species findings are summarized on the RESULTS line; a negative summary
-	// (e.g. "NO INTESTINAL PARASITE SEEN") arrives via the remarks field.
+	// Parasitology report laid out like RS FORM.docx: COLOR / CONSISTENCY with
+	// the values set large, then two columns — RESULTS and its ruled lines on
+	// the left, the "Others:" cell-count table floated on the right. The paper
+	// form doesn't itemize species, so positive species findings are summarized
+	// on the RESULTS line; a negative summary (e.g. "NO INTESTINAL PARASITE
+	// SEEN") arrives via the remarks field. Widths are the Word grids in inches.
 	import ReportModal from '$lib/components/report/ReportModal.svelte';
 	import ReportHeader from '$lib/components/report/ReportHeader.svelte';
 	import ReportPatientBlock from '$lib/components/report/ReportPatientBlock.svelte';
 	import ReportFooter from '$lib/components/report/ReportFooter.svelte';
-	import ReportField from '$lib/components/report/ReportField.svelte';
 	import ReportFreeText from '$lib/components/report/ReportFreeText.svelte';
 	export let isViewModalOpen = false;
 	export let data;
@@ -25,6 +24,8 @@
 		['Entamoeba Histolytica Cyst', 'entamoebaHistCyst'],
 		['Entamoeba Histolytica Trophozoite', 'entamoebaHistTroph']
 	];
+	// The form's fifth row is an unlabelled blank; it carries Bacteria only
+	// when something was actually recorded there.
 	const cells = [
 		['Pus cells:', 'pusCell', '/hpf'],
 		['RBC:', 'rbc', '/hpf'],
@@ -42,7 +43,7 @@
 </script>
 
 <ReportModal bind:isViewModalOpen paper="letter">
-	<ReportHeader title="Parasitology" bannerClass="bg-report-parasitology" />
+	<ReportHeader title="Parasitology" bannerClass="bg-report-parasitology" headSize="9pt" />
 	<ReportPatientBlock
 		patient={data?.patient}
 		caseNumber={data?.caseNumber}
@@ -50,40 +51,53 @@
 		requestedBy={data?.requestedBy}
 	/>
 
-	<div class="report-gap rpt-md mt-3 grid grid-cols-2 gap-x-10">
-		<div class="flex items-end gap-1">
-			<span class="shrink-0 uppercase">Color:</span>
-			<span class="rpt-2xl flex-1 border-b border-black text-center font-bold uppercase"
-				>{data?.color || ''}&#8203;</span
-			>
+	<!-- COLOR / CONSISTENCY: grid 0.72 / 2.23 / 0.98 / 1.67, values 16pt bold -->
+	<div class="report-gap rpt-md mt-3 flex">
+		<div style="width: 0.72in">COLOR:</div>
+		<div
+			class="rpt-2xl border-b border-black text-center font-bold uppercase"
+			style="width: 2.23in"
+		>
+			{data?.color || ''}&#8203;
 		</div>
-		<div class="flex items-end gap-1">
-			<span class="shrink-0 uppercase">Consistency:</span>
-			<span class="rpt-2xl flex-1 border-b border-black text-center font-bold uppercase"
-				>{data?.consistency || ''}&#8203;</span
-			>
+		<div style="width: 0.98in">CONSISTENCY:</div>
+		<div
+			class="rpt-2xl border-b border-black text-center font-bold uppercase"
+			style="width: 1.67in"
+		>
+			{data?.consistency || ''}&#8203;
 		</div>
 	</div>
 
-	<div class="report-gap rpt-md mt-4 w-1/2">
-		<div class="rpt-xl font-bold">Others:</div>
-		<div class="mt-1 flex flex-col gap-0.5">
+	<!-- RESULTS runs the full width at 16pt. The Others table is anchored 0.21in
+	     below the top of that paragraph on the form — i.e. just under the
+	     headline — so it starts here, floated at 3.71in from the margin and
+	     3.25in wide (it runs 0.46in into the right margin exactly as in Word),
+	     with the three ruled lines (indented 0.57in, 2.44in wide) beside it. -->
+	<div class="report-gap rpt-md mt-5 flex items-baseline gap-2">
+		<span class="font-bold">RESULTS:</span>
+		<span class="rpt-2xl font-bold uppercase underline">{resultLine}&#8203;</span>
+	</div>
+	<div class="report-gap rpt-md flex items-start">
+		<div class="shrink-0" style="width: 3.71in">
+			<div class="mt-3" style="margin-left: 0.57in; width: 2.44in">
+				<ReportFreeText value={data?.others} lines={3} />
+			</div>
+		</div>
+		<div class="shrink-0" style="width: 3.25in">
+			<div class="rpt-xl font-bold">Others:</div>
 			{#each cells as [label, field, unit]}
-				<div class="flex gap-1">
-					<span class="w-5/12 shrink-0">{label}</span>
-					<ReportField value={data?.[field]} {unit} />
+				<div class="flex">
+					<div style="width: 1.57in">
+						{field === 'bacteria' && !data?.bacteria ? '' : label}
+					</div>
+					<div class="border-b border-black text-center font-bold uppercase" style="width: 1.06in">
+						{data?.[field] || ''}&#8203;
+					</div>
+					<div class="pl-1" style="width: 0.62in">{unit}</div>
 				</div>
 			{/each}
 		</div>
-	</div>
-
-	<div class="report-gap rpt-md mt-4 flex gap-2">
-		<span class="shrink-0 uppercase">Results:</span>
-		<span class="font-bold uppercase">{resultLine}&#8203;</span>
-	</div>
-
-	<div class="report-gap rpt-md mt-2 w-2/3">
-		<ReportFreeText value={data?.others} lines={3} />
 	</div>
 
 	<ReportFooter
