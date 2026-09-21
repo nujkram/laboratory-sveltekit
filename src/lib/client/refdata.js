@@ -10,6 +10,36 @@ export async function cacheRefData(key, data) {
 	await db.put('refdata', { key, dataEnc, cachedAt: Date.now() });
 }
 
+/**
+ * Forget everything cached about the person who was signed in: the reference
+ * lists, the working set of patient charts, and the service worker's copies of
+ * those responses.
+ *
+ * Called on sign-out, because the next person at a shared counter machine must
+ * not inherit the last one's data — the API refuses them now, but a cached
+ * response never reaches the API.
+ *
+ * Deliberately leaves the `outbox` and `keys` stores alone: the outbox holds
+ * writes that have not reached the server yet, and dropping those would lose a
+ * patient or a result someone entered offline.
+ */
+export async function clearCachedUserData() {
+	try {
+		const db = await getDB();
+		if (db) await db.clear('refdata');
+	} catch {
+		// nothing cached, or IndexedDB unavailable — nothing to forget
+	}
+	try {
+		if (typeof caches !== 'undefined') {
+			const keys = await caches.keys();
+			await Promise.all(keys.map((k) => caches.delete(k)));
+		}
+	} catch {
+		// Cache Storage blocked (private window) — nothing to forget
+	}
+}
+
 export async function getRefData(key) {
 	const db = await getDB();
 	if (!db) return null;

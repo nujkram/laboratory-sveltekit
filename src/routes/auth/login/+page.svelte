@@ -1,5 +1,4 @@
 <script>
-	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { SHA256 } from 'crypto-js';
 	import Logo from '$lib/components/Logo.svelte';
@@ -38,23 +37,18 @@
 			error = data.errorMessage || 'An error occured';
 			loggingIn = false;
 		} else {
-			page.subscribe((value) => {
-				value.data.user = {
-					_id: data.user._id,
-					profile: {
-						email: data.user.profile.email,
-						firstName: data.user.profile.firstName,
-						lastName: data.user.profile.lastName,
-						phone: data.user.profile.phone,
-						photo: data.user.profile.photo,
-						country: data.user.profile.country,
-						province: data.user.profile.province,
-						displayName: data.user.profile.displayName
-					},
-					email: data.user.profile.email
-				};
-			});
-			goto('/');
+			// Re-run the root layout's server load so `$page.data.user` is the
+			// user we just signed in as — role included.
+			//
+			// A plain goto() is not enough: the root layout is shared with this
+			// page, so SvelteKit reuses its already-loaded (signed-out) data and
+			// the role-filtered sidebar renders empty until a manual refresh.
+			// This previously hand-patched the page store instead, which both
+			// fought the store and omitted `role` entirely.
+			//
+			// '/' is not every role's home — a cashier has no dashboard — but the
+			// server guard redirects them to one they can open.
+			await goto('/', { invalidateAll: true, replaceState: true });
 		}
 	};
 </script>

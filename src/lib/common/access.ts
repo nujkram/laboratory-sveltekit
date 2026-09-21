@@ -44,6 +44,60 @@ const RULES: Array<{ prefix: string; allow: Access }> = [
 	{ prefix: '/', allow: CLINICAL }
 ];
 
+/**
+ * The same idea for the JSON API. Pages being guarded is not enough on its own:
+ * `/api/admin/prefetch` alone returns 500 patients and their records, so a
+ * cashier who was merely kept off /patients could still have fetched the lot.
+ *
+ * Ordered like RULES — most specific prefix first.
+ */
+const API_RULES: Array<{ prefix: string; allow: Access }> = [
+	{ prefix: '/api/auth/login', allow: 'public' },
+	{ prefix: '/api/auth/logout', allow: 'authenticated' },
+
+	// changing your OWN password; the endpoint itself checks admin for resets
+	{ prefix: '/api/admin/user/password', allow: 'authenticated' },
+	// reference lists the record forms need to populate their selects
+	{ prefix: '/api/admin/user/med-tech', allow: CLINICAL },
+	{ prefix: '/api/admin/user/pathologist', allow: CLINICAL },
+	{ prefix: '/api/admin/user', allow: [ADMIN_ROLE] },
+
+	{ prefix: '/api/admin/role', allow: [ADMIN_ROLE] },
+	{ prefix: '/api/admin/settings', allow: [ADMIN_ROLE] },
+
+	{ prefix: '/api/admin/patient', allow: CLINICAL },
+	{ prefix: '/api/admin/record', allow: CLINICAL },
+	{ prefix: '/api/admin/dashboard', allow: CLINICAL },
+	// bulk patients + records for offline use — clinical only, emphatically
+	{ prefix: '/api/admin/prefetch', allow: CLINICAL },
+
+	{ prefix: '/api/admin/lab-test/update', allow: [ADMIN_ROLE] },
+	{ prefix: '/api/admin/lab-test', allow: CLINICAL },
+
+	{ prefix: '/api/admin/lab-transaction/pay', allow: [ADMIN_ROLE, CASHIER_ROLE] },
+	{ prefix: '/api/admin/lab-transaction/cancel', allow: [ADMIN_ROLE] },
+	{ prefix: '/api/admin/lab-transaction/insert', allow: CLINICAL },
+	{ prefix: '/api/admin/lab-transaction', allow: [...CLINICAL, CASHIER_ROLE] }
+];
+
+/**
+ * May this user call this endpoint? An unlisted `/api/` path falls through to
+ * administrators only, so a new endpoint is closed by default rather than open
+ * to everyone the day it is added.
+ */
+export function canCallApi(user: any, pathname: string) {
+	const path = pathname.length > 1 && pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
+	const rule = API_RULES.find(
+		({ prefix }) => path === prefix || path.startsWith(`${prefix}/`)
+	);
+	const allow: Access = rule ? rule.allow : [ADMIN_ROLE];
+
+	if (allow === 'public') return true;
+	if (!user) return false;
+	if (allow === 'authenticated') return true;
+	return allow.includes(user.role);
+}
+
 function ruleFor(pathname: string) {
 	const path = pathname.length > 1 && pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
 	return RULES.find(({ prefix }) =>

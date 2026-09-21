@@ -2,7 +2,7 @@ import { redirect } from '@sveltejs/kit';
 import clientPromise from '$lib/server/mongo';
 import { dev } from '$app/environment';
 import { hashToken, SESSION_COOKIE, SESSION_TTL_MS } from '$lib/server/session';
-import { canView, isPublicPath, landingFor } from '$lib/common/access';
+import { canCallApi, canView, isPublicPath, landingFor } from '$lib/common/access';
 
 export const handle = async ({ event, resolve }: { event: any; resolve: any }) => {
 	// Browsers (Chrome DevTools, etc.) probe /.well-known/* automatically.
@@ -15,7 +15,8 @@ export const handle = async ({ event, resolve }: { event: any; resolve: any }) =
 
 	if (!token) {
 		event.locals.user = null;
-		guardPage(event);
+		const blocked = guardRequest(event);
+		if (blocked) return blocked;
 		return await resolve(event);
 	}
 
@@ -43,7 +44,8 @@ export const handle = async ({ event, resolve }: { event: any; resolve: any }) =
 		event.locals.user = null;
 	}
 
-	guardPage(event);
+	const blocked = guardRequest(event);
+	if (blocked) return blocked;
 
 	return await resolve(event);
 };
@@ -61,10 +63,11 @@ export const handle = async ({ event, resolve }: { event: any; resolve: any }) =
  *
  * @param {any} event
  */
-function guardPage(event: any) {
+function guardRequest(event: any): Response | undefined {
 	const path = event.url.pathname;
 
-	if (path.startsWith('/api/') || path.startsWith('/_app/') || isPublicPath(path)) return;
+	if (path.startsWith('/api/')) return guardApi(event, path);
+	if (path.startsWith('/_app/') || isPublicPath(path)) return;
 	// SvelteKit's client-side navigation fetches `__data.json` beside the route;
 	// resolve the real route before deciding.
 	const route = path.endsWith('/__data.json') ? path.slice(0, -'/__data.json'.length) || '/' : path;
@@ -79,6 +82,36 @@ function guardPage(event: any) {
 	if (!canView(event.locals.user, route)) {
 		throw redirect(303, landingFor(event.locals.user));
 	}
+}
+
+/**
+ * The same gate for the JSON API, answering in JSON rather than redirecting —
+ * a redirect would hand the client an HTML page it cannot parse.
+ *
+ * This is a single chokepoint in front of every endpoint, so a new one cannot
+ * be shipped unguarded by forgetting the check; `canCallApi` closes anything
+ * unlisted to administrators. The per-endpoint guards stay, both as defence in
+ * depth and because they give a more specific message.
+ *
+ * @param {any} event
+ * @param {string} path
+ */
+function guardApi(event: any, path: string): Response | undefined {
+	if (canCallApi(event.locals.user, path)) return;
+
+	const signedOut = !event.locals.user;
+	// The app's usual envelope, so existing callers (saveOrQueue, the list
+	// pages) read the reason instead of choking on an HTML error page.
+	return new Response(
+		JSON.stringify({
+			status: 'Error',
+			code: signedOut ? 'AUTH' : 'FORBIDDEN',
+			message: signedOut
+				? 'Your session has expired. Please sign in again.'
+				: 'Your role does not have access to this resource.'
+		}),
+		{ status: signedOut ? 401 : 403, headers: { 'Content-Type': 'application/json' } }
+	);
 }
 
 /** @type {import('@sveltejs/kit').HandleServerError} */

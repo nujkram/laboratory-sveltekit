@@ -4,6 +4,7 @@
 	import { page } from '$app/stores';
 	import { isOnline, pendingCount, syncBlocked } from '$lib/stores/connectivity.js';
 	import { sidebarOpen, toggleSidebar } from '$lib/stores/ui.js';
+	import { clearCachedUserData } from '$lib/client/refdata.js';
 
 	// Passed from the layout so it survives offline (cached user fallback).
 	export let user = null;
@@ -41,6 +42,10 @@
 			// Offline or network error — the cookie is cleared server-side next
 			// time; still leave the app so the UI doesn't look signed in.
 		}
+		// Drop this person's cached reference data and responses so the next
+		// user of a shared machine does not inherit them. Pending offline
+		// writes in the outbox are kept.
+		await clearCachedUserData();
 		window.location.href = '/auth/login';
 	}
 </script>

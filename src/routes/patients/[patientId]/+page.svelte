@@ -7,6 +7,7 @@
 	import Button from "$lib/components/reusable/Button.svelte";
 	import EditPatientForm from "$lib/components/forms/patient/EditPatientForm.svelte";
 	import Sort from "$lib/components/reusable/Sort.svelte";
+	import { categoryBadge, categoryBadgeBase } from '$lib/constants/categoryColors.js';
 	import Edit from "$lib/components/icons/Edit.svelte";
 	import ChemistryModal from '$lib/components/modals/ChemistryModal.svelte';
 	import MiscModal from '$lib/components/modals/MiscModal.svelte';
@@ -323,7 +324,10 @@
 									}}
 								>
 									<td class="whitespace-nowrap px-5 py-3">
-										<span class="inline-flex items-center rounded-full bg-leaf-soft px-2.5 py-1 text-xs font-medium text-pine-700">
+										<span class="{categoryBadgeBase} {categoryBadge(data?.category).tint}">
+											<span
+												class="h-1.5 w-1.5 shrink-0 rounded-full {categoryBadge(data?.category).dot}"
+											/>
 											{data?.category || '—'}
 										</span>
 									</td>

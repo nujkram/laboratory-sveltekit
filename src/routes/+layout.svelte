@@ -12,19 +12,25 @@
 	import { fade } from 'svelte/transition';
 	import { cacheRefData, getRefData, loadRefList, prefetchWorkingSet } from '$lib/client/refdata.js';
 	import { startAutoSync } from '$lib/client/sync.js';
+	import { canView } from '$lib/common/access';
 
 	let cachedUser = null;
 
 	// Whenever the app is used online, refresh the data needed offline: the form
 	// reference lists, plus the working set (patients + recent records per patient)
 	// so any active patient's chart opens offline — not just recently-viewed ones.
+	//
+	// All of it is clinical, so it is only warmed for roles that may read it. A
+	// cashier caching 500 patient charts on the counter machine would undo the
+	// access rules, and the API now refuses them anyway.
 	function warmRefData() {
-		if (typeof navigator !== 'undefined' && navigator.onLine) {
-			loadRefList('categories', '/api/admin/record/categories');
-			loadRefList('medTechs', '/api/admin/user/med-tech');
-			loadRefList('pathologists', '/api/admin/user/pathologist');
-			prefetchWorkingSet();
-		}
+		if (typeof navigator === 'undefined' || !navigator.onLine) return;
+		if (!canView($page.data.user, '/patients')) return;
+
+		loadRefList('categories', '/api/admin/record/categories');
+		loadRefList('medTechs', '/api/admin/user/med-tech');
+		loadRefList('pathologists', '/api/admin/user/pathologist');
+		prefetchWorkingSet();
 	}
 
 	// Offline, fall back to the last-known signed-in user so the app stays usable.
