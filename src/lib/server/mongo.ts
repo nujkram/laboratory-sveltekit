@@ -51,6 +51,8 @@ async function ensureIndexes(db: Db) {
 		['records.patient', db.collection('records').createIndex({ patientId: 1, created: -1 })],
 		['records.created', db.collection('records').createIndex({ created: -1 })],
 		['records.category', db.collection('records').createIndex({ category: 1 })],
+		// results reconciled against the charge slip that paid for them
+		['records.transactionId', db.collection('records').createIndex({ transactionId: 1 }, { sparse: true })],
 		// patient/user lists: sort by created desc, filter/sort by name & status
 		['patients.created', db.collection('patients').createIndex({ created: -1 })],
 		['patients.lastName', db.collection('patients').createIndex({ lastName: 1 })],

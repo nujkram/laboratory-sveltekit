@@ -12,7 +12,7 @@
 	export let data;
 </script>
 
-<ReportModal bind:isViewModalOpen paper="chemLand">
+<ReportModal bind:isViewModalOpen transaction={data?.transaction} paper="chemLand">
 	<ReportHeader title="Chemistry" bannerClass="bg-report-chemistry" />
 	<ReportPatientBlock
 		patient={data?.patient}

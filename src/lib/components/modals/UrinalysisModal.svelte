@@ -40,7 +40,7 @@
 	];
 </script>
 
-<ReportModal bind:isViewModalOpen paper="a4">
+<ReportModal bind:isViewModalOpen transaction={data?.transaction} paper="a4">
 	<ReportHeader title="Urinalysis" bannerClass="bg-report-urinalysis" />
 	<ReportPatientBlock
 		patient={data?.patient}

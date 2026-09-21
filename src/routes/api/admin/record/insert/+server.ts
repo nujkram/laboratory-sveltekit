@@ -3,6 +3,7 @@ import { json } from '@sveltejs/kit';
 import clientPromise from '$lib/server/mongo';
 import { nextCaseNumber } from '$lib/server/caseNumber';
 import { cleanBody } from '$lib/server/sanitize';
+import { RecordLinkError, validateTransactionLink } from '$lib/server/recordTransaction';
 
 /**
  * Idempotent insert: the client generates `_id` (so an offline entry can be
@@ -41,6 +42,17 @@ export async function POST({ request, locals }: any) {
 	const existing = await Record.findOne({ _id });
 	if (existing) {
 		return json({ status: 'Success', message: 'Record already saved', response: existing });
+	}
+
+	// Optional link to the charge slip this result was paid under. Validated
+	// before the case number is allocated so a bad link never burns one.
+	try {
+		data.transactionId = await validateTransactionLink(db, data.transactionId, data.patientId);
+	} catch (error) {
+		if (error instanceof RecordLinkError) {
+			return json({ status: 'Error', message: error.message }, { status: 400 });
+		}
+		throw error;
 	}
 
 	data.caseNumber = await nextCaseNumber(db);

@@ -31,7 +31,7 @@
 	$: clot = splitTime(data?.clottingTime);
 </script>
 
-<ReportModal bind:isViewModalOpen paper="a4Hema">
+<ReportModal bind:isViewModalOpen transaction={data?.transaction} paper="a4Hema">
 	<ReportHeader title="Hematology" bannerClass="bg-report-hematology" />
 	<ReportPatientBlock
 		patient={data?.patient}

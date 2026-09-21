@@ -14,6 +14,35 @@
 	export let isViewModalOpen = false;
 	/** key of $lib/constants/reportPapers — the form's original paper size */
 	export let paper = 'letter';
+	/**
+	 * The laboratory transaction this result was charged under, when it is
+	 * linked to one: `{ referenceNumber, paymentStatus, status }`.
+	 *
+	 * The slip printed at the counter says results are released on presentation
+	 * of the official receipt; this is what lets the app know whether that
+	 * receipt exists. Left null — by every record predating the link, by
+	 * anything encoded offline, and by the receipt itself — printing behaves
+	 * exactly as it always has.
+	 */
+	export let transaction = null;
+
+	// Deliberately a prompt, not a block. A result that cannot be printed in an
+	// emergency is a worse failure than one released before the cashier has been
+	// paid, and the med-tech cannot see whether the patient is mid-payment.
+	$: unpaid = !!transaction && transaction.paymentStatus !== 'Paid';
+	let confirmingRelease = false;
+
+	function handlePrint() {
+		if (unpaid && !confirmingRelease) {
+			confirmingRelease = true;
+			return;
+		}
+		confirmingRelease = false;
+		printReport();
+	}
+
+	// Never carry the prompt over to the next report opened.
+	$: if (!isViewModalOpen) confirmingRelease = false;
 
 	const handleCloseModal = () => (isViewModalOpen = false);
 
@@ -40,19 +69,37 @@
 		<div class="report-card" on:click|stopPropagation>
 			<div id="nav-modal">
 				<button
-					class="absolute top-3 left-2.5 inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-primaryHover"
-					on:click={printReport}
+					class="absolute top-3 left-2.5 inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-white transition-colors {confirmingRelease
+						? 'bg-warning hover:bg-warningHover'
+						: 'bg-primary hover:bg-primaryHover'}"
+					on:click={handlePrint}
 				>
-					Print
+					{confirmingRelease ? 'Release anyway?' : 'Print'}
 				</button>
-				<!-- Chrome draws its own URL/date strip inside the page margin and
-				     lets the user override margins per destination; both silently
-				     break a form that has to match the paper 1:1. -->
-				<p class="absolute top-4 left-20 text-xs text-muted">
-					In the print dialog set <span class="font-medium">Margins: Default</span>, untick
-					<span class="font-medium">Headers and footers</span>, and tick
-					<span class="font-medium">Background graphics</span>.
-				</p>
+				{#if confirmingRelease}
+					<button
+						class="absolute top-3 left-[9.5rem] inline-flex items-center rounded-lg border border-line bg-surface px-3 py-1.5 text-sm font-medium text-ink transition-colors hover:bg-paper"
+						on:click={() => (confirmingRelease = false)}
+					>
+						Cancel
+					</button>
+				{/if}
+				{#if unpaid}
+					<p class="absolute top-4 left-64 text-xs font-medium text-warning">
+						Charge slip {transaction.referenceNumber} is
+						{transaction.status === 'Cancelled' ? 'cancelled' : 'unpaid'} — the official receipt
+						has not been issued.
+					</p>
+				{:else}
+					<!-- Chrome draws its own URL/date strip inside the page margin and
+					     lets the user override margins per destination; both silently
+					     break a form that has to match the paper 1:1. -->
+					<p class="absolute top-4 left-20 text-xs text-muted">
+						In the print dialog set <span class="font-medium">Margins: Default</span>, untick
+						<span class="font-medium">Headers and footers</span>, and tick
+						<span class="font-medium">Background graphics</span>.
+					</p>
+				{/if}
 				<button
 					on:click={handleCloseModal}
 					type="button"

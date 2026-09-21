@@ -11,6 +11,7 @@
 	import { onMount } from 'svelte';
 	import { loadRefList } from '$lib/client/refdata.js';
 	import { saveOrQueue } from '$lib/client/saveOrQueue.js';
+	import { formatPeso } from '$lib/utils/currency';
 
 	export let data;
 	let { patientId } = data;
@@ -123,7 +124,37 @@
 	let options = [];
 	let selectedOption = '';
 
+	// Charge slips already raised for this patient, so the result can be tied to
+	// what was actually paid for. Online-only: offline the picker simply is not
+	// offered and the record saves unlinked, which is a valid state.
+	let transactions = [];
+	let transactionId = '';
+
+	async function loadTransactions() {
+		if (typeof navigator !== 'undefined' && !navigator.onLine) return;
+		try {
+			const res = await fetch('/api/admin/lab-transaction', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				credentials: 'include',
+				body: JSON.stringify({ patientId, pageSize: 25, sortBy: 'created', sortOrder: 'desc' })
+			});
+			const result = await res.json();
+			if (result?.status !== 'Success') return;
+			transactions = (result.response ?? []).filter((t) => t.status !== 'Cancelled');
+			// The slip in the patient's hand is almost always the unpaid one.
+			transactionId = (transactions.find((t) => t.paymentStatus === 'Unpaid') ?? transactions[0])?._id ?? '';
+		} catch {
+			// no picker; the record still saves without a link
+		}
+	}
+
+	function describeSlip(t) {
+		return `${t.referenceNumber} · ${formatPeso(t.netCentavos)} · ${t.paymentStatus}`;
+	}
+
 	onMount(async () => {
+		loadTransactions();
 		// Reference lists: fresh when online, last-cached when offline.
 		const [cats, mts, paths] = await Promise.all([
 			loadRefList('categories', '/api/admin/record/categories'),
@@ -293,6 +324,25 @@
 					/>
 				</div>
 			</div>
+			{#if transactions.length}
+				<div class="md:flex md:items-center mb-6">
+					<div class="md:w-3/12">
+						<label class="field-label" for="inline-transaction">Charge slip</label>
+					</div>
+					<div class="md:w-5/12">
+						<select id="inline-transaction" name="transactionId" class="field" bind:value={transactionId}>
+							<option value="">Not linked to a charge slip</option>
+							{#each transactions as t (t._id)}
+								<option value={t._id}>{describeSlip(t)}</option>
+							{/each}
+						</select>
+						<span class="field-hint">
+							Ties this result to what the patient was charged, and warns before it is
+							released while the slip is unpaid.
+						</span>
+					</div>
+				</div>
+			{/if}
 			<div class="md:flex md:items-center mb-6">
 				<div class="md:w-3/12">
 					<label

@@ -20,7 +20,7 @@
 	$: analyzerNote = cfg.analyzer && data?.analyzer ? `*${data.analyzer} TM` : '';
 </script>
 
-<ReportModal bind:isViewModalOpen paper={cfg.paper}>
+<ReportModal bind:isViewModalOpen transaction={data?.transaction} paper={cfg.paper}>
 	<ReportHeader title="Miscellaneous" bannerClass={cfg.banner} variant={cfg.header} />
 	<ReportPatientBlock
 		patient={data?.patient}

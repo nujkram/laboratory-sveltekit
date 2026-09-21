@@ -42,7 +42,7 @@
 	$: resultLine = findings.length ? findings.join('; ') : data?.remarks || '';
 </script>
 
-<ReportModal bind:isViewModalOpen paper="letter">
+<ReportModal bind:isViewModalOpen transaction={data?.transaction} paper="letter">
 	<ReportHeader title="Parasitology" bannerClass="bg-report-parasitology" headSize="9pt" />
 	<ReportPatientBlock
 		patient={data?.patient}

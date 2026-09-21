@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit';
 import clientPromise from '$lib/server/mongo';
 import { cleanBody } from '$lib/server/sanitize';
+import { RecordLinkError, validateTransactionLink } from '$lib/server/recordTransaction';
 
 /**
  * Fields the client can never overwrite through an update — identity,
@@ -46,6 +47,21 @@ export async function POST({ request, locals }: any) {
 
 	const db = await clientPromise();
 	const Record = db.collection('records');
+
+	// The charge-slip link may be changed or cleared here. `patientId` is a
+	// protected field, so the owning patient comes from the stored record
+	// rather than the request — a body cannot claim a different one.
+	if ('transactionId' in data) {
+		const existing: any = await Record.findOne({ _id }, { projection: { patientId: 1 } });
+		try {
+			data.transactionId = await validateTransactionLink(db, data.transactionId, existing?.patientId);
+		} catch (error) {
+			if (error instanceof RecordLinkError) {
+				return json({ status: 'Error', message: error.message }, { status: 400 });
+			}
+			throw error;
+		}
+	}
 
 	data.updated = new Date();
 	data.updateBy = locals.user._id;
