@@ -81,6 +81,13 @@
 					/>
 				</svg>
 			</SidebarItem>
+			<SidebarItem link="/cashier" title="Cashier">
+				<svg class="h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+					<path
+						d="M10 1a2 2 0 00-2 2v1H5.5A1.5 1.5 0 004 5.5v1A1.5 1.5 0 005.5 8h9A1.5 1.5 0 0016 6.5v-1A1.5 1.5 0 0014.5 4H12V3a2 2 0 00-2-2zm-.5 2a.5.5 0 011 0v1h-1V3zM4 9.5A1.5 1.5 0 015.5 8h9A1.5 1.5 0 0116 9.5v7A1.5 1.5 0 0114.5 18h-9A1.5 1.5 0 014 16.5v-7zm2.75 1a.75.75 0 000 1.5h6.5a.75.75 0 000-1.5h-6.5zm0 3a.75.75 0 000 1.5h3.5a.75.75 0 000-1.5h-3.5z"
+					/>
+				</svg>
+			</SidebarItem>
 		</ul>
 
 		<p class="px-3 pt-6 pb-2 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-white/40">

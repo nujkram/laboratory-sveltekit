@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import { MongoClient, type Db } from 'mongodb';
 import { ensureLabTests } from './labTestCatalog';
+import { ensureCashierRole } from './roleSeed';
 
 const uri = process.env['DATABASE_URL'];
 
@@ -79,6 +80,14 @@ async function ensureIndexes(db: Db) {
 		[
 			'lab_transactions.createdBy',
 			db.collection('lab_transactions').createIndex({ createdBy: 1, created: -1 })
+		],
+		// One official receipt number can only ever belong to one transaction.
+		// Sparse, because unpaid transactions have no payment sub-document.
+		[
+			'lab_transactions.orNumber unique',
+			db
+				.collection('lab_transactions')
+				.createIndex({ 'payment.orNumber': 1 }, { unique: true, sparse: true })
 		]
 	];
 	const results = await Promise.allSettled(attempts.map(([, p]) => p));
@@ -108,6 +117,11 @@ function connect() {
 				if (added) console.info(`ensureLabTests: seeded ${added} laboratory test(s)`);
 			} catch (error) {
 				console.error('ensureLabTests failed (non-fatal):', error);
+			}
+			try {
+				if (await ensureCashierRole(db)) console.info('ensureCashierRole: added the Cashier role');
+			} catch (error) {
+				console.error('ensureCashierRole failed (non-fatal):', error);
 			}
 			return { client, db };
 		})().catch((error) => {

@@ -19,6 +19,7 @@
 		patients: 'Patients',
 		record: 'Laboratory Records',
 		laboratory: 'Laboratory Transactions',
+		cashier: 'Cashier',
 		users: 'Users',
 		settings: 'Settings'
 	};

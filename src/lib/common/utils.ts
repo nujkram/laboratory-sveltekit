@@ -52,6 +52,16 @@ export const ADMIN_ROLE = 'Administrator';
 // client-side `$page.data.user`. Both carry a `role` string.
 export const isAdmin = (user: any) => user?.role === ADMIN_ROLE;
 
+// Role that may take payment for a laboratory transaction. Needs a matching
+// document in the `roles` collection before anyone can be given it.
+export const CASHIER_ROLE = 'Cashier';
+
+export const isCashier = (user: any) => user?.role === CASHIER_ROLE;
+
+// Taking money is restricted to cashiers and administrators. Encoding a
+// request stays open to all staff, the way records already are.
+export const canTakePayment = (user: any) => isCashier(user) || isAdmin(user);
+
 export const formMachine = createMachine({
 	id: 'form',
 	initial: 'fresh',
