@@ -38,6 +38,23 @@ async function staleWhileRevalidate(request) {
 	return cached || (await network) || Response.error();
 }
 
+/**
+ * Always ask the network first; only fall back to the cache when it cannot be
+ * reached. A cached response is still refreshed so the offline copy stays as
+ * recent as the last successful load.
+ */
+async function networkFirstData(request) {
+	const cache = await caches.open(CACHE);
+	try {
+		const res = await fetch(request);
+		if (res && res.ok) cache.put(request, res.clone());
+		return res;
+	} catch {
+		const cached = await cache.match(request);
+		return cached || Response.error();
+	}
+}
+
 self.addEventListener('fetch', (event) => {
 	const { request } = event;
 	if (request.method !== 'GET') return; // writes go through the app's outbox
@@ -51,8 +68,19 @@ self.addEventListener('fetch', (event) => {
 		return;
 	}
 
-	// SvelteKit load data + reference GET APIs → stale-while-revalidate.
-	if (url.pathname.endsWith('/__data.json') || SWR_API.some((p) => url.pathname.startsWith(p))) {
+	// SvelteKit load data carries the SIGNED-IN USER, so it must never be served
+	// stale: after a sign-out or a switch of staff on a shared terminal, a
+	// cached copy would show the previous person's name and — now that the
+	// sidebar is role-driven — their navigation. Network-first keeps the
+	// identity honest online while still falling back to cache offline, which
+	// is what the offline support actually needs.
+	if (url.pathname.endsWith('/__data.json')) {
+		event.respondWith(networkFirstData(request));
+		return;
+	}
+
+	// Reference GET APIs (no per-user content) → stale-while-revalidate.
+	if (SWR_API.some((p) => url.pathname.startsWith(p))) {
 		event.respondWith(staleWhileRevalidate(request));
 		return;
 	}

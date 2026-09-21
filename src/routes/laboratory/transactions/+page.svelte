@@ -9,6 +9,7 @@
 	import Sort from '$lib/components/reusable/Sort.svelte';
 	import LabReceiptModal from '$lib/components/modals/LabReceiptModal.svelte';
 	import { formatPeso } from '$lib/utils/currency';
+	import { canView } from '$lib/common/access';
 	import { isOnline } from '$lib/stores/connectivity.js';
 
 	let items = [];
@@ -173,7 +174,11 @@
 				range.
 			</p>
 		</div>
-		<Button type="link" href="/laboratory/request/new" color="primary" text="New request" />
+		<!-- a cashier may read this list but not encode a request; offering the
+		     button would just bounce them back here -->
+		{#if canView($page.data.user, '/laboratory/request/new')}
+			<Button type="link" href="/laboratory/request/new" color="primary" text="New request" />
+		{/if}
 	</div>
 
 	<!-- Range totals -->
