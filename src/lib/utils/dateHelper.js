@@ -58,3 +58,15 @@ export const formatDateMDY = (dateString) => {
 	if (isNaN(date.getTime())) return '';
 	return `${months[date.getMonth()].slice(0, 3)} ${date.getDate()}, ${date.getFullYear()}`;
 };
+
+// MM/DD/YYYY — the compact form, for report fields too narrow for the spelled
+// month. Same missing/invalid handling as formatDateMDY.
+/** @param {string | number | Date | null | undefined} dateString */
+export const formatDateNumericMDY = (dateString) => {
+	if (!dateString) return '';
+	const date = new Date(dateString);
+	if (isNaN(date.getTime())) return '';
+	const mm = String(date.getMonth() + 1).padStart(2, '0');
+	const dd = String(date.getDate()).padStart(2, '0');
+	return `${mm}/${dd}/${date.getFullYear()}`;
+};

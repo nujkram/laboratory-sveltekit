@@ -49,6 +49,7 @@
 		caseNumber={data?.caseNumber}
 		created={data?.created}
 		requestedBy={data?.requestedBy}
+		packed
 	/>
 
 	<!-- COLOR / CONSISTENCY: grid 0.72 / 2.23 / 0.98 / 1.67, values 16pt bold -->
