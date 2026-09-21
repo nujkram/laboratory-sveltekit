@@ -74,6 +74,13 @@
 					/>
 				</svg>
 			</SidebarItem>
+			<SidebarItem link="/laboratory" title="Transactions">
+				<svg class="h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+					<path
+						d="M3 4.5A1.5 1.5 0 014.5 3h11A1.5 1.5 0 0117 4.5v11a1.5 1.5 0 01-1.5 1.5h-11A1.5 1.5 0 013 15.5v-11zM5.5 6a.75.75 0 000 1.5h1A.75.75 0 006.5 6h-1zm3 0a.75.75 0 000 1.5h6A.75.75 0 0014.5 6h-6zm-3 3.25a.75.75 0 000 1.5h1a.75.75 0 000-1.5h-1zm3 0a.75.75 0 000 1.5h6a.75.75 0 000-1.5h-6zm-3 3.25a.75.75 0 000 1.5h1a.75.75 0 000-1.5h-1zm3 0a.75.75 0 000 1.5h6a.75.75 0 000-1.5h-6z"
+					/>
+				</svg>
+			</SidebarItem>
 		</ul>
 
 		<p class="px-3 pt-6 pb-2 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-white/40">

@@ -18,6 +18,7 @@
 		'': 'Dashboard',
 		patients: 'Patients',
 		record: 'Laboratory Records',
+		laboratory: 'Laboratory Transactions',
 		users: 'Users',
 		settings: 'Settings'
 	};

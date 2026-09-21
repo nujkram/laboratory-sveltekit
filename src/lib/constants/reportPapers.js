@@ -25,7 +25,11 @@ export const papers = {
 		base: '12pt',
 		head: '10pt'
 	},
-	chemLand: { size: '11in 8.5in', margin: '0.5in', content: '10in', base: '10pt', head: '8pt' }
+	chemLand: { size: '11in 8.5in', margin: '0.5in', content: '10in', base: '10pt', head: '8pt' },
+	// Half-letter charge slip. Not from a Word template — this is the new
+	// laboratory transaction receipt, sized so two print per letter sheet on an
+	// ordinary office printer (no slip printer needed).
+	receipt: { size: '5.5in 8.5in', margin: '0.3in', content: '4.9in', base: '9pt', head: '7pt' }
 };
 
 /**

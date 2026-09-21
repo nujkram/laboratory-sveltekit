@@ -176,6 +176,12 @@
 		display: none !important;
 	}
 
+	/* Notices meant for the person at the screen (e.g. the receipt's "still
+	   generating the scan codes" warning) must never reach the paper. */
+	.report-screen-only {
+		display: none !important;
+	}
+
 	/* @page already supplies the paper margins — don't apply them twice. */
 	#report-sheet {
 		padding: 0 !important;
