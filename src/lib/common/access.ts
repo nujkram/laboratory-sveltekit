@@ -75,6 +75,9 @@ const API_RULES: Array<{ prefix: string; allow: Access }> = [
 	{ prefix: '/api/admin/lab-test', allow: CLINICAL },
 
 	{ prefix: '/api/admin/lab-transaction/pay', allow: [ADMIN_ROLE, CASHIER_ROLE] },
+	// The counter sets the discount: that is where the senior/PWD card is handed
+	// over. Clinical staff reach the same rules through `insert` at request time.
+	{ prefix: '/api/admin/lab-transaction/discount', allow: [ADMIN_ROLE, CASHIER_ROLE] },
 	{ prefix: '/api/admin/lab-transaction/cancel', allow: [ADMIN_ROLE] },
 	{ prefix: '/api/admin/lab-transaction/insert', allow: CLINICAL },
 	{ prefix: '/api/admin/lab-transaction', allow: [...CLINICAL, CASHIER_ROLE] }

@@ -111,6 +111,16 @@ export async function POST({ request, locals }: any) {
 								netCentavos: { $sum: '$netCentavos' },
 								paidCentavos: {
 									$sum: { $cond: [{ $eq: ['$paymentStatus', 'Paid'] }, '$netCentavos', 0] }
+								},
+								discountCentavos: { $sum: '$discountCentavos' },
+								// Senior and PWD separately: the 20% is deductible from
+								// gross income, so the laboratory has to be able to state
+								// the statutory total for a period without re-adding the
+								// ad-hoc concessions to it.
+								statutoryDiscountCentavos: {
+									$sum: {
+										$cond: [{ $in: ['$discountType', ['Senior', 'PWD']] }, '$discountCentavos', 0]
+									}
 								}
 							}
 						}
@@ -131,7 +141,9 @@ export async function POST({ request, locals }: any) {
 		summary: {
 			netCentavos: summary.netCentavos ?? 0,
 			paidCentavos: summary.paidCentavos ?? 0,
-			unpaidCentavos: (summary.netCentavos ?? 0) - (summary.paidCentavos ?? 0)
+			unpaidCentavos: (summary.netCentavos ?? 0) - (summary.paidCentavos ?? 0),
+			discountCentavos: summary.discountCentavos ?? 0,
+			statutoryDiscountCentavos: summary.statutoryDiscountCentavos ?? 0
 		}
 	});
 }

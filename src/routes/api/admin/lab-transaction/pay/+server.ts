@@ -111,11 +111,19 @@ export async function POST({ request, locals }: any) {
 		paidByName: locals.user.name ?? locals.user.profile?.firstName ?? null
 	};
 
+	// The filter IS the lock: only an unpaid, uncancelled transaction matches.
+	const lock: any = { _id, paymentStatus: 'Unpaid', status: 'Pending' };
+	// It also pins the amount. A cashier can apply a senior/PWD discount to an
+	// unpaid transaction, so the net read above can change underneath us — and the
+	// tendered, change and paid amounts were all computed from it. Pinning turns
+	// that race into a 409 telling the cashier to retrieve it again, instead of a
+	// payment quietly recorded at the pre-discount total.
+	if (typeof current.netCentavos === 'number') lock.netCentavos = current.netCentavos;
+
 	let result;
 	try {
 		result = await LabTransaction.updateOne(
-			// The filter IS the lock: only an unpaid, uncancelled transaction matches.
-			{ _id, paymentStatus: 'Unpaid', status: 'Pending' },
+			lock,
 			{
 				$set: { paymentStatus: 'Paid', payment, updated: new Date(), updateBy: locals.user._id },
 				$push: { history: auditEntry('paid', locals.user, `O.R. ${orNumber}`) as any }
@@ -140,10 +148,33 @@ export async function POST({ request, locals }: any) {
 	}
 
 	if (!result.matchedCount) {
-		// Lost the race: someone paid it between our read and our write.
+		// Lost the race: the transaction changed between our read and our write.
 		const latest: any = await LabTransaction.findOne({ _id });
+		if (latest?.paymentStatus === 'Paid') {
+			return json(
+				{ status: 'Conflict', message: alreadyPaid(latest), response: latest },
+				{ status: 409 }
+			);
+		}
+		if (latest?.status === 'Cancelled') {
+			return json(
+				{
+					status: 'Conflict',
+					message: 'That transaction was cancelled and cannot be paid.',
+					response: latest
+				},
+				{ status: 409 }
+			);
+		}
+		// The amount moved — someone applied or removed a discount while this
+		// cashier was counting the money. Send back the current document so the
+		// screen can redraw at the new total rather than re-submitting the old one.
 		return json(
-			{ status: 'Conflict', message: alreadyPaid(latest), response: latest },
+			{
+				status: 'Conflict',
+				message: 'This transaction was repriced while you were taking payment. Please check the new total before charging it.',
+				response: latest
+			},
 			{ status: 409 }
 		);
 	}

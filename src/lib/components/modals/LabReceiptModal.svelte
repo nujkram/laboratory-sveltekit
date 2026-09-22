@@ -15,6 +15,13 @@
 	import ReportModal from '$lib/components/report/ReportModal.svelte';
 	import ReportHeader from '$lib/components/report/ReportHeader.svelte';
 	import { formatAmount } from '$lib/utils/currency';
+	import {
+		discountIdLabel,
+		discountLineLabel,
+		discountSlipHeading,
+		isStatutory,
+		readDiscountType
+	} from '$lib/common/discounts';
 	import { formatDateMDY } from '$lib/utils/dateHelper.js';
 
 	export let isViewModalOpen = false;
@@ -32,6 +39,7 @@
 	$: reference = data?.referenceNumber ?? '';
 	$: encodedBy =
 		data?.createdBy?.profile?.firstName || data?.createdBy?.name || data?.createdBy?.email || '';
+	$: discountType = readDiscountType(data);
 
 	// Redraw whenever the modal opens with a different transaction.
 	$: if (isViewModalOpen && reference) renderCodes(reference);
@@ -179,8 +187,8 @@
 				<div class="flex justify-between border-t border-black pt-0.5">
 					<span>Gross Amount</span><span class="tabular font-bold">{formatAmount(data?.grossCentavos)}</span>
 				</div>
-				<div class="flex justify-between">
-					<span>Less: Discount</span><span class="tabular font-bold">{formatAmount(data?.discountCentavos)}</span>
+				<div class="flex justify-between gap-2">
+					<span>{discountLineLabel(discountType)}</span><span class="tabular font-bold">{formatAmount(data?.discountCentavos)}</span>
 				</div>
 				<div class="flex justify-between border-t border-black pt-0.5">
 					<span class="font-bold">Net Amount</span>
@@ -189,7 +197,30 @@
 			</div>
 		</div>
 
-		{#if data?.discountReason}
+		{#if isStatutory(discountType)}
+			<!-- BIR substantiation for RA 9994 / RA 10754. The cardholder's name, the
+			     OSCA/PWD ID number, the separately stated gross-discount-net above,
+			     and a SIGNATURE are what make the 20% deductible. The signature rule
+			     has to be pre-printed — it cannot be added to a slip after the fact,
+			     and it is the first thing an examiner looks for. -->
+			<div class="report-gap rpt-xs mt-2 border border-black px-2 py-1">
+				<div class="font-bold uppercase tracking-wide">{discountSlipHeading(discountType)}</div>
+				<div class="mt-0.5 flex gap-1">
+					<span class="shrink-0">{discountIdLabel(discountType)}</span>
+					<span class="flex-1 border-b border-black font-bold">{data?.discountIdNumber || ''}&#8203;</span>
+				</div>
+				<div class="mt-0.5 flex gap-1">
+					<span class="shrink-0">Cardholder:</span>
+					<span class="flex-1 border-b border-black font-bold uppercase">
+						{data?.discountCardholderName || ''}&#8203;
+					</span>
+				</div>
+				<div class="mt-2 flex gap-1">
+					<span class="flex-1 border-b border-black">&#8203;</span>
+				</div>
+				<div class="rpt-tiny text-center">Signature of cardholder / representative</div>
+			</div>
+		{:else if data?.discountReason}
 			<div class="report-gap rpt-xs mt-1 text-right">Discount: {data.discountReason}</div>
 		{/if}
 

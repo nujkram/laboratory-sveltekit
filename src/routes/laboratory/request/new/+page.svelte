@@ -12,9 +12,11 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import Button from '$lib/components/reusable/Button.svelte';
+	import DiscountFields from '$lib/components/reusable/DiscountFields.svelte';
 	import LabReceiptModal from '$lib/components/modals/LabReceiptModal.svelte';
 	import { id } from '$lib/common/utils';
 	import { formatPeso, toCentavos } from '$lib/utils/currency';
+	import { discountLineLabel, emptyDiscountForm } from '$lib/common/discounts';
 	import { isOnline } from '$lib/stores/connectivity.js';
 
 	let tests = [];
@@ -36,8 +38,8 @@
 	let testSearch = '';
 	let openSection = '';
 
-	let discountInput = '';
-	let discountReason = '';
+	let discount = emptyDiscountForm();
+	let discountResult = null;
 
 	let submitting = false;
 	let message = null;
@@ -57,9 +59,12 @@
 		.sort((a, b) => a.code - b.code);
 
 	$: grossCentavos = selectedLines.reduce((sum, line) => sum + line.lineTotalCentavos, 0);
-	$: discountCentavos = Math.max(0, toCentavos(discountInput) ?? 0);
-	$: discountTooBig = discountCentavos > grossCentavos;
-	$: netCentavos = Math.max(0, grossCentavos - Math.min(discountCentavos, grossCentavos));
+	// `discountResult` is bound from DiscountFields, which runs the same
+	// resolveDiscount the server will. An invalid discount previews as zero and
+	// blocks submit, rather than showing a total the server would refuse.
+	$: discountCentavos = discountResult?.ok ? discountResult.value.discountCentavos : 0;
+	$: netCentavos = Math.max(0, grossCentavos - discountCentavos);
+	$: customerAge = mode === 'patient' ? selectedPatient?.age ?? null : walkIn.age;
 
 	$: patientMatches = patientSearch.trim()
 		? patients
@@ -84,7 +89,7 @@
 		!submitting &&
 		$isOnline &&
 		selectedLines.length > 0 &&
-		!discountTooBig &&
+		!!discountResult?.ok &&
 		(mode === 'patient' ? !!selectedPatient : !!walkIn.name.trim());
 
 	onMount(async () => {
@@ -165,8 +170,15 @@
 					  },
 			requestedBy: requestedBy.trim(),
 			items: selectedLines.map((line) => ({ code: line.code, qty: line.qty })),
-			discountCentavos,
-			discountReason: discountReason.trim(),
+			// Send what was chosen, not what it comes to: the server computes a
+			// statutory amount itself and ignores any figure posted alongside it.
+			discount: {
+				type: discount.type,
+				idNumber: discount.idNumber.trim(),
+				cardholderName: discount.cardholderName.trim(),
+				amountCentavos: toCentavos(discount.amountInput) ?? 0,
+				reason: discount.reason.trim()
+			},
 			remarks: remarks.trim()
 		};
 
@@ -201,8 +213,7 @@
 		walkIn = { name: '', age: '', sex: '', address: '' };
 		requestedBy = '';
 		remarks = '';
-		discountInput = '';
-		discountReason = '';
+		discount = emptyDiscountForm();
 		createdTransaction = null;
 		message = null;
 		submitting = false;
@@ -489,30 +500,21 @@
 			{/if}
 
 			<div class="flex flex-wrap items-start justify-between gap-6 border-t border-line px-5 py-4">
-				<div class="grid flex-1 gap-3 sm:grid-cols-2" style="min-width: 16rem">
-					<div>
-						<label class="mb-1.5 block text-sm font-medium text-ink" for="discount">
-							Discount (₱)
-						</label>
-						<input id="discount" class="field" type="text" inputmode="decimal" bind:value={discountInput} placeholder="0.00" />
-						{#if discountTooBig}
-							<p class="mt-1 text-xs font-medium text-danger">
-								Discount cannot be more than the gross amount.
-							</p>
-						{/if}
-					</div>
-					<div>
-						<label class="mb-1.5 block text-sm font-medium text-ink" for="discountReason">Reason</label>
-						<input id="discountReason" class="field" type="text" bind:value={discountReason} placeholder="Senior / PWD" />
-					</div>
+				<div class="flex-1" style="min-width: 16rem">
+					<DiscountFields
+						bind:discount
+						bind:result={discountResult}
+						{grossCentavos}
+						{customerAge}
+					/>
 				</div>
 
 				<div class="w-full sm:w-64">
 					<div class="flex justify-between py-1 text-sm text-muted">
 						<span>Gross amount</span><span class="tabular font-semibold text-ink">{formatPeso(grossCentavos)}</span>
 					</div>
-					<div class="flex justify-between py-1 text-sm text-muted">
-						<span>Less: discount</span><span class="tabular font-semibold text-ink">{formatPeso(Math.min(discountCentavos, grossCentavos))}</span>
+					<div class="flex justify-between gap-3 py-1 text-sm text-muted">
+						<span>{discountLineLabel(discount.type)}</span><span class="tabular font-semibold text-ink">{formatPeso(discountCentavos)}</span>
 					</div>
 					<div class="mt-1 flex justify-between border-t border-line pt-2">
 						<span class="font-medium text-ink">Net amount</span>

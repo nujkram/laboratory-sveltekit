@@ -12,9 +12,17 @@
 	import { onMount, tick } from 'svelte';
 	import { page } from '$app/stores';
 	import Button from '$lib/components/reusable/Button.svelte';
+	import DiscountFields from '$lib/components/reusable/DiscountFields.svelte';
 	import LabReceiptModal from '$lib/components/modals/LabReceiptModal.svelte';
 	import { formatPeso, toCentavos } from '$lib/utils/currency';
 	import { canTakePayment } from '$lib/common/utils';
+	import {
+		discountFormFrom,
+		discountLineLabel,
+		emptyDiscountForm,
+		isStatutory,
+		readDiscountType
+	} from '$lib/common/discounts';
 	import { isOnline } from '$lib/stores/connectivity.js';
 
 	let lookupEl;
@@ -33,8 +41,18 @@
 
 	let isViewModalOpen = false;
 
+	// The counter is where the senior/PWD card is actually handed over, so the
+	// discount can still be set or corrected here — right up until payment.
+	let discountOpen = false;
+	let discount = emptyDiscountForm();
+	let discountResult = null;
+	let applyingDiscount = false;
+	let discountError = '';
+	let discountApplied = false;
+
 	$: allowed = canTakePayment($page.data.user);
 	$: netCentavos = transaction?.netCentavos ?? 0;
+	$: storedDiscountType = transaction ? readDiscountType(transaction) : 'None';
 	$: tenderedCentavos = method === 'Cash' ? toCentavos(tenderedInput) : netCentavos;
 	$: changeCentavos =
 		tenderedCentavos === null ? null : Math.max(0, tenderedCentavos - netCentavos);
@@ -51,6 +69,15 @@
 		!!orNumber.trim() &&
 		!shortTendered &&
 		(method !== 'Cash' || tenderedCentavos !== null);
+	$: canApplyDiscount =
+		!applyingDiscount &&
+		!paying &&
+		$isOnline &&
+		allowed &&
+		!!transaction &&
+		!alreadyPaid &&
+		!cancelled &&
+		!!discountResult?.ok;
 
 	// A scanner ends its burst with Enter. The form's submit button would
 	// normally handle that implicitly, but this is the one interaction the whole
@@ -81,6 +108,13 @@
 				orNumber = transaction?.payment?.orNumber ?? '';
 				tenderedInput = '';
 				method = transaction?.payment?.method ?? 'Cash';
+				// Seed the form from what is already on the transaction, so a
+				// discount the encoder applied is corrected rather than retyped.
+				discount = discountFormFrom(transaction);
+				discountOpen = discount.type !== 'None';
+				discountResult = null;
+				discountError = '';
+				discountApplied = false;
 			} else {
 				lookupError = result?.message || 'Could not retrieve that transaction.';
 			}
@@ -92,6 +126,49 @@
 			looking = false;
 			await tick();
 			selectLookup();
+		}
+	}
+
+	async function applyDiscount() {
+		if (!canApplyDiscount) return;
+		applyingDiscount = true;
+		discountError = '';
+		discountApplied = false;
+
+		try {
+			const res = await fetch('/api/admin/lab-transaction/discount', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				credentials: 'include',
+				body: JSON.stringify({
+					_id: transaction._id,
+					// The server computes a statutory amount itself; posting one
+					// alongside would only be a chance to disagree with it.
+					discount: {
+						type: discount.type,
+						idNumber: discount.idNumber.trim(),
+						cardholderName: discount.cardholderName.trim(),
+						amountCentavos: toCentavos(discount.amountInput) ?? 0,
+						reason: discount.reason.trim()
+					}
+				})
+			});
+			const result = await res.json();
+			if (result?.status === 'Success') {
+				transaction = result.response;
+				discount = discountFormFrom(transaction);
+				discountApplied = true;
+				// The total just moved. Anything already counted out was counted
+				// against the old one, so it must not survive into the payment.
+				tenderedInput = '';
+			} else {
+				discountError = result?.message || 'The discount could not be applied.';
+				if (result?.response) transaction = result.response;
+			}
+		} catch {
+			discountError = 'Could not reach the server. The discount was NOT applied.';
+		} finally {
+			applyingDiscount = false;
 		}
 	}
 
@@ -138,6 +215,11 @@
 		payError = '';
 		lookupError = '';
 		paidJustNow = false;
+		discountOpen = false;
+		discount = emptyDiscountForm();
+		discountResult = null;
+		discountError = '';
+		discountApplied = false;
 		selectLookup();
 	}
 
@@ -267,10 +349,18 @@
 						<span>Subtotal</span>
 						<span class="tabular font-semibold text-ink">{formatPeso(transaction.grossCentavos)}</span>
 					</div>
-					<div class="flex justify-between py-1 text-sm text-muted">
-						<span>Discount{transaction.discountReason ? ` (${transaction.discountReason})` : ''}</span>
+					<div class="flex justify-between gap-3 py-1 text-sm text-muted">
+						<span>{discountLineLabel(storedDiscountType)}</span>
 						<span class="tabular font-semibold text-ink">{formatPeso(transaction.discountCentavos)}</span>
 					</div>
+					{#if isStatutory(storedDiscountType)}
+						<!-- So the cashier can read this against the card in hand. -->
+						<p class="-mt-0.5 pb-1 text-xs text-muted">
+							{transaction.discountCardholderName} · ID {transaction.discountIdNumber}
+						</p>
+					{:else if storedDiscountType === 'Other' && transaction.discountReason}
+						<p class="-mt-0.5 pb-1 text-xs text-muted">{transaction.discountReason}</p>
+					{/if}
 					<div class="mt-1 flex items-baseline justify-between border-t border-line pt-2">
 						<span class="font-medium text-ink">Total due</span>
 						<span class="font-display text-2xl font-bold tabular text-pine-700">
@@ -313,6 +403,69 @@
 					</div>
 				</div>
 			{:else}
+				<!-- Setting the discount lives inside the unpaid branch on purpose: a
+				     paid or cancelled transaction simply has no control here, which
+				     matches what the endpoint itself will refuse. -->
+				<div class="border-t border-line px-5 py-4">
+					{#if discountOpen}
+						<div class="rounded-xl border border-line bg-paper px-4 py-4">
+							<div class="mb-3 flex items-center justify-between gap-3">
+								<h4 class="font-display text-sm font-bold text-ink">Senior Citizen / PWD discount</h4>
+								<button
+									type="button"
+									class="text-xs font-medium text-muted hover:text-ink"
+									on:click={() => (discountOpen = false)}
+								>
+									Hide
+								</button>
+							</div>
+
+							<DiscountFields
+								bind:discount
+								bind:result={discountResult}
+								grossCentavos={transaction.grossCentavos}
+								customerAge={transaction.customer?.age}
+								disabled={applyingDiscount || paying}
+							/>
+
+							<div class="mt-4 flex flex-wrap items-center gap-3">
+								<Button
+									color="secondary"
+									text={applyingDiscount ? 'Saving…' : 'Save discount'}
+									disabled={!canApplyDiscount}
+									on:click={applyDiscount}
+								/>
+								{#if discountError}
+									<span class="text-sm font-medium text-danger">{discountError}</span>
+								{:else if discountApplied}
+									<span class="text-sm font-medium text-pine-700">
+										Total is now {formatPeso(transaction.netCentavos)}. Reprint the slip — the
+										customer signs for the discount on it.
+									</span>
+								{/if}
+							</div>
+
+							{#if discountApplied}
+								<div class="mt-3">
+									<Button
+										color="terciary"
+										text="Print updated slip"
+										on:click={() => (isViewModalOpen = true)}
+									/>
+								</div>
+							{/if}
+						</div>
+					{:else}
+						<button
+							type="button"
+							class="text-sm font-medium text-pine-700 hover:underline"
+							on:click={() => (discountOpen = true)}
+						>
+							{storedDiscountType === 'None' ? 'Apply a discount' : 'Change the discount'}
+						</button>
+					{/if}
+				</div>
+
 				<div class="space-y-4 border-t border-line px-5 py-4">
 					<div class="grid gap-3 sm:grid-cols-3">
 						<div>

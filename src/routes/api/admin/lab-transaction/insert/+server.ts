@@ -89,7 +89,7 @@ export async function POST({ request, locals }: any) {
 	// Server-authoritative pricing.
 	let priced;
 	try {
-		priced = await priceTransaction(db, raw?.items, raw?.discountCentavos);
+		priced = await priceTransaction(db, raw?.items, raw?.discount);
 	} catch (error) {
 		if (error instanceof PricingError) {
 			return json({ status: 'Error', message: error.message }, { status: 400 });
@@ -108,8 +108,12 @@ export async function POST({ request, locals }: any) {
 		requestedBy: String(raw?.requestedBy ?? '').trim(),
 		items: priced.items,
 		grossCentavos: priced.grossCentavos,
-		discountCentavos: priced.discountCentavos,
-		discountReason: String(raw?.discountReason ?? '').trim(),
+		// The whole resolved discount at once — type, amount, reason and the
+		// captured senior/PWD ID. The cashier's discount endpoint `$set`s the same
+		// object, so the two writers cannot drift. Note the reason is DERIVED for a
+		// statutory discount: a client-supplied string no longer reaches the
+		// printed slip.
+		...priced.discount,
 		netCentavos: priced.netCentavos,
 		status: 'Pending',
 		paymentStatus: 'Unpaid',

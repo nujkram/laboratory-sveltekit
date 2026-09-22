@@ -1,4 +1,6 @@
 import type { Db } from 'mongodb';
+import { resolveDiscount } from '$lib/common/discounts';
+import type { DiscountInput, ResolvedDiscount } from '$lib/common/discounts';
 
 /**
  * Pricing for laboratory transactions. Everything money-related is computed
@@ -25,10 +27,14 @@ export type LabTransactionItem = {
 	lineTotalCentavos: number;
 };
 
-export type PricedTransaction = {
+export type PricedItems = {
 	items: LabTransactionItem[];
 	grossCentavos: number;
-	discountCentavos: number;
+};
+
+export type PricedTransaction = PricedItems & {
+	/** Spread onto the document wholesale, so both write paths stay identical. */
+	discount: ResolvedDiscount;
 	netCentavos: number;
 };
 
@@ -73,13 +79,16 @@ export function normaliseRequestedItems(raw: any): RequestedItem[] {
 
 /**
  * Price the requested codes against the live catalog.
+ *
+ * Kept separate from the discount so that the cashier's discount endpoint can
+ * reprice a stored transaction against the gross it was quoted at, without
+ * re-reading the catalog: `items[]` is the snapshot of what the customer was
+ * actually quoted, and a cashier applying a senior discount is discounting that
+ * quote, not re-quoting it at today's prices.
+ *
  * @throws PricingError when a code is unknown, withdrawn or not orderable
  */
-export async function priceTransaction(
-	db: Db,
-	rawItems: any,
-	rawDiscount: any
-): Promise<PricedTransaction> {
+export async function priceItems(db: Db, rawItems: any): Promise<PricedItems> {
 	const requested = normaliseRequestedItems(rawItems);
 
 	const catalog = await db
@@ -116,19 +125,35 @@ export async function priceTransaction(
 
 	const grossCentavos = items.reduce((sum, item) => sum + item.lineTotalCentavos, 0);
 
-	const discountCentavos = rawDiscount === undefined || rawDiscount === null ? 0 : Number(rawDiscount);
-	if (!Number.isInteger(discountCentavos) || discountCentavos < 0) {
-		throw new PricingError('Discount must be a whole amount of zero or more.');
-	}
-	if (discountCentavos > grossCentavos) {
-		throw new PricingError('Discount cannot be greater than the gross amount.');
-	}
+	return { items, grossCentavos };
+}
+
+/**
+ * Price the requested codes and apply a discount to them.
+ *
+ * The discount rules live in `$lib/common/discounts` so that the browser preview
+ * and this server-side commit run the same code and produce the same message.
+ * That module returns a result object rather than throwing, because it is also
+ * imported by Svelte reactive statements; the throw belongs here, where the
+ * insert endpoint already catches PricingError and answers 400.
+ *
+ * @throws PricingError when a code is unknown or the discount does not validate
+ */
+export async function priceTransaction(
+	db: Db,
+	rawItems: any,
+	rawDiscount: DiscountInput
+): Promise<PricedTransaction> {
+	const { items, grossCentavos } = await priceItems(db, rawItems);
+
+	const discount = resolveDiscount(grossCentavos, rawDiscount ?? {});
+	if (!discount.ok) throw new PricingError(discount.message);
 
 	return {
 		items,
 		grossCentavos,
-		discountCentavos,
-		netCentavos: grossCentavos - discountCentavos
+		discount: discount.value,
+		netCentavos: grossCentavos - discount.value.discountCentavos
 	};
 }
 
