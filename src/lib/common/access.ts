@@ -1,4 +1,4 @@
-import { ADMIN_ROLE, CASHIER_ROLE } from './utils';
+import { ADMIN_ROLE, CASHIER_ROLE, MANAGER_ROLE } from './utils';
 
 /**
  * Who may open which part of the app.
@@ -15,6 +15,9 @@ import { ADMIN_ROLE, CASHIER_ROLE } from './utils';
  *    above withholds.
  *  - Lab staff can raise a request but cannot open the cashier counter, so the
  *    person who creates a charge is never the person who settles it.
+ *  - A manager reads the takings — the reports and the transaction list — and
+ *    sets what a test costs, but cannot raise a charge, discount one, settle
+ *    one or cancel one. The person reviewing the money never moves it.
  */
 
 export const MEDTECH_ROLE = 'Medical Technologist';
@@ -31,9 +34,15 @@ type Access = string[] | 'public' | 'authenticated';
  */
 const RULES: Array<{ prefix: string; allow: Access }> = [
 	{ prefix: '/auth', allow: 'public' },
-	// before the broader /laboratory rule
+	// before the broader /laboratory rule: raising a charge stays clinical, and
+	// it loads the full patient list, so neither a cashier nor a manager gets it
 	{ prefix: '/laboratory/request', allow: CLINICAL },
-	{ prefix: '/laboratory', allow: [...CLINICAL, CASHIER_ROLE] },
+	{ prefix: '/laboratory', allow: [...CLINICAL, CASHIER_ROLE, MANAGER_ROLE] },
+	{ prefix: '/reports', allow: [ADMIN_ROLE, MANAGER_ROLE] },
+	// The price list sits at the top level rather than under /laboratory: it is a
+	// management screen, and SidebarItem matches on prefix, so nesting it there
+	// would light up Transactions at the same time.
+	{ prefix: '/prices', allow: [ADMIN_ROLE, MANAGER_ROLE] },
 	{ prefix: '/cashier', allow: [ADMIN_ROLE, CASHIER_ROLE] },
 	{ prefix: '/patients', allow: CLINICAL },
 	{ prefix: '/record', allow: CLINICAL },
@@ -71,8 +80,8 @@ const API_RULES: Array<{ prefix: string; allow: Access }> = [
 	// bulk patients + records for offline use — clinical only, emphatically
 	{ prefix: '/api/admin/prefetch', allow: CLINICAL },
 
-	{ prefix: '/api/admin/lab-test/update', allow: [ADMIN_ROLE] },
-	{ prefix: '/api/admin/lab-test', allow: CLINICAL },
+	{ prefix: '/api/admin/lab-test/update', allow: [ADMIN_ROLE, MANAGER_ROLE] },
+	{ prefix: '/api/admin/lab-test', allow: [...CLINICAL, MANAGER_ROLE] },
 
 	{ prefix: '/api/admin/lab-transaction/pay', allow: [ADMIN_ROLE, CASHIER_ROLE] },
 	// The counter sets the discount: that is where the senior/PWD card is handed
@@ -80,7 +89,9 @@ const API_RULES: Array<{ prefix: string; allow: Access }> = [
 	{ prefix: '/api/admin/lab-transaction/discount', allow: [ADMIN_ROLE, CASHIER_ROLE] },
 	{ prefix: '/api/admin/lab-transaction/cancel', allow: [ADMIN_ROLE] },
 	{ prefix: '/api/admin/lab-transaction/insert', allow: CLINICAL },
-	{ prefix: '/api/admin/lab-transaction', allow: [...CLINICAL, CASHIER_ROLE] }
+	// read-only takings: managers get this and the list, and nothing that writes
+	{ prefix: '/api/admin/lab-transaction/report', allow: [ADMIN_ROLE, MANAGER_ROLE] },
+	{ prefix: '/api/admin/lab-transaction', allow: [...CLINICAL, CASHIER_ROLE, MANAGER_ROLE] }
 ];
 
 /**
@@ -128,9 +139,13 @@ export function canView(user: any, pathname: string) {
 
 /**
  * Where to send someone who lands somewhere they may not go. A cashier has no
- * dashboard, so bouncing them to `/` would loop.
+ * dashboard, so bouncing them to `/` would loop; a manager has neither the
+ * dashboard nor the counter, and lands on the reports instead.
  */
 export function landingFor(user: any) {
 	if (!user) return '/auth/login';
-	return canView(user, '/') ? '/' : canView(user, '/cashier') ? '/cashier' : '/pending';
+	if (canView(user, '/')) return '/';
+	if (canView(user, '/cashier')) return '/cashier';
+	if (canView(user, '/reports')) return '/reports';
+	return '/pending';
 }

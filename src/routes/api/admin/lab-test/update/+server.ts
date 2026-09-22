@@ -1,13 +1,14 @@
 import { json } from '@sveltejs/kit';
 import clientPromise from '$lib/server/mongo';
-import { isAdmin } from '$lib/common/utils';
+import { canEditPrices } from '$lib/common/utils';
 
 /**
  * Edit a catalog test: its price, or whether it can be ordered.
  *
- * Administrators only — this is the number every future transaction charges.
- * Existing transactions are untouched by design: each one snapshotted the price
- * it was created with, so a correction here never rewrites an issued receipt.
+ * Administrators and managers — this is the number every future transaction
+ * charges, so it is a management decision rather than a clinical one. Existing
+ * transactions are untouched by design: each one snapshotted the price it was
+ * created with, so a correction here never rewrites an issued receipt.
  * @type {import('./$types').RequestHandler}
  */
 export async function POST({ request, locals }: any) {
@@ -17,9 +18,9 @@ export async function POST({ request, locals }: any) {
 			{ status: 401 }
 		);
 	}
-	if (!isAdmin(locals.user)) {
+	if (!canEditPrices(locals.user)) {
 		return json(
-			{ status: 'Error', message: 'Only administrators can change laboratory prices.' },
+			{ status: 'Error', message: 'Only a manager or administrator can change laboratory prices.' },
 			{ status: 403 }
 		);
 	}

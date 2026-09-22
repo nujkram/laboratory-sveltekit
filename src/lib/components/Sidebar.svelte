@@ -96,6 +96,26 @@
 					</svg>
 				</SidebarItem>
 			{/if}
+			{#if show('/reports')}
+				<SidebarItem link="/reports" title="Reports">
+					<svg class="h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+						<path
+							d="M3 16.5a.75.75 0 01.75-.75h12.5a.75.75 0 010 1.5H3.75A.75.75 0 013 16.5zM5 13.5a1 1 0 001-1V9a1 1 0 10-2 0v3.5a1 1 0 001 1zm4 0a1 1 0 001-1V4a1 1 0 10-2 0v8.5a1 1 0 001 1zm4 0a1 1 0 001-1V7a1 1 0 10-2 0v5.5a1 1 0 001 1z"
+						/>
+					</svg>
+				</SidebarItem>
+			{/if}
+			{#if show('/prices')}
+				<SidebarItem link="/prices" title="Price list">
+					<svg class="h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+						<path
+							fill-rule="evenodd"
+							d="M2.5 5.5A2.5 2.5 0 015 3h3.34a2.5 2.5 0 011.77.73l6.16 6.16a2.5 2.5 0 010 3.54l-3.34 3.34a2.5 2.5 0 01-3.54 0L3.23 10.6A2.5 2.5 0 012.5 8.84V5.5zM6 7.5a1.25 1.25 0 100-2.5 1.25 1.25 0 000 2.5z"
+							clip-rule="evenodd"
+						/>
+					</svg>
+				</SidebarItem>
+			{/if}
 			{#if show('/cashier')}
 				<SidebarItem link="/cashier" title="Cashier">
 					<svg class="h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">

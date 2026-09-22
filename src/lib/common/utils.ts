@@ -62,6 +62,23 @@ export const isCashier = (user: any) => user?.role === CASHIER_ROLE;
 // request stays open to all staff, the way records already are.
 export const canTakePayment = (user: any) => isCashier(user) || isAdmin(user);
 
+// Role that reviews the takings: reports and the transaction list, read-only,
+// plus the price list. Needs a matching document in the `roles` collection
+// before anyone can be given it.
+export const MANAGER_ROLE = 'Manager';
+
+export const isManager = (user: any) => user?.role === MANAGER_ROLE;
+
+// A manager reads the money but never moves it: no creating a request, no
+// discount, no payment, no cancelling. That separation is the whole point of
+// the role — the person reviewing the takings is not the person taking them.
+export const canViewReports = (user: any) => isManager(user) || isAdmin(user);
+
+// Setting what a test costs is a management decision, not a clinical one.
+// Existing transactions snapshot their prices, so a change here never rewrites
+// a receipt that has already been issued.
+export const canEditPrices = (user: any) => isManager(user) || isAdmin(user);
+
 export const formMachine = createMachine({
 	id: 'form',
 	initial: 'fresh',

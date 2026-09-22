@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import { MongoClient, type Db } from 'mongodb';
 import { ensureLabTests } from './labTestCatalog';
-import { ensureCashierRole } from './roleSeed';
+import { ensureRoles } from './roleSeed';
 
 const uri = process.env['DATABASE_URL'];
 
@@ -121,9 +121,10 @@ function connect() {
 				console.error('ensureLabTests failed (non-fatal):', error);
 			}
 			try {
-				if (await ensureCashierRole(db)) console.info('ensureCashierRole: added the Cashier role');
+				const roles = await ensureRoles(db);
+				if (roles.length) console.info(`ensureRoles: added ${roles.join(', ')}`);
 			} catch (error) {
-				console.error('ensureCashierRole failed (non-fatal):', error);
+				console.error('ensureRoles failed (non-fatal):', error);
 			}
 			return { client, db };
 		})().catch((error) => {

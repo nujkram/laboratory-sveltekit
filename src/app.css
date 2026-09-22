@@ -149,8 +149,20 @@
 
 	/* The open report is portalled to <body> (src/lib/actions/portal.js), so
 	   isolating it is just a matter of hiding its siblings. display:none rather
-	   than visibility:hidden so the hidden boxes leave the layout entirely. */
-	body > *:not(#print-record-modal) {
+	   than visibility:hidden so the hidden boxes leave the layout entirely.
+
+	   Scoped to :not(.printing-report) so a page that is not a portalled report
+	   can still print ITSELF — the reports screen sets that class around its
+	   window.print() call, and without this it would hand over a blank sheet.
+	   The sidebar and topbar rules above are unconditional, so they stay hidden
+	   either way. */
+	body:not(.printing-report) > *:not(#print-record-modal) {
+		display: none !important;
+	}
+
+	/* Screen-only controls on a page that prints itself: the range picker and
+	   the Print button are of no use on paper. */
+	body.printing-report .print-hide {
 		display: none !important;
 	}
 
