@@ -8,7 +8,13 @@
 	import Button from '$lib/components/reusable/Button.svelte';
 	import Sort from '$lib/components/reusable/Sort.svelte';
 	import LabReceiptModal from '$lib/components/modals/LabReceiptModal.svelte';
+	import ChemistryModal from '$lib/components/modals/ChemistryModal.svelte';
+	import HematologyModal from '$lib/components/modals/HematologyModal.svelte';
+	import UrinalysisModal from '$lib/components/modals/UrinalysisModal.svelte';
+	import ParasitologyModal from '$lib/components/modals/ParasitologyModal.svelte';
+	import MiscModal from '$lib/components/modals/MiscModal.svelte';
 	import { formatPeso } from '$lib/utils/currency';
+	import { categoryBadge, categoryBadgeBase } from '$lib/constants/categoryColors.js';
 	import { canView } from '$lib/common/access';
 	import { isOnline } from '$lib/stores/connectivity.js';
 
@@ -27,6 +33,7 @@
 	let searchTimer;
 	let paymentStatus = 'all';
 	let status = 'all';
+	let resultStatus = 'all';
 	let mineOnly = false;
 
 	let fromDate = todayLocal();
@@ -35,6 +42,14 @@
 	let isViewModalOpen = false;
 	let currentTransaction = null;
 
+	// The result report, opened in place rather than via the patient chart.
+	let isResultOpen = false;
+	let currentResult = null;
+	let loadingResultId = '';
+	// A slip with several results gets a picker before the report.
+	let pickingFrom = null;
+
+	$: canEncode = canView($page.data.user, '/record');
 	$: pageMinIndex = itemSize === 0 ? 0 : (currentPage - 1) * pageSize + 1;
 	$: pageMaxIndex = Math.min(currentPage * pageSize, itemSize);
 
@@ -68,6 +83,7 @@
 					search,
 					paymentStatus,
 					status,
+					resultStatus,
 					createdBy: mineOnly ? $page.data.user?._id ?? '' : '',
 					dateFrom: boundsOf(fromDate, false),
 					dateTo: boundsOf(toDate, true)
@@ -92,6 +108,20 @@
 		} finally {
 			loading = false;
 		}
+	}
+
+	// One line per encoded result, for the badge's hover title.
+	function describeResults(row) {
+		return (row.results ?? [])
+			.map((r) => `${r.caseNumber ? `Case ${r.caseNumber}` : 'Pending case no.'} · ${r.category}`)
+			.join('\n');
+	}
+
+	// Why a slip cannot take a result right now, or '' when it can.
+	function resultBlocker(row) {
+		if (row.status === 'Cancelled') return 'This slip was cancelled';
+		if (!row.patientId) return 'Walk-in customer — register them as a patient first';
+		return '';
 	}
 
 	function refilter() {
@@ -142,6 +172,36 @@
 	function openSlip(transaction) {
 		currentTransaction = transaction;
 		isViewModalOpen = true;
+	}
+
+	// Fetch the record and its patient, then show the same report modal the
+	// patient chart uses. The single-record endpoint joins the transaction (for
+	// the release gate) but not the patient, so that is fetched alongside.
+	function viewResults(row) {
+		const results = row.results ?? [];
+		if (results.length === 1) openResult(row, results[0]._id);
+		else if (results.length > 1) pickingFrom = row;
+	}
+
+	async function openResult(row, id) {
+		if (!id || loadingResultId) return;
+		loadingResultId = id;
+		try {
+			const [recordRes, patientRes] = await Promise.all([
+				fetch(`/api/admin/record/${id}`),
+				fetch(`/api/admin/patient/${row.patientId}`)
+			]);
+			const record = (await recordRes.json())?.response;
+			const patient = (await patientRes.json())?.response;
+			if (!record) return;
+			currentResult = { ...record, patient };
+			pickingFrom = null;
+			isResultOpen = true;
+		} catch {
+			// nothing to show; the badge still says a result exists
+		} finally {
+			loadingResultId = '';
+		}
 	}
 
 	function dateTime(value) {
@@ -247,6 +307,20 @@
 				</select>
 			</div>
 
+			<div>
+				<label for="resultStatus" class="sr-only">Result status</label>
+				<select
+					id="resultStatus"
+					bind:value={resultStatus}
+					on:change={refilter}
+					class="rounded-lg border-line bg-surface py-2 pl-3 pr-9 text-sm font-medium text-ink focus:border-leaf focus:ring-2 focus:ring-leaf/25"
+				>
+					<option value="all">All results</option>
+					<option value="Awaiting">Awaiting result</option>
+					<option value="Encoded">Result encoded</option>
+				</select>
+			</div>
+
 			<label class="flex items-center gap-2 text-sm text-muted">
 				<input
 					type="checkbox"
@@ -303,6 +377,7 @@
 							</span>
 						</th>
 						<th scope="col" class="px-5 py-3 font-semibold">Payment</th>
+						<th scope="col" class="px-5 py-3 font-semibold">Result</th>
 						<th scope="col" class="px-5 py-3 font-semibold">Encoded by</th>
 						<th scope="col" class="px-5 py-3 text-right font-semibold">Actions</th>
 					</tr>
@@ -310,7 +385,7 @@
 				<tbody class="divide-y divide-line">
 					{#if loading}
 						<tr>
-							<td colspan="8" class="px-5 py-14 text-center">
+							<td colspan="9" class="px-5 py-14 text-center">
 								<div class="flex items-center justify-center gap-3 text-muted">
 									<svg class="h-5 w-5 animate-spin text-leaf" viewBox="0 0 24 24" fill="none" aria-hidden="true">
 										<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
@@ -364,6 +439,23 @@
 										</span>
 									{/if}
 								</td>
+								<td class="whitespace-nowrap px-5 py-3">
+									{#if row.status === 'Cancelled'}
+										<span class="text-muted">—</span>
+									{:else if (row.results ?? []).length}
+										<span
+											class="inline-flex items-center gap-1.5 rounded-full bg-leaf-soft px-2.5 py-1 text-xs font-medium text-pine-700"
+											title={describeResults(row)}
+										>
+											<span class="h-1.5 w-1.5 rounded-full bg-leaf" />
+											Result encoded{row.results.length > 1 ? ` (${row.results.length})` : ''}
+										</span>
+									{:else}
+										<span class="inline-flex items-center gap-1.5 rounded-full bg-warning/10 px-2.5 py-1 text-xs font-medium text-warning">
+											<span class="h-1.5 w-1.5 rounded-full bg-warning" /> Awaiting result
+										</span>
+									{/if}
+								</td>
 								<td class="whitespace-nowrap px-5 py-3 text-muted">{encoderName(row)}</td>
 								<td class="px-5 py-3">
 									<div class="flex items-center justify-end gap-2">
@@ -374,13 +466,45 @@
 											textSize="text-xs"
 											on:click={() => openSlip(row)}
 										/>
+										<!-- results are clinical: a cashier or manager reads the
+										     column but is not offered the buttons -->
+										{#if canEncode && $isOnline}
+											{#if (row.results ?? []).length && row.patientId}
+												<Button
+													color="secondary"
+													text={loadingResultId && row.results.some((r) => r._id === loadingResultId)
+														? 'Opening…'
+														: row.results.length > 1
+															? `View results (${row.results.length})`
+															: 'View result'}
+													padding="py-1.5 px-3"
+													textSize="text-xs"
+													disabled={!!loadingResultId}
+													on:click={() => viewResults(row)}
+												/>
+											{/if}
+											{#if resultBlocker(row)}
+												<span title={resultBlocker(row)}>
+													<Button color="primary" text="Create result" padding="py-1.5 px-3" textSize="text-xs" disabled />
+												</span>
+											{:else}
+												<Button
+													color="primary"
+													text="Create result"
+													type="link"
+													href="/record/create/{row.patientId}?transaction={row._id}"
+													padding="py-1.5 px-3"
+													textSize="text-xs"
+												/>
+											{/if}
+										{/if}
 									</div>
 								</td>
 							</tr>
 						{/each}
 					{:else}
 						<tr>
-							<td colspan="8" class="px-5 py-14 text-center">
+							<td colspan="9" class="px-5 py-14 text-center">
 								<p class="font-display text-base font-semibold text-ink">
 									{loadError ? 'Could not load transactions' : 'No transactions in this range'}
 								</p>
@@ -446,4 +570,62 @@
 
 {#if isViewModalOpen && currentTransaction}
 	<LabReceiptModal bind:isViewModalOpen data={currentTransaction} />
+{/if}
+
+<svelte:window on:keydown={(e) => e.key === 'Escape' && pickingFrom && (pickingFrom = null)} />
+
+{#if pickingFrom}
+	<div class="fixed z-10 inset-0 overflow-y-auto">
+		<div class="flex items-center justify-center min-h-screen p-4">
+			<div class="fixed inset-0 bg-ink/40 backdrop-blur-sm" on:click={() => (pickingFrom = null)} />
+			<div class="relative z-50 w-full max-w-md rounded-xl border border-line bg-surface shadow-card-lg">
+				<div class="border-b border-line px-6 py-4">
+					<h3 class="font-display text-lg font-bold text-ink">Results for {pickingFrom.referenceNumber}</h3>
+					<p class="mt-1 text-sm text-muted">
+						{pickingFrom.customer?.name || '—'} · {pickingFrom.results.length} results on this slip
+					</p>
+				</div>
+				<ul class="divide-y divide-line">
+					{#each pickingFrom.results as r (r._id)}
+						<li>
+							<button
+								type="button"
+								class="flex w-full items-center gap-3 px-6 py-3 text-left transition-colors hover:bg-paper disabled:opacity-60"
+								disabled={!!loadingResultId}
+								on:click={() => openResult(pickingFrom, r._id)}
+							>
+								<span class="{categoryBadgeBase} {categoryBadge(r.category).tint}">
+									<span class="h-1.5 w-1.5 shrink-0 rounded-full {categoryBadge(r.category).dot}" />
+									{r.category}
+								</span>
+								<span class="font-mono text-sm font-semibold text-ink">
+									{r.caseNumber ? `Case ${r.caseNumber}` : 'Pending case no.'}
+								</span>
+								<span class="ml-auto font-mono text-xs text-muted">
+									{loadingResultId === r._id ? 'Opening…' : dateTime(r.created)}
+								</span>
+							</button>
+						</li>
+					{/each}
+				</ul>
+				<div class="flex justify-end border-t border-line px-6 py-3">
+					<Button color="secondary" text="Close" padding="py-1.5 px-3" textSize="text-xs" on:click={() => (pickingFrom = null)} />
+				</div>
+			</div>
+		</div>
+	</div>
+{/if}
+
+{#if isResultOpen && currentResult}
+	{#if currentResult.category === 'Chemistry'}
+		<ChemistryModal bind:isViewModalOpen={isResultOpen} data={currentResult} />
+	{:else if currentResult.category === 'Hematology'}
+		<HematologyModal bind:isViewModalOpen={isResultOpen} data={currentResult} />
+	{:else if currentResult.category === 'Urinalysis'}
+		<UrinalysisModal bind:isViewModalOpen={isResultOpen} data={currentResult} />
+	{:else if currentResult.category === 'Parasitology'}
+		<ParasitologyModal bind:isViewModalOpen={isResultOpen} data={currentResult} />
+	{:else if currentResult.category === 'Miscellaneous'}
+		<MiscModal bind:isViewModalOpen={isResultOpen} data={currentResult} />
+	{/if}
 {/if}

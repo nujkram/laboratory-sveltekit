@@ -65,7 +65,9 @@
 	style="--sheet-width: {sheet.content}; --sheet-base: {sheet.base}; --sheet-head: {sheet.head};"
 >
 	<div class="report-backdrop" on:click={handleCloseModal} />
-	<div class="report-scroll">
+	<!-- The scroll layer covers the backdrop, so a click on the grey area lands
+	     here, not on it: `self` closes on the layer itself and not on the card. -->
+	<div class="report-scroll" on:click|self={handleCloseModal}>
 		<div class="report-card" on:click|stopPropagation>
 			<div id="nav-modal">
 				<button

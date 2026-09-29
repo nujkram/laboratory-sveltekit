@@ -37,6 +37,7 @@ export async function POST({ request, locals }: any) {
 		search = '',
 		paymentStatus = 'all',
 		status = 'all',
+		resultStatus = 'all',
 		createdBy = '',
 		patientId = '',
 		dateFrom = '',
@@ -86,7 +87,33 @@ export async function POST({ request, locals }: any) {
 	const sortField = sortableFields[sortBy] ?? 'created';
 	const direction = sortOrder === 'asc' ? 1 : -1;
 
+	// The results encoded against each slip. A slip's "done-ness" is derived from
+	// this rather than stored, so it cannot drift from the records themselves.
+	// Served by the sparse index on records.transactionId.
+	const joinResults = {
+		$lookup: {
+			from: 'records',
+			localField: '_id',
+			foreignField: 'transactionId',
+			pipeline: [
+				{ $match: { isActive: true } },
+				{ $sort: { created: -1 } },
+				{ $project: { _id: 1, caseNumber: 1, category: 1, created: 1 } }
+			],
+			as: 'results'
+		}
+	};
+
+	// Filtering on the join has to happen before pagination, so only pay for the
+	// pre-slice lookup when the filter is actually on; the default range (today)
+	// keeps that cheap.
+	const filterByResult = resultStatus === 'Awaiting' || resultStatus === 'Encoded';
+	const preSlice = filterByResult
+		? [joinResults, { $match: { 'results.0': { $exists: resultStatus === 'Encoded' } } }]
+		: [];
+
 	const hydrate = [
+		...(filterByResult ? [] : [joinResults]),
 		{
 			$lookup: { from: 'users', localField: 'createdBy', foreignField: '_id', as: 'createdBy' }
 		},
@@ -98,6 +125,7 @@ export async function POST({ request, locals }: any) {
 		.collection('lab_transactions')
 		.aggregate([
 			{ $match: match },
+			...preSlice,
 			{ $sort: { [sortField]: direction } },
 			{
 				$facet: {

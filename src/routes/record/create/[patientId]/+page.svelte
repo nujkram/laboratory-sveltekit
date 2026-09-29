@@ -142,8 +142,12 @@
 			const result = await res.json();
 			if (result?.status !== 'Success') return;
 			transactions = (result.response ?? []).filter((t) => t.status !== 'Cancelled');
-			// The slip in the patient's hand is almost always the unpaid one.
-			transactionId = (transactions.find((t) => t.paymentStatus === 'Unpaid') ?? transactions[0])?._id ?? '';
+			// Opened from a specific slip: take that one. Otherwise the slip in the
+			// patient's hand is almost always the unpaid one.
+			const fromLink = transactions.find((t) => t._id === data.transactionId);
+			transactionId =
+				(fromLink ?? transactions.find((t) => t.paymentStatus === 'Unpaid') ?? transactions[0])?._id ?? '';
+			if (fromLink?.requestedBy && !requestedBy) requestedBy = fromLink.requestedBy;
 		} catch {
 			// no picker; the record still saves without a link
 		}
