@@ -444,7 +444,7 @@
 				{#if message}
 					<span transition:fade class="text-sm font-medium text-muted">{@html message}</span>
 				{/if}
-				<Button type="button" color="primary" text="Save changes" padding="py-2.5 px-5" />
+				<Button htmlType="submit" type="button" color="primary" text="Save changes" padding="py-2.5 px-5" />
 			</div>
 		</form>
 	</div>

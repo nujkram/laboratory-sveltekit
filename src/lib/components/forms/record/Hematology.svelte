@@ -20,6 +20,11 @@
 		clottingTime,
 		bloodType,
 		rh,
+		mcv,
+		mch,
+		mchc,
+		rdwCv,
+		mpv,
 		others,
 		remarks;
 </script>
@@ -365,7 +370,7 @@
             class="field-label"
             for="inline-thrombocyte-number"
         >
-            Thrombocyte Number Fraction
+            Thrombocyte Number Concentration
         </label>
     </div>
     <div class="md:w-5/12">
@@ -373,13 +378,134 @@
             class="field"
             id="inline-thrombocyte-number"
             type="text"
-            placeholder="Thrombocyte Number Fraction"
+            placeholder="Thrombocyte Number Concentration"
             name="thrombocyteNumber"
             bind:value={thrombocyteNumber}
         />
     </div>
     <div class="md:w-3/12">
         <h4 class="field-hint">150-350 x⁹10/L</h4>
+    </div>
+</div>
+<!-- red-cell indices: the paper form's OTHERS box -->
+<div class="md:flex md:items-center mb-6">
+    <div class="md:w-3/12">
+        <label
+            class="field-label"
+            for="inline-mcv"
+        >
+            MCV
+        </label>
+    </div>
+    <div class="md:w-5/12">
+        <input
+            class="field"
+            id="inline-mcv"
+            type="text"
+            inputmode="decimal"
+            placeholder="MCV"
+            name="mcv"
+            bind:value={mcv}
+        />
+    </div>
+    <div class="md:w-3/12">
+        <h4 class="field-hint">80.0-99.0 fL</h4>
+    </div>
+</div>
+<div class="md:flex md:items-center mb-6">
+    <div class="md:w-3/12">
+        <label
+            class="field-label"
+            for="inline-mch"
+        >
+            MCH
+        </label>
+    </div>
+    <div class="md:w-5/12">
+        <input
+            class="field"
+            id="inline-mch"
+            type="text"
+            inputmode="decimal"
+            placeholder="MCH"
+            name="mch"
+            bind:value={mch}
+        />
+    </div>
+    <div class="md:w-3/12">
+        <h4 class="field-hint">26.5-33.5 pg</h4>
+    </div>
+</div>
+<div class="md:flex md:items-center mb-6">
+    <div class="md:w-3/12">
+        <label
+            class="field-label"
+            for="inline-mchc"
+        >
+            MCHC
+        </label>
+    </div>
+    <div class="md:w-5/12">
+        <input
+            class="field"
+            id="inline-mchc"
+            type="text"
+            inputmode="decimal"
+            placeholder="MCHC"
+            name="mchc"
+            bind:value={mchc}
+        />
+    </div>
+    <div class="md:w-3/12">
+        <h4 class="field-hint">320-360 g/L</h4>
+    </div>
+</div>
+<div class="md:flex md:items-center mb-6">
+    <div class="md:w-3/12">
+        <label
+            class="field-label"
+            for="inline-rdwCv"
+        >
+            RDW-CV
+        </label>
+    </div>
+    <div class="md:w-5/12">
+        <input
+            class="field"
+            id="inline-rdwCv"
+            type="text"
+            inputmode="decimal"
+            placeholder="RDW-CV"
+            name="rdwCv"
+            bind:value={rdwCv}
+        />
+    </div>
+    <div class="md:w-3/12">
+        <h4 class="field-hint">10.0-15.0 %</h4>
+    </div>
+</div>
+<div class="md:flex md:items-center mb-6">
+    <div class="md:w-3/12">
+        <label
+            class="field-label"
+            for="inline-mpv"
+        >
+            MPV
+        </label>
+    </div>
+    <div class="md:w-5/12">
+        <input
+            class="field"
+            id="inline-mpv"
+            type="text"
+            inputmode="decimal"
+            placeholder="MPV"
+            name="mpv"
+            bind:value={mpv}
+        />
+    </div>
+    <div class="md:w-3/12">
+        <h4 class="field-hint">7.0-11.0 fL</h4>
     </div>
 </div>
 <div class="md:flex md:items-center mb-6">

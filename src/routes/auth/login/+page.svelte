@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { SHA256 } from 'crypto-js';
 	import Logo from '$lib/components/Logo.svelte';
+	import { isOnline } from '$lib/stores/connectivity.js';
 
 	export let data;
 	const { user, settings } = data;
@@ -10,31 +11,33 @@
 	let password = '';
 	let error = '';
 	let loggingIn = false;
-	let hasAccess = false;
-	$: {
-		if (user) {
-			hasAccess = true;
-		} else {
-			setTimeout(() => {
-				hasAccess = false;
-			}, 500);
-			goto('/auth/login');
-		}
-	}
 
 	const handleLogin = async () => {
-		const securePassword = await SHA256(password).toString();
-		const response = await fetch('/api/auth/login', {
-			method: 'POST',
-			headers: {
-				'content-type': 'application/json'
-			},
-			body: JSON.stringify({ email, password: securePassword })
-		});
-		const data = await response.json();
+		if (!$isOnline) {
+			error = 'You appear to be offline. Signing in needs a connection.';
+			loggingIn = false;
+			return;
+		}
+		let data;
+		try {
+			const securePassword = await SHA256(password).toString();
+			const response = await fetch('/api/auth/login', {
+				method: 'POST',
+				headers: {
+					'content-type': 'application/json'
+				},
+				body: JSON.stringify({ email, password: securePassword })
+			});
+			data = await response.json();
+		} catch {
+			// a dropped connection or a non-JSON 500: say so, and let them retry
+			error = 'Could not reach the server. Please try again.';
+			loggingIn = false;
+			return;
+		}
 
 		if (data.error) {
-			error = data.errorMessage || 'An error occured';
+			error = data.errorMessage || 'An error occurred';
 			loggingIn = false;
 		} else {
 			// Re-run the root layout's server load so `$page.data.user` is the
@@ -103,7 +106,6 @@
 			<form
 				class="mt-8 space-y-5"
 				method="POST"
-				autocomplete="off"
 				on:submit={(e) => {
 					e.preventDefault();
 					if (!loggingIn) {

@@ -23,7 +23,7 @@
 	let pageMinIndex = 1;
 	let pageMaxIndex = pageSize;
 	let sortOrder = 'asc';
-	let sortBy = 'code';
+	let sortBy = 'lastName';
     let isAddModalOpen = false;
     let isEditModalOpen = false;
 	let isConfirmModalOpen = false;
@@ -31,17 +31,27 @@
 	$: isAdmin = $page.data.user?.role === 'Administrator';
 
 	// Modals
-    const handleAddModal = () => (isAddModalOpen = !isAddModalOpen);
-    const handleEditModal = () => (isEditModalOpen = !isEditModalOpen);
-	const handleConfirmDeleteModal = () => (isConfirmModalOpen = !isConfirmModalOpen);
+	const handleAddModal = () => (isAddModalOpen = !isAddModalOpen);
+	// Act on the row whose button was clicked — never on whichever row the
+	// pointer last passed over, which a keyboard or touch user never does.
+	function editUser(user) {
+		currentUser = user;
+		isEditModalOpen = true;
+	}
+	function askDeactivate(user) {
+		currentUser = user;
+		isConfirmModalOpen = true;
+	}
 
-	function currentUserExist() {
-		if (currentUser === undefined || !items.includes(currentUser)) {
-			log.error('Selected user does not exist in items fetch from database!');
-			return false;
-		}
-
-		return true;
+	// Plain substring match on any name part: no regex, so "(" cannot throw,
+	// and a missing name part cannot either.
+	function matchesSearch(user, term) {
+		const q = (term ?? '').trim().toLowerCase();
+		if (!q) return true;
+		const p = user?.profile ?? {};
+		return [p.firstName, p.middleName, p.lastName, p.email].some((v) =>
+			String(v ?? '').toLowerCase().includes(q)
+		);
 	}
 
 	async function loadUsers() {
@@ -62,63 +72,50 @@
 
 	function sortItems() {
 		let order = sortOrder === 'asc' ? 1 : -1;
+		// names live under profile; isActive/created on the document itself
+		const key = (u) => u?.profile?.[sortBy] ?? u?.[sortBy] ?? '';
 		items = items.sort((a, b) => {
-			if (a[sortBy] < b[sortBy]) return -1 * order;
-			if (a[sortBy] > b[sortBy]) return 1 * order;
+			if (key(a) < key(b)) return -1 * order;
+			if (key(a) > key(b)) return 1 * order;
 			return 0;
 		});
 	}
 
 	function handleSort(columnName) {
 		if (columnName === sortBy) {
-			sortOrder = sortOrder === 'asc' ? 'des' : 'asc';
+			sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
 		} else {
 			sortBy = columnName;
 		}
 		sortItems();
 	}
 
-    const handleOverFlow = () => {
-		if (pageMinIndex > itemSize) currentPage = 1;
-	};
-
-    const decrementPageNumber = () => {
+	const decrementPageNumber = () => {
 		if (currentPage > 1) currentPage -= 1;
 	};
 	const incrementPageNumber = () => {
-		if (pageMaxIndex < itemSize) currentPage += 1;
+		if (currentPage < totalPages) currentPage += 1;
 	};
 
 	onMount(async () => {
 		loadUsers();
 	});
 
-	$: {
-		// Prevent user to input below the minimum or beyond the maximum value of pagesize.
-		if (pageSize < 1) pageSize = 1;
-		// reactive statement to automatically filter data based on status.
-		paginatedItems = search
-			? items.filter((user) => {
-					return status !== 'all'
-						? (user?.profile?.lastName.match(RegExp(search, 'gi')) ||
-								user?.profile?.firstName.match(RegExp(search, 'gi'))) &&
-								user.isActive === (status === 'active')
-						: user?.profile?.lastName.match(RegExp(search, 'gi')) ||
-								user?.profile?.firstName.match(RegExp(search, 'gi'));
-			  })
-			: items.filter((user) => {
-					return status !== 'all' ? user?.isActive === (status === 'active') : items;
-			  });
-		if (paginatedItems.length) {
-			itemSize = paginatedItems.length;
-			paginatedItems = paginate({ items: paginatedItems, pageSize, currentPage });
-		}
-		pageMinIndex = paginatedItems.length == 0 ? 0 : 1 + (currentPage - 1) * pageSize;
-		pageMaxIndex =
-			pageSize * currentPage > paginatedItems.length
-				? paginatedItems.length
-				: pageSize * currentPage;
-	}
+	// Filter, count, clamp, then slice — in that order, so the footer's "x–y of n"
+	// counts the filtered set and Next stops at the last page instead of paging
+	// into an empty one that Prev cannot leave.
+	$: if (pageSize < 1) pageSize = 1;
+	$: filtered = items.filter(
+		(p) => matchesSearch(p, search) && (status === 'all' || !!p.isActive === (status === 'active'))
+	);
+	$: itemSize = filtered.length;
+	$: totalPages = Math.max(1, Math.ceil(itemSize / pageSize));
+	$: if (currentPage > totalPages) currentPage = totalPages;
+	$: paginatedItems = paginate({ items: filtered, pageSize, currentPage });
+	$: pageMinIndex = itemSize === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+	$: pageMaxIndex = Math.min(currentPage * pageSize, itemSize);
+	// A new search or filter starts from the first page.
+	$: search, status, (currentPage = 1);
 </script>
 
 <svelte:head><title>Users · Laboratory Information System</title></svelte:head>
@@ -192,19 +189,14 @@
 				<tbody class="divide-y divide-line">
 					{#key paginatedItems}
 						{#if paginatedItems.length}
-							{#each paginatedItems as data}
-								<tr
-									class="cursor-pointer transition-colors hover:bg-paper"
-									on:mouseenter={() => {
-										if (currentUser !== data) {
-											currentUser = data;
-										}
-									}}
-									on:click={() => {
-										goto(`/users/${currentUser?._id}`);
-									}}
-								>
-									<td class="whitespace-nowrap px-5 py-3 font-medium text-ink">{data?.profile?.lastName || '—'}</td>
+							{#each paginatedItems as data (data._id)}
+								<tr class="transition-colors hover:bg-paper">
+									<td class="whitespace-nowrap px-5 py-3 font-medium text-ink">
+										<!-- a real link, so the row opens from the keyboard too -->
+										<a href="/users/{data._id}" class="text-ink no-underline hover:text-pine-700 hover:underline">
+											{data?.profile?.lastName || '—'}
+										</a>
+									</td>
 									<td class="whitespace-nowrap px-5 py-3 text-ink">{data?.profile?.firstName || '—'}</td>
 									<td class="whitespace-nowrap px-5 py-3 text-muted">{data?.profile?.middleName || '—'}</td>
 									<td class="whitespace-nowrap px-5 py-3 font-mono text-xs text-muted">{data?.profile?.email || '—'}</td>
@@ -225,15 +217,19 @@
 											{data.isActive ? 'Active' : 'Inactive'}
 										</span>
 									</td>
-									<td class="px-5 py-3" on:click|stopPropagation>
+									<td class="px-5 py-3">
 										<div class="flex items-center justify-end gap-2">
 											{#if isAdmin}
-												<Button color="warning" text="" padding="py-1.5 px-2.5" textSize="text-xs" on:click={handleEditModal}>
-													<Edit />
-												</Button>
-												<Button color="danger" text="" padding="py-1.5 px-2.5" textSize="text-xs" on:click={handleConfirmDeleteModal}>
-													<Trash />
-												</Button>
+												<span title="Edit user">
+													<Button color="warning" text="" padding="py-1.5 px-2.5" textSize="text-xs" on:click={() => editUser(data)}>
+														<Edit /><span class="sr-only">Edit {data?.profile?.firstName} {data?.profile?.lastName}</span>
+													</Button>
+												</span>
+												<span title="Deactivate user">
+													<Button color="danger" text="" padding="py-1.5 px-2.5" textSize="text-xs" on:click={() => askDeactivate(data)}>
+														<Trash /><span class="sr-only">Deactivate {data?.profile?.firstName} {data?.profile?.lastName}</span>
+													</Button>
+												</span>
 											{:else}
 												<span class="text-xs text-muted">—</span>
 											{/if}
@@ -267,7 +263,6 @@
 						type="number"
 						min="1"
 						bind:value={pageSize}
-						on:change={handleOverFlow}
 						class="w-16 rounded-lg border-line bg-surface py-1 text-center text-sm text-ink focus:border-leaf focus:ring-2 focus:ring-leaf/25"
 					/>
 				</label>
@@ -307,7 +302,7 @@
 {#if isAddModalOpen }
 	<AddUserForm title='Add User' bind:isAddModalOpen {loadUsers} />
 {/if}
-{#if currentUserExist}
+{#if currentUser}
 	{#if isEditModalOpen}
 		<EditUserForm bind:isEditModalOpen {currentUser} {loadUsers} />
 	{/if}

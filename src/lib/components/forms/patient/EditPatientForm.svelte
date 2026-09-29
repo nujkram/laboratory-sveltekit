@@ -115,7 +115,7 @@
 						>
 							Cancel
 						</button>
-						<Button color="success" text={saving ? 'Saving…' : 'Save changes'} disabled={saving} />
+						<Button htmlType="submit" color="success" text={saving ? 'Saving…' : 'Save changes'} disabled={saving} />
 					</div>
 				</form>
 			</div>

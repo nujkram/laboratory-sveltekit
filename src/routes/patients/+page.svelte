@@ -24,25 +24,30 @@
 	let pageMinIndex = 1;
 	let pageMaxIndex = pageSize;
 	let sortOrder = 'asc';
-	let sortBy = 'code';
+	let sortBy = 'lastName';
     let isEditModalOpen = false;
 	let isConfirmModalOpen = false;
 	let loading = true;
 
-    // Modals
-    const handleEditModal = () => (isEditModalOpen = !isEditModalOpen);
-	const handleConfirmDeleteModal = () => (isConfirmModalOpen = !isConfirmModalOpen);
+	// Modals act on the row whose button was clicked — never on whichever row
+	// the pointer last passed over, which a keyboard or touch user never does.
+	function editPatient(patient) {
+		currentPatient = patient;
+		isEditModalOpen = true;
+	}
+	function askDeactivate(patient) {
+		currentPatient = patient;
+		isConfirmModalOpen = true;
+	}
 
-    function currentPatientExist() {
-		if (currentPatient === undefined || !items.includes(currentPatient)) {
-			log.error('Selected patient does not exist in items fetch from database!');
-			return false;
-		}
-
-		if (patient.code === '' || patient.description === '') {
-			return false;
-		}
-		return true;
+	// Plain substring match on any name part: no regex, so "(" or "*" cannot
+	// throw, and a missing name part cannot either.
+	function matchesSearch(patient, term) {
+		const q = (term ?? '').trim().toLowerCase();
+		if (!q) return true;
+		return [patient.firstName, patient.middleName, patient.lastName].some((v) =>
+			String(v ?? '').toLowerCase().includes(q)
+		);
 	}
 
     async function loadPatient() {
@@ -97,54 +102,38 @@
 
 	function handleSort(columnName) {
 		if (columnName === sortBy) {
-			sortOrder = sortOrder === 'asc' ? 'des' : 'asc';
+			sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
 		} else {
 			sortBy = columnName;
 		}
 		sortItems();
 	}
 
-    const handleOverFlow = () => {
-		if (pageMinIndex > itemSize) currentPage = 1;
-	};
-
-    const decrementPageNumber = () => {
+	const decrementPageNumber = () => {
 		if (currentPage > 1) currentPage -= 1;
 	};
 	const incrementPageNumber = () => {
-		if (pageMaxIndex < itemSize) currentPage += 1;
+		if (currentPage < totalPages) currentPage += 1;
 	};
 
 	onMount(async () => {
 		loadPatient();
 	});
-    $: {
-		// Prevent user to input below the minimum or beyond the maximum value of pagesize.
-		if (pageSize < 1) pageSize = 1;
-		// reactive statement to automatically filter data based on status.
-		paginatedItems = search
-			? items.filter((patient) => {
-					return status !== 'all'
-						? (patient.lastName.match(RegExp(search, 'gi')) ||
-								patient.firstName.match(RegExp(search, 'gi'))) &&
-								patient.isActive === (status === 'active')
-						: patient.lastName.match(RegExp(search, 'gi')) ||
-								patient.firstName.match(RegExp(search, 'gi'));
-			  })
-			: items.filter((patient) => {
-					return status !== 'all' ? patient.isActive === (status === 'active') : items;
-			  });
-		if (paginatedItems.length) {
-			itemSize = paginatedItems.length;
-			paginatedItems = paginate({ items: paginatedItems, pageSize, currentPage });
-		}
-		pageMinIndex = paginatedItems.length == 0 ? 0 : 1 + (currentPage - 1) * pageSize;
-		pageMaxIndex =
-			pageSize * currentPage > paginatedItems.length
-				? paginatedItems.length
-				: pageSize * currentPage;
-	}
-
+	// Filter, count, clamp, then slice — in that order, so the footer's "x–y of n"
+	// counts the filtered set and Next stops at the last page instead of paging
+	// into an empty one that Prev cannot leave.
+	$: if (pageSize < 1) pageSize = 1;
+	$: filtered = items.filter(
+		(p) => matchesSearch(p, search) && (status === 'all' || !!p.isActive === (status === 'active'))
+	);
+	$: itemSize = filtered.length;
+	$: totalPages = Math.max(1, Math.ceil(itemSize / pageSize));
+	$: if (currentPage > totalPages) currentPage = totalPages;
+	$: paginatedItems = paginate({ items: filtered, pageSize, currentPage });
+	$: pageMinIndex = itemSize === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+	$: pageMaxIndex = Math.min(currentPage * pageSize, itemSize);
+	// A new search or filter starts from the first page.
+	$: search, status, (currentPage = 1);
 </script>
 
 <svelte:head><title>Patients · Laboratory Information System</title></svelte:head>
@@ -233,15 +222,8 @@
 					{:else}
 						{#key paginatedItems}
 						{#if paginatedItems.length}
-							{#each paginatedItems as data}
-								<tr
-									class="transition-colors hover:bg-paper"
-									on:mouseenter={() => {
-										if (currentPatient !== data) {
-											currentPatient = data;
-										}
-									}}
-								>
+							{#each paginatedItems as data (data._id)}
+								<tr class="transition-colors hover:bg-paper">
 									<td class="whitespace-nowrap px-5 py-3 font-medium text-ink">{data.lastName || '—'}</td>
 									<td class="whitespace-nowrap px-5 py-3 text-ink">{data.firstName || '—'}</td>
 									<td class="whitespace-nowrap px-5 py-3 text-muted">{data.middleName || '—'}</td>
@@ -267,12 +249,16 @@
 											<Button color="terciary" text="Add result" type="link" href="/record/create/{data._id}" padding="py-1.5 px-3" textSize="text-xs" />
 											{#if !data._pending}
 												<Button color="primary" text="View" type="link" href="/patients/{data._id}" padding="py-1.5 px-3" textSize="text-xs" />
-												<Button color="warning" text="" padding="py-1.5 px-2.5" textSize="text-xs" on:click={handleEditModal}>
-													<Edit />
-												</Button>
-												<Button color="danger" text="" padding="py-1.5 px-2.5" textSize="text-xs" on:click={handleConfirmDeleteModal}>
-													<Trash />
-												</Button>
+												<span title="Edit patient">
+													<Button color="warning" text="" padding="py-1.5 px-2.5" textSize="text-xs" on:click={() => editPatient(data)}>
+														<Edit /><span class="sr-only">Edit {data.firstName} {data.lastName}</span>
+													</Button>
+												</span>
+												<span title="Deactivate patient">
+													<Button color="danger" text="" padding="py-1.5 px-2.5" textSize="text-xs" on:click={() => askDeactivate(data)}>
+														<Trash /><span class="sr-only">Deactivate {data.firstName} {data.lastName}</span>
+													</Button>
+												</span>
 											{/if}
 										</div>
 									</td>
@@ -305,7 +291,6 @@
 						type="number"
 						min="1"
 						bind:value={pageSize}
-						on:change={handleOverFlow}
 						class="w-16 rounded-lg border-line bg-surface py-1 text-center text-sm text-ink focus:border-leaf focus:ring-2 focus:ring-leaf/25"
 					/>
 				</label>
@@ -342,7 +327,7 @@
 	</div>
 </div>
 
-{#if currentPatientExist}
+{#if currentPatient}
 	{#if isEditModalOpen}
 		<EditPatientForm bind:isEditModalOpen bind:currentPatient {loadPatient} />
 	{/if}

@@ -78,7 +78,12 @@
 	let searchTimer;
 
 	// Modals
-	const handleViewModal = () => (isViewModalOpen = !isViewModalOpen);
+	// Opened for the row whose button was clicked, never the last hovered one
+	// (which a keyboard user never hovers at all).
+	function openRecord(record) {
+		currentRecord = record;
+		isViewModalOpen = true;
+	}
 
 	// Resolve the patient: fetch + cache when online; offline fall back to the
 	// cached single patient, the cached patients list, or a queued (pending) patient.
@@ -316,15 +321,8 @@
 					{:else}
 						{#key items}
 						{#if items.length}
-							{#each items as data}
-								<tr
-									class="transition-colors hover:bg-paper"
-									on:mouseenter={() => {
-										if (currentRecord !== data) {
-											currentRecord = data;
-										}
-									}}
-								>
+							{#each items as data (data._id)}
+								<tr class="transition-colors hover:bg-paper">
 									<td class="whitespace-nowrap px-5 py-3">
 										<span class="{categoryBadgeBase} {categoryBadge(data?.category).tint}">
 											<span
@@ -354,7 +352,7 @@
 									</td>
 									<td class="px-5 py-3">
 										<div class="flex items-center justify-end gap-2">
-											<Button color="primary" text="View" padding="py-1.5 px-3" textSize="text-xs" on:click={handleViewModal} />
+											<Button color="primary" text="View" padding="py-1.5 px-3" textSize="text-xs" on:click={() => openRecord(data)} />
 											{#if !data?._pending}
 												<Button color="warning" text="Update" type="link" href="/record/{data?._id}/update" padding="py-1.5 px-3" textSize="text-xs" />
 												{#if isAdmin}
@@ -428,7 +426,7 @@
 	</div>
 </div>
 
-{#if isViewModalOpen}
+{#if isViewModalOpen && currentRecord}
 	{#if currentRecord.category === 'Chemistry'}
 		<ChemistryModal bind:isViewModalOpen data={currentRecord} />
 	{/if}

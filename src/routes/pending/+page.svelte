@@ -28,9 +28,12 @@
 
 	async function syncNow() {
 		syncing = true;
-		await flushOutbox();
-		await refresh();
-		syncing = false;
+		try {
+			await flushOutbox();
+			await refresh();
+		} finally {
+			syncing = false;
+		}
 	}
 
 	async function retry(item) {

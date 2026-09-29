@@ -13,6 +13,8 @@
 	export let classes = '';
 	export let margin = '';
 	export let disabled = false;
+	/** 'button' | 'submit' — a Button inside a form only submits it when asked to */
+	export let htmlType = 'button';
 
 	const dispatch = createEventDispatcher();
 
@@ -37,7 +39,7 @@
 
 {#if type === 'button'}
 	<button
-		type="submit"
+		type={htmlType}
 		{disabled}
 		class="{base} {colorClasses} {textColor} {textSize} {padding} {rounded} {margin} {classes} {disabled
 			? 'cursor-not-allowed opacity-60'

@@ -67,7 +67,12 @@
 	let isViewModalOpen = false;
 	let searchTimer;
 
-	const handleViewModal = () => (isViewModalOpen = !isViewModalOpen);
+	// Opened for the row whose button was clicked, never the last hovered one
+	// (which a keyboard user never hovers at all).
+	function openRecord(record) {
+		currentRecord = record;
+		isViewModalOpen = true;
+	}
 
 	async function loadRecords() {
 		loading = true;
@@ -264,11 +269,8 @@
 							</td>
 						</tr>
 					{:else if items.length}
-						{#each items as data}
-							<tr
-								class="transition-colors hover:bg-paper"
-								on:mouseenter={() => (currentRecord = data)}
-							>
+						{#each items as data (data._id)}
+								<tr class="transition-colors hover:bg-paper">
 								<td class="whitespace-nowrap px-5 py-3">
 									<a href="/patients/{data?.patient?._id}" class="font-medium text-ink no-underline hover:text-pine-700">
 										{data?.patient?.completeName || '—'}
@@ -296,7 +298,7 @@
 								</td>
 								<td class="px-5 py-3">
 									<div class="flex items-center justify-end gap-2">
-										<Button color="primary" text="View" padding="py-1.5 px-3" textSize="text-xs" on:click={handleViewModal} />
+										<Button color="primary" text="View" padding="py-1.5 px-3" textSize="text-xs" on:click={() => openRecord(data)} />
 										{#if !data?._pending}
 											<Button color="warning" text="Update" type="link" href="/record/{data?._id}/update" padding="py-1.5 px-3" textSize="text-xs" />
 											{#if isAdmin}

@@ -18,6 +18,7 @@
 	import { formatPeso, toCentavos } from '$lib/utils/currency';
 	import { discountLineLabel, emptyDiscountForm } from '$lib/common/discounts';
 	import { isOnline } from '$lib/stores/connectivity.js';
+	import { calculateAge } from '$lib/utils/ageHelper';
 
 	let tests = [];
 	let sections = [];
@@ -64,7 +65,14 @@
 	// blocks submit, rather than showing a total the server would refuse.
 	$: discountCentavos = discountResult?.ok ? discountResult.value.discountCentavos : 0;
 	$: netCentavos = Math.max(0, grossCentavos - discountCentavos);
-	$: customerAge = mode === 'patient' ? selectedPatient?.age ?? null : walkIn.age;
+	// A registered patient carries a birth date, not an age — work it out, or the
+	// senior-discount check never sees how old they are.
+	$: customerAge =
+		mode === 'patient'
+			? selectedPatient?.birthDate
+				? calculateAge(selectedPatient.birthDate)
+				: null
+			: walkIn.age;
 
 	$: patientMatches = patientSearch.trim()
 		? patients

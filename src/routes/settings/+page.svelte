@@ -10,6 +10,7 @@
 	let location = settings?.location;
 	let mobile = settings?.mobile;
 	let message;
+	let failed = false;
 	let saving = false;
 
 	async function handleSubmit() {
@@ -19,12 +20,18 @@
 				endpoint: '/api/admin/settings/update',
 				entity: 'settings',
 				isCreate: false,
-				body: { _id: settings._id, name, location, mobile }
+				body: { _id: settings?._id, name, location, mobile }
 			});
-			message = res.synced ? (res.result?.message || 'Settings saved.') : 'Saved offline — will sync automatically.';
-			setTimeout(() => (message = null), 3000);
+			failed = !res.ok;
+			message = !res.ok
+				? res.result?.message || 'Could not save the settings.'
+				: res.synced
+					? res.result?.message || 'Settings saved.'
+					: 'Saved offline — will sync automatically.';
+			setTimeout(() => (message = null), failed ? 5000 : 3000);
 		} catch (error) {
-			console.error('error', error);
+			failed = true;
+			message = 'Something went wrong. Please try again.';
 		} finally {
 			saving = false;
 		}
@@ -99,12 +106,18 @@
 				{#if message}
 					<span
 						transition:fade
-						class="inline-flex items-center gap-2 text-sm font-medium text-success"
-						role="status"
+						class="inline-flex items-center gap-2 text-sm font-medium {failed ? 'text-danger' : 'text-success'}"
+						role={failed ? 'alert' : 'status'}
 					>
-						<svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-							<path fill-rule="evenodd" d="M16.7 5.3a1 1 0 010 1.4l-7.5 7.5a1 1 0 01-1.4 0l-3.5-3.5a1 1 0 011.4-1.4l2.8 2.79 6.8-6.8a1 1 0 011.4 0z" clip-rule="evenodd" />
-						</svg>
+						{#if failed}
+							<svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+								<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm0-11a1 1 0 011 1v3a1 1 0 11-2 0V8a1 1 0 011-1zm0 7a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+							</svg>
+						{:else}
+							<svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+								<path fill-rule="evenodd" d="M16.7 5.3a1 1 0 010 1.4l-7.5 7.5a1 1 0 01-1.4 0l-3.5-3.5a1 1 0 011.4-1.4l2.8 2.79 6.8-6.8a1 1 0 011.4 0z" clip-rule="evenodd" />
+							</svg>
+						{/if}
 						{message}
 					</span>
 				{/if}

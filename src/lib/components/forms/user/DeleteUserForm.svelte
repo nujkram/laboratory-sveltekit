@@ -10,6 +10,11 @@
 	let saving = false;
 	let message = null;
 	let alertColor = 'red';
+	// Written out in full: Tailwind only keeps classes it can see in the source,
+	// so an interpolated `bg-{color}-500` is purged and the alert renders unstyled.
+	$: alertClass = alertColor === 'red'
+		? 'border border-danger/30 bg-danger/10 text-danger'
+		: 'border border-leaf/30 bg-leaf-soft text-pine-700';
 	let typed = '';
 
 	$: canHardDelete = typed.trim().toUpperCase() === 'DELETE' && !saving;
@@ -77,7 +82,7 @@
 				</p>
 
 				{#if message}
-					<div transition:fade class="mt-4 flex items-center justify-center bg-{alertColor}-500 text-white text-sm font-bold px-4 py-3 rounded" role="alert">
+					<div transition:fade class="mt-4 flex items-center justify-center {alertClass} text-sm font-bold px-4 py-3 rounded" role="alert">
 						<p>{message}</p>
 					</div>
 				{/if}

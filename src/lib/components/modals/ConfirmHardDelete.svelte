@@ -17,6 +17,9 @@
 	let typed = '';
 
 	$: canDelete = typed.trim().toUpperCase() === CONFIRM_WORD && !busy;
+	// Parents close by setting `open` directly, so clear the word here too —
+	// the next delete must not open already armed.
+	$: if (!open) typed = '';
 
 	function close() {
 		if (busy) return;

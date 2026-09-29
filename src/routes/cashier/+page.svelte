@@ -280,6 +280,7 @@
 				on:keydown={handleKey}
 			/>
 			<Button
+				htmlType="submit"
 				color="primary"
 				text={looking ? 'Finding…' : 'Retrieve'}
 				disabled={looking || !lookup.trim()}
