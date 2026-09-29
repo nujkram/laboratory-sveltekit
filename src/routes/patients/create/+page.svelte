@@ -53,7 +53,9 @@
 						: 'Saved offline — will sync automatically.';
 					setTimeout(() => {
 						message = null;
-						goto('/patients'); // patients list works offline (shows pending)
+						// Straight to the chart, where "New request" and "New result" are one
+						// click away; offline the chart needs the server, so the list instead.
+						goto(res.synced ? `/patients/${res.doc._id}` : '/patients');
 					}, res.synced ? 1500 : 2500);
 				} else {
 					message = res.result?.message || 'An error occurred. Please try again.';

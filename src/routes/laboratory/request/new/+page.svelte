@@ -19,6 +19,10 @@
 	import { discountLineLabel, emptyDiscountForm } from '$lib/common/discounts';
 	import { isOnline } from '$lib/stores/connectivity.js';
 	import { calculateAge } from '$lib/utils/ageHelper';
+	import { page } from '$app/stores';
+	import { canView } from '$lib/common/access';
+
+	export let data;
 
 	let tests = [];
 	let sections = [];
@@ -118,6 +122,11 @@
 			}
 			patients = patientList?.response ?? patientList ?? [];
 			if (!Array.isArray(patients)) patients = [];
+			// Opened from a patient's chart: that patient is already the answer.
+			if (data?.patientId) {
+				const preset = patients.find((p) => p._id === data.patientId);
+				if (preset) pickPatient(preset);
+			}
 		} catch {
 			loadError = $isOnline
 				? 'Could not load the laboratory test catalog.'
@@ -273,6 +282,14 @@
 			</p>
 			<div class="mt-4 flex flex-wrap gap-2">
 				<Button color="primary" text="Print slip" on:click={() => (isViewModalOpen = true)} />
+				{#if createdTransaction.patientId && canView($page.data.user, '/record')}
+					<Button
+						type="link"
+						href="/record/create/{createdTransaction.patientId}?transaction={createdTransaction._id}"
+						color="success"
+						text="Create result"
+					/>
+				{/if}
 				<Button color="secondary" text="Encode another request" on:click={startAnother} />
 				<Button type="link" href="/laboratory/transactions" color="terciary" text="View transactions" />
 			</div>

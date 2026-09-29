@@ -246,6 +246,9 @@
 									</td>
 									<td class="px-5 py-3">
 										<div class="flex items-center justify-end gap-2">
+											{#if !data._pending}
+												<Button color="secondary" text="New request" type="link" href="/laboratory/request/new?patientId={data._id}" padding="py-1.5 px-3" textSize="text-xs" />
+											{/if}
 											<Button color="terciary" text="Add result" type="link" href="/record/create/{data._id}" padding="py-1.5 px-3" textSize="text-xs" />
 											{#if !data._pending}
 												<Button color="primary" text="View" type="link" href="/patients/{data._id}" padding="py-1.5 px-3" textSize="text-xs" />

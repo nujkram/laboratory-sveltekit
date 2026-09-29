@@ -24,11 +24,35 @@
 		readDiscountType
 	} from '$lib/common/discounts';
 	import { isOnline } from '$lib/stores/connectivity.js';
+	import { parseReference } from '$lib/common/labReference';
 
 	let lookupEl;
 	let lookup = '';
 	let looking = false;
 	let lookupError = '';
+	// A name typed instead of a reference: the unpaid slips it matches.
+	let matches = [];
+
+	// The last receipt number recorded, so the next one can be offered rather
+	// than read off the booklet each time. A suggestion only.
+	let lastOr = null;
+	let orSuggested = false;
+	async function loadLastOr() {
+		try {
+			const res = await fetch('/api/admin/lab-transaction/last-or', { credentials: 'include' });
+			const result = await res.json();
+			if (result?.status === 'Success') lastOr = result.response?.orNumber ?? null;
+		} catch {
+			/* no suggestion, the field is simply empty */
+		}
+	}
+	// "0001234" → "0001235", "A-118" → "A-119"; anything without trailing digits → ''
+	function nextOr(value) {
+		const m = String(value ?? '').match(/^(.*?)(\d+)$/);
+		if (!m) return '';
+		const next = String(Number(m[2]) + 1).padStart(m[2].length, '0');
+		return m[1] + next;
+	}
 
 	let transaction = null;
 
@@ -97,6 +121,36 @@
 		payError = '';
 		paidJustNow = false;
 		transaction = null;
+		matches = [];
+
+		// Not a reference number: the customer has lost the slip, so find it
+		// by their name among the slips still waiting for payment.
+		if (parseReference(reference) === null) {
+			try {
+				const res = await fetch('/api/admin/lab-transaction', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					credentials: 'include',
+					body: JSON.stringify({ search: reference, paymentStatus: 'Unpaid', status: 'Pending', pageSize: 8 })
+				});
+				const result = await res.json();
+				const found = result?.status === 'Success' ? result.response ?? [] : [];
+				if (found.length === 1) {
+					lookup = found[0].referenceNumber;
+					looking = false;
+					return retrieve();
+				}
+				matches = found;
+				if (!found.length) lookupError = `No unpaid slip matches "${reference}".`;
+			} catch {
+				lookupError = $isOnline ? 'Could not reach the server.' : 'You are offline. Payments can only be taken online.';
+			} finally {
+				looking = false;
+				await tick();
+				selectLookup();
+			}
+			return;
+		}
 
 		try {
 			const res = await fetch(`/api/admin/lab-transaction/by-reference/${encodeURIComponent(reference)}`, {
@@ -106,6 +160,11 @@
 			if (result?.status === 'Success') {
 				transaction = result.response;
 				orNumber = transaction?.payment?.orNumber ?? '';
+				orSuggested = false;
+				if (!orNumber && transaction?.paymentStatus !== 'Paid' && lastOr) {
+					orNumber = nextOr(lastOr);
+					orSuggested = !!orNumber;
+				}
 				tenderedInput = '';
 				method = transaction?.payment?.method ?? 'Cash';
 				// Seed the form from what is already on the transaction, so a
@@ -193,6 +252,8 @@
 			if (result?.status === 'Success') {
 				transaction = { ...transaction, ...result.response };
 				paidJustNow = true;
+				lastOr = orNumber.trim();
+				orSuggested = false;
 			} else {
 				// A 409 here is the double-charge guard doing its job — show exactly
 				// what the server said, and refresh so the cashier sees the truth.
@@ -228,7 +289,10 @@
 		lookupEl?.select();
 	}
 
-	onMount(selectLookup);
+	onMount(() => {
+		selectLookup();
+		if ($isOnline) loadLastOr();
+	});
 </script>
 
 <svelte:head><title>Cashier · Laboratory Information System</title></svelte:head>
@@ -292,6 +356,24 @@
 			<p class="mt-3 rounded-lg bg-danger/10 px-3 py-2 text-sm font-medium text-danger" role="alert">
 				{lookupError}
 			</p>
+		{/if}
+		{#if matches.length}
+			<p class="mt-3 text-xs font-semibold uppercase tracking-wide text-muted">Unpaid slips matching that name</p>
+			<ul class="mt-1 divide-y divide-line rounded-lg border border-line">
+				{#each matches as m (m._id)}
+					<li>
+						<button
+							type="button"
+							class="flex w-full items-center justify-between gap-3 px-4 py-2.5 text-left text-sm transition-colors hover:bg-paper"
+							on:click={() => { lookup = m.referenceNumber; retrieve(); }}
+						>
+							<span class="font-mono font-semibold text-ink">{m.referenceNumber}</span>
+							<span class="min-w-0 flex-1 truncate text-ink">{m.customer?.name || '—'}</span>
+							<span class="font-semibold tabular text-ink">{formatPeso(m.netCentavos)}</span>
+						</button>
+					</li>
+				{/each}
+			</ul>
 		{/if}
 	</form>
 
@@ -480,9 +562,13 @@
 								class="field font-mono"
 								type="text"
 								bind:value={orNumber}
+								on:input={() => (orSuggested = false)}
 								autocomplete="off"
 								placeholder="From the receipt booklet"
 							/>
+							{#if orSuggested}
+								<p class="field-hint">Suggested — next after O.R. {lastOr}. Edit it if your booklet differs.</p>
+							{/if}
 						</div>
 						<div>
 							<label class="mb-1.5 block text-sm font-medium text-ink" for="method">Method</label>

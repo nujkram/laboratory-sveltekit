@@ -10,12 +10,42 @@
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { loadRefList, getRefData, cacheRefData } from '$lib/client/refdata.js';
+	import { calculateAge } from '$lib/utils/ageHelper';
 	import { allPending } from '$lib/client/outbox.js';
 	import { saveOrQueue } from '$lib/client/saveOrQueue.js';
 
 	export let data;
 	let { recordId } = data;
 	let record = null;
+
+	// The patient this chart belongs to — shown at the top so a result cannot
+	// quietly be filed against the wrong person. Cached copy when offline.
+	let patient = null;
+	let patientMissing = false;
+	async function loadPatient(id) {
+		if (!id) return;
+		if (navigator.onLine) {
+			try {
+				const res = await fetch(`/api/admin/patient/${id}`);
+				const json = await res.json();
+				if (json.response) {
+					patient = json.response;
+					cacheRefData(`patient:${id}`, patient);
+					return;
+				}
+			} catch (e) {
+				/* fall through to the cache */
+			}
+		}
+		patient = (await getRefData(`patient:${id}`)) ?? null;
+		if (!patient) {
+			const list = (await getRefData('patients')) ?? [];
+			patient = list.find((p) => p._id === id) || null;
+		}
+		patientMissing = !patient;
+	}
+	$: if (patientId && !patient && !patientMissing) loadPatient(patientId);
+	$: pickedSlip = record?.transaction ?? null;
 	let loading = true;
 	let notFound = false;
 	// Blocks a second submit while the first is in flight — a double click
@@ -214,8 +244,39 @@
 <div class="animate-rise-in mx-auto max-w-4xl space-y-5">
 	<div>
 		<h2 class="font-display text-2xl font-bold text-ink">Update laboratory result</h2>
-		<p class="mt-1 text-sm text-muted">Edit this result, then save your changes.</p>
+		<p class="mt-1 text-sm text-muted">
+			Edit this result, then save your changes.
+			{#if record?.caseNumber}<span class="font-mono text-ink">Case {record.caseNumber}</span>{/if}
+		</p>
 	</div>
+	{#if !loading && !notFound}
+	<!-- Whose chart this goes on: the one check that prevents a result being
+	     filed against the wrong person. -->
+	<div class="flex flex-wrap items-center gap-x-5 gap-y-2 rounded-xl border border-line bg-pine-fade px-5 py-4 text-white shadow-card">
+		<span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-leaf-active ring-2 ring-white/15">
+			<svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+				<path d="M10 2a3.5 3.5 0 100 7 3.5 3.5 0 000-7zM3.5 16.5a6.5 6.5 0 0113 0 .5.5 0 01-.5.5H4a.5.5 0 01-.5-.5z" />
+			</svg>
+		</span>
+		<div class="min-w-0 flex-1">
+			<p class="font-display text-lg font-bold leading-tight">
+				{patient?.completeName ?? (patientMissing ? 'Patient not found' : 'Loading patient…')}
+			</p>
+			<p class="mt-0.5 text-sm text-white/70">
+				{#if patient}
+					{[patient.gender, patient.birthDate ? `${calculateAge(patient.birthDate)} yrs` : '', patient.address].filter(Boolean).join(' · ') || '—'}
+				{:else if patientMissing}
+					Check the link you followed — this chart does not exist.
+				{/if}
+			</p>
+		</div>
+		{#if pickedSlip}
+			<span class="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 font-mono text-xs font-medium text-leaf-active" title="Charge slip this result is linked to">
+				{pickedSlip.referenceNumber} · {pickedSlip.paymentStatus}
+			</span>
+		{/if}
+	</div>
+	{/if}
 	{#if loading}
 		<div class="flex items-center justify-center gap-3 rounded-xl border border-line bg-surface px-6 py-14 text-muted shadow-card">
 			<svg class="h-5 w-5 animate-spin text-leaf" viewBox="0 0 24 24" fill="none" aria-hidden="true">

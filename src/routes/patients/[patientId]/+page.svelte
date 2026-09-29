@@ -284,6 +284,9 @@
 					class="w-full rounded-lg border-line bg-surface py-2 pl-9 pr-3 text-sm text-ink placeholder:text-muted/60 focus:border-leaf focus:ring-2 focus:ring-leaf/25"
 				/>
 			</div>
+			{#if patient && !patient._pending}
+				<Button color="secondary" text="New request" type="link" href="/laboratory/request/new?patientId={patient._id}" padding="py-2 px-4" />
+			{/if}
 			<Button color="primary" text="New result" type="link" href="/record/create/{patient?._id}" padding="py-2 px-4">
 				<svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
 					<path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
