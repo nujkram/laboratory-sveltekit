@@ -528,7 +528,7 @@
 					{/if}
 
 					<div class="flex items-center justify-end gap-3">
-						<Button color="secondary" text="Cancel" on:click={nextCustomer} />
+						<Button color="secondary" text="Clear" on:click={nextCustomer} />
 						<Button
 							color="success"
 							text={paying ? 'Recording…' : `Take payment ${formatPeso(netCentavos)}`}

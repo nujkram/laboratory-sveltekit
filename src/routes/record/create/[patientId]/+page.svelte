@@ -279,14 +279,13 @@
 				<div class="md:w-3/12">
 					<label
 						class="field-label"
-						for="category"
+						for="inline-category"
 					>
 						Category
 					</label>
 				</div>
 				<div class="md:w-5/12">
-					<select
-						id="dropdown"
+					<select id="inline-category"
 						name="category"
 						class="field"
 						placeholder="Select an option"
@@ -353,19 +352,14 @@
 				<div class="md:w-3/12">
 					<label
 						class="field-label"
-						for="inline-firstName"
+						for="inline-pathologist"
 					>
 						Pathologist
 					</label>
 				</div>
 				<div class="md:w-5/12">
-					<select
-						id="dropdown"
-						name="pathologist"
-						class="field"
-						placeholder="Select an option"
-						bind:value={pathologist}
-					>
+					<select id="inline-pathologist" name="pathologist" class="field" required bind:value={pathologist}>
+						<option value="" disabled>Select…</option>
 					{#each pathologists as option}
 						<option value={option?._id}>{option?.profile?.displayName}</option>
 					{/each}
@@ -376,19 +370,14 @@
 				<div class="md:w-3/12">
 					<label
 						class="field-label"
-						for="inline-firstName"
+						for="inline-medicalTechnologist"
 					>
 						Medical Technologist
 					</label>
 				</div>
 				<div class="md:w-5/12">
-					<select
-						id="dropdown"
-						name="medicalTechnologist"
-						class="field"
-						placeholder="Select an option"
-						bind:value={medicalTechnologist}
-					>
+					<select id="inline-medicalTechnologist" name="medicalTechnologist" class="field" required bind:value={medicalTechnologist}>
+						<option value="" disabled>Select…</option>
 						{#each medTechs as option}
 							<option value={option?._id}>{option?.profile?.displayName}</option>
 						{/each}
@@ -397,7 +386,7 @@
 			</div>
 			<div class="flex items-center justify-end gap-3 border-t border-line pt-5">
 				{#if message}
-					<span transition:fade class="text-sm font-medium text-muted">{@html message}</span>
+					<span transition:fade class="text-sm font-medium text-muted">{message}</span>
 				{/if}
 				<Button htmlType="submit" type="button" color="primary" text={submitting ? 'Saving…' : 'Save result'} disabled={submitting} padding="py-2.5 px-5" />
 			</div>

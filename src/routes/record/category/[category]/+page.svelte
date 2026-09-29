@@ -182,8 +182,7 @@
 		status = 'all';
 		loadRecords();
 	}
-
-	onMount(loadRecords);
+	// (the block above also runs once on mount, so no onMount(loadRecords))
 </script>
 
 <svelte:head><title>Records · Laboratory Information System</title></svelte:head>

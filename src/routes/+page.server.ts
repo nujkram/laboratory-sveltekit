@@ -12,7 +12,8 @@ export async function load({ locals, params, url, parent, fetch }) {
 	// @ts-ignore
 	const { user } = locals;
 
-	async function fetchData(path) {
+	let loadError = '';
+	async function fetchData(path: string) {
 		try {
 			let response = await fetch(path, {
 				method: 'GET',
@@ -21,9 +22,12 @@ export async function load({ locals, params, url, parent, fetch }) {
 				}
 			});
 			let result = await response.json();
+			if (!response.ok || !result?.response) throw new Error(result?.message || 'Could not load the dashboard.');
 			return result.response;
-		} catch (error) {
-			console.error('error', error);
+		} catch (error: any) {
+			// Zeros would read as "a quiet day"; the page shows this instead.
+			loadError = error?.message || 'Could not load the dashboard.';
+			return null;
 		}
 	}
 
@@ -33,6 +37,7 @@ export async function load({ locals, params, url, parent, fetch }) {
 
 	return {
 		user,
+		loadError,
 		summary
 	};
 }

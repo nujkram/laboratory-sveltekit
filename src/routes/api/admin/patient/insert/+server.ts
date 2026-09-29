@@ -27,6 +27,15 @@ export async function POST({ request, locals }: any) {
         );
     }
 
+    for (const field of ['firstName', 'lastName']) {
+        if (typeof data?.[field] !== 'string' || !data[field].trim()) {
+            return new Response(
+                JSON.stringify({ status: 'Error', message: 'First and last name are required.' }),
+                { status: 400 }
+            );
+        }
+        data[field] = data[field].trim();
+    }
     data.middleName = data?.middleName || '';
     data.completeName = data.middleName
         ? `${data.firstName} ${data.middleName} ${data.lastName}`

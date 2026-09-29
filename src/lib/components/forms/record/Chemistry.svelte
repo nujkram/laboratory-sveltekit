@@ -113,14 +113,14 @@
             class="field-label"
             for="inline-hba1c"
         >
-            HBa1c
+            HbA1c
         </label>
     </div>
     <div class="md:w-5/12">
         <input
             class="field"
             id="inline-hba1c"
-            placeholder="HBa1c"
+            placeholder="HbA1c"
             type="text"
             name="hba1c"
             bind:value={hba1c}
@@ -343,14 +343,14 @@
             class="field-label"
             for="inline-sodium"
         >
-            Soduim
+            Sodium
         </label>
     </div>
     <div class="md:w-5/12">
         <input
             class="field"
             id="inline-sodium"
-            placeholder="Soduim"
+            placeholder="Sodium"
             type="text"
             name="sodium"
             bind:value={sodium}

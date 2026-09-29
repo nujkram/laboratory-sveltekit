@@ -26,6 +26,7 @@
 		: '-translate-x-full'}"
 	aria-label="Main navigation"
 	aria-hidden={!$sidebarOpen}
+	inert={$sidebarOpen ? undefined : ''}
 >
 	<!-- Collapse control -->
 	<button

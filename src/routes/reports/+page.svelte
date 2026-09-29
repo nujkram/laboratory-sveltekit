@@ -43,6 +43,9 @@
 	}
 
 	async function load() {
+		// A range typed backwards is almost always a slip: swap it rather than
+		// reporting an empty period.
+		if (fromDate && toDate && fromDate > toDate) [fromDate, toDate] = [toDate, fromDate];
 		loading = true;
 		loadError = '';
 		try {
@@ -140,7 +143,7 @@
 			</p>
 		</div>
 		<div class="print-hide">
-			<Button type="link" href="/laboratory" color="terciary" text="View transactions" />
+			<Button type="link" href="/laboratory/transactions" color="terciary" text="View transactions" />
 		</div>
 	</div>
 
@@ -258,6 +261,7 @@
 					<h3 class="font-display text-base font-bold text-ink">Collected by</h3>
 				</div>
 				{#if byCashier.length}
+					<div class="overflow-x-auto">
 					<table class="w-full text-sm">
 						<thead>
 							<tr class="border-b border-line text-left text-[0.7rem] uppercase tracking-[0.12em] text-muted">
@@ -278,6 +282,7 @@
 							{/each}
 						</tbody>
 					</table>
+					</div>
 				{:else}
 					<p class="px-5 py-8 text-center text-sm text-muted">Nothing was collected in this period.</p>
 				{/if}
@@ -307,6 +312,7 @@
 				<h3 class="font-display text-base font-bold text-ink">Day by day</h3>
 			</div>
 			{#if byDay.length}
+				<div class="overflow-x-auto">
 				<table class="w-full text-sm">
 					<thead>
 						<tr class="border-b border-line text-left text-[0.7rem] uppercase tracking-[0.12em] text-muted">
@@ -340,6 +346,7 @@
 						{/each}
 					</tbody>
 				</table>
+				</div>
 			{:else}
 				<p class="px-5 py-10 text-center text-sm text-muted">
 					No transactions in this period.

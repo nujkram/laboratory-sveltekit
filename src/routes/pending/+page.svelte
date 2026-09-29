@@ -1,10 +1,10 @@
 <script>
 	// @ts-nocheck
-	import { onMount } from 'svelte';
-	import { allPending, updateItem, removeItem } from '$lib/client/outbox.js';
+		import { allPending, updateItem, removeItem } from '$lib/client/outbox.js';
 	import { flushOutbox } from '$lib/client/sync.js';
 	import { isOnline, pendingCount, syncBlocked } from '$lib/stores/connectivity.js';
 	import { getRefData } from '$lib/client/refdata.js';
+	import ConfirmDialog from '$lib/components/modals/ConfirmDialog.svelte';
 
 	let items = [];
 	let loading = true;
@@ -41,14 +41,24 @@
 		await syncNow();
 	}
 
-	// Conflict resolution: overwrite the server version with the queued edit.
-	async function keepMine(item) {
-		await updateItem(item.queueId, { force: true, status: 'pending', lastError: null, nextAttempt: 0 });
-		await syncNow();
-	}
+	// Both actions lose something — the other device's edit, or this one's —
+	// so each asks first.
+	let pendingAction = null; // { kind: 'keep' | 'discard', item }
 
-	async function discard(item) {
-		if (confirm('Discard this unsynced entry? It will not be saved.')) {
+	// Conflict resolution: overwrite the server version with the queued edit.
+	function keepMine(item) {
+		pendingAction = { kind: 'keep', item };
+	}
+	function discard(item) {
+		pendingAction = { kind: 'discard', item };
+	}
+	async function confirmAction() {
+		const { kind, item } = pendingAction;
+		pendingAction = null;
+		if (kind === 'keep') {
+			await updateItem(item.queueId, { force: true, status: 'pending', lastError: null, nextAttempt: 0 });
+			await syncNow();
+		} else {
 			await removeItem(item.queueId);
 			await refresh();
 		}
@@ -69,8 +79,8 @@
 		return { title: item.entity, detail: '' };
 	}
 
-	onMount(refresh);
-	// Re-read whenever the pending count changes (e.g. after a background sync).
+	// Re-read whenever the pending count changes (e.g. after a background sync);
+	// this also runs once on mount.
 	$: $pendingCount, refresh?.();
 </script>
 
@@ -162,3 +172,18 @@
 		{/if}
 	</div>
 </div>
+
+<ConfirmDialog
+	open={!!pendingAction}
+	title={pendingAction?.kind === 'keep' ? 'Overwrite the other version?' : 'Discard this entry?'}
+	confirmLabel={pendingAction?.kind === 'keep' ? 'Keep mine' : 'Discard'}
+	danger={pendingAction?.kind === 'discard'}
+	on:confirm={confirmAction}
+	on:cancel={() => (pendingAction = null)}
+>
+	{#if pendingAction?.kind === 'keep'}
+		This replaces what was saved from another device with the copy queued on this one.
+	{:else}
+		{summarize(pendingAction?.item ?? {}).title} — it has not reached the server and will not be saved.
+	{/if}
+</ConfirmDialog>

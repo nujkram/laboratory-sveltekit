@@ -9,6 +9,7 @@
 	// list is worse than four separate saves.
 	import { onMount } from 'svelte';
 	import Button from '$lib/components/reusable/Button.svelte';
+	import ConfirmDialog from '$lib/components/modals/ConfirmDialog.svelte';
 	import { formatPeso, toCentavos } from '$lib/utils/currency';
 	import { isOnline } from '$lib/stores/connectivity.js';
 
@@ -114,8 +115,17 @@
 		save(row, { priceCentavos: row.draftCentavos });
 	}
 
+	// Withdrawing takes a test off every new request form at once, so it asks
+	// first; putting it back is harmless and does not.
+	let withdrawing = null;
 	function toggleAvailable(test) {
-		save(test, { isAvailable: test.isAvailable === false });
+		if (test.isAvailable === false) save(test, { isAvailable: true });
+		else withdrawing = test;
+	}
+	function confirmWithdraw() {
+		const test = withdrawing;
+		withdrawing = null;
+		save(test, { isAvailable: false });
 	}
 
 	onMount(load);
@@ -132,7 +142,6 @@
 				created with.
 			</p>
 		</div>
-		<Button type="link" href="/reports" color="terciary" text="Back to reports" />
 	</div>
 
 	<div class="overflow-hidden rounded-xl border border-line bg-surface shadow-card">
@@ -166,6 +175,7 @@
 							{group.section}
 						</h3>
 					</div>
+					<div class="overflow-x-auto">
 					<table class="w-full text-sm">
 						<tbody>
 							{#each group.rows as test (test.code)}
@@ -200,6 +210,7 @@
 											inputmode="decimal"
 											value={test.draft}
 											on:input={(e) => (drafts = { ...drafts, [test.code]: e.target.value })}
+											on:keydown={(e) => e.key === 'Enter' && test.dirty && savePrice(test)}
 											disabled={!$isOnline || savingCode === test.code}
 										/>
 									</td>
@@ -225,8 +236,21 @@
 							{/each}
 						</tbody>
 					</table>
+					</div>
 				</div>
 			{/each}
 		{/if}
 	</div>
 </div>
+
+<ConfirmDialog
+	open={!!withdrawing}
+	title="Withdraw this test?"
+	confirmLabel="Withdraw"
+	danger
+	on:confirm={confirmWithdraw}
+	on:cancel={() => (withdrawing = null)}
+>
+	<span class="font-semibold text-ink">{withdrawing?.name}</span> will no longer be offered on new
+	requests. Charges already raised are unaffected, and you can make it orderable again here.
+</ConfirmDialog>

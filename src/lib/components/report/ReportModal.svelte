@@ -68,7 +68,7 @@
 	<!-- The scroll layer covers the backdrop, so a click on the grey area lands
 	     here, not on it: `self` closes on the layer itself and not on the card. -->
 	<div class="report-scroll" on:click|self={handleCloseModal}>
-		<div class="report-card" on:click|stopPropagation>
+		<div class="report-card" role="dialog" aria-modal="true" on:click|stopPropagation>
 			<div id="nav-modal">
 				<button
 					class="absolute top-3 left-2.5 inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-white transition-colors {confirmingRelease

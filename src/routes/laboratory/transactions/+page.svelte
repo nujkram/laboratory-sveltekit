@@ -46,6 +46,7 @@
 	let isResultOpen = false;
 	let currentResult = null;
 	let loadingResultId = '';
+	let resultError = '';
 	// A slip with several results gets a picker before the report.
 	let pickingFrom = null;
 
@@ -186,6 +187,7 @@
 	async function openResult(row, id) {
 		if (!id || loadingResultId) return;
 		loadingResultId = id;
+		resultError = '';
 		try {
 			const [recordRes, patientRes] = await Promise.all([
 				fetch(`/api/admin/record/${id}`),
@@ -193,12 +195,17 @@
 			]);
 			const record = (await recordRes.json())?.response;
 			const patient = (await patientRes.json())?.response;
-			if (!record) return;
+			if (!record) {
+				resultError = 'That result could not be found — it may have been deleted.';
+				return;
+			}
 			currentResult = { ...record, patient };
 			pickingFrom = null;
 			isResultOpen = true;
 		} catch {
-			// nothing to show; the badge still says a result exists
+			resultError = $isOnline
+				? 'Could not open the result. Please try again.'
+				: 'You are offline. Results can only be opened online.';
 		} finally {
 			loadingResultId = '';
 		}
@@ -353,6 +360,9 @@
 			</div>
 		</div>
 
+		{#if resultError}
+			<p class="border-b border-line bg-danger/10 px-5 py-2 text-sm font-medium text-danger" role="alert">{resultError}</p>
+		{/if}
 		<div class="overflow-x-auto">
 			<table class="w-full text-sm">
 				<thead

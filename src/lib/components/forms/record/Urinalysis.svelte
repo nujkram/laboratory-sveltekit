@@ -329,7 +329,7 @@
             class="field-label"
             for="inline-calcium-oxolate"
         >
-            Calcium Oxolate
+            Calcium Oxalate
         </label>
     </div>
     <div class="md:w-5/12">
@@ -337,7 +337,7 @@
             class="field"
             id="inline-calcium-oxolate"
             type="text"
-            placeholder="Calcium Oxolate"
+            placeholder="Calcium Oxalate"
             name="calciumOxolate"
             bind:value={calciumOxolate}
         />

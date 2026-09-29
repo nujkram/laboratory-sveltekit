@@ -16,6 +16,11 @@
 	export let data;
 	let { recordId } = data;
 	let record = null;
+	let loading = true;
+	let notFound = false;
+	// Blocks a second submit while the first is in flight — a double click
+	// otherwise sends two updates and the second fails with a conflict.
+	let submitting = false;
 	let medTechs = [];
 	let pathologists = [];
 	let category = '';
@@ -155,6 +160,8 @@
 
 	onMount(async () => {
 		await loadRecord();
+		notFound = !record;
+		loading = false;
 		const [cats, mts, paths] = await Promise.all([
 			loadRefList('categories', '/api/admin/record/categories'),
 			loadRefList('medTechs', '/api/admin/user/med-tech'),
@@ -173,6 +180,8 @@
 	};
 
 	async function handleSubmit(e) {
+		if (submitting) return;
+		submitting = true;
 		const body = Object.fromEntries(new FormData(e.currentTarget));
 		body.baseUpdated = record?.updated ?? null; // for conflict detection at sync
 		message = statusMessages.sending;
@@ -191,9 +200,11 @@
 				}, res.synced ? 1500 : 2500);
 			} else {
 				message = res.result?.message || statusMessages.error;
+				submitting = false;
 			}
 		} catch (error) {
 			message = statusMessages.error;
+			submitting = false;
 		}
 	}
 </script>
@@ -205,7 +216,22 @@
 		<h2 class="font-display text-2xl font-bold text-ink">Update laboratory result</h2>
 		<p class="mt-1 text-sm text-muted">Edit this result, then save your changes.</p>
 	</div>
-	<div class="overflow-hidden rounded-xl border border-line bg-surface shadow-card">
+	{#if loading}
+		<div class="flex items-center justify-center gap-3 rounded-xl border border-line bg-surface px-6 py-14 text-muted shadow-card">
+			<svg class="h-5 w-5 animate-spin text-leaf" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+			<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+			<path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+										</svg>
+			<span class="text-sm font-medium">Loading the record…</span>
+		</div>
+	{:else if notFound}
+		<div class="rounded-xl border border-line bg-surface px-6 py-14 text-center shadow-card">
+			<p class="font-display text-base font-semibold text-ink">Record not found</p>
+			<p class="mt-1 text-sm text-muted">It may have been deleted, or the link is out of date.</p>
+			<div class="mt-4"><Button type="link" href="/record" color="primary" text="Browse records" /></div>
+		</div>
+	{/if}
+	<div class="overflow-hidden rounded-xl border border-line bg-surface shadow-card" class:hidden={loading || notFound}>
 		<form class="space-y-5 px-6 py-6" on:submit|preventDefault={handleSubmit}>
 			<div class="hidden md:items-center mb-6">
 				<div class="md:w-3/12">
@@ -251,7 +277,7 @@
 				<div class="md:w-3/12">
 					<label
 						class="field-label"
-						for="category"
+						for="inline-category"
 					>
 						Category
 					</label>
@@ -260,8 +286,7 @@
 					<!-- Category is fixed on update — the result fields differ per category.
 					     Disabled control isn't submitted, so a hidden input carries the value. -->
 					<input type="hidden" name="category" value={selectedOption} />
-					<select
-						id="dropdown"
+					<select id="inline-category"
 						class="field cursor-not-allowed bg-paper opacity-70"
 						bind:value={selectedOption}
 						disabled
@@ -398,19 +423,14 @@
 				<div class="md:w-3/12">
 					<label
 						class="field-label"
-						for="inline-firstName"
+						for="inline-pathologist"
 					>
 						Pathologist
 					</label>
 				</div>
 				<div class="md:w-5/12">
-					<select
-						id="dropdown"
-						name="pathologist"
-						class="field"
-						placeholder="Select an option"
-						bind:value={pathologist}
-					>
+					<select id="inline-pathologist" name="pathologist" class="field" required bind:value={pathologist}>
+						<option value="" disabled>Select…</option>
 						{#each pathologists as option}
 							<option value={option?._id}>{option?.profile?.displayName}</option>
 						{/each}
@@ -421,19 +441,14 @@
 				<div class="md:w-3/12">
 					<label
 						class="field-label"
-						for="inline-firstName"
+						for="inline-medicalTechnologist"
 					>
 						Medical Technologist
 					</label>
 				</div>
 				<div class="md:w-5/12">
-					<select
-						id="dropdown"
-						name="medicalTechnologist"
-						class="field"
-						placeholder="Select an option"
-						bind:value={medicalTechnologist}
-					>
+					<select id="inline-medicalTechnologist" name="medicalTechnologist" class="field" required bind:value={medicalTechnologist}>
+						<option value="" disabled>Select…</option>
 						{#each medTechs as option}
 							<option value={option?._id}  >{option?.profile?.displayName}</option>
 						{/each}
@@ -442,9 +457,9 @@
 			</div>
 			<div class="flex items-center justify-end gap-3 border-t border-line pt-5">
 				{#if message}
-					<span transition:fade class="text-sm font-medium text-muted">{@html message}</span>
+					<span transition:fade class="text-sm font-medium text-muted">{message}</span>
 				{/if}
-				<Button htmlType="submit" type="button" color="primary" text="Save changes" padding="py-2.5 px-5" />
+				<Button htmlType="submit" type="button" color="primary" text={submitting ? 'Saving…' : 'Save changes'} disabled={submitting || notFound} padding="py-2.5 px-5" />
 			</div>
 		</form>
 	</div>

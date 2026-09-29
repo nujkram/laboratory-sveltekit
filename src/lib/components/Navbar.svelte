@@ -50,7 +50,10 @@
 	}
 </script>
 
-<svelte:window on:click={() => (isDropdownOpen = false)} />
+<svelte:window
+	on:click={() => (isDropdownOpen = false)}
+	on:keydown={(e) => e.key === 'Escape' && (isDropdownOpen = false)}
+/>
 
 <header
 	id="app-topbar"

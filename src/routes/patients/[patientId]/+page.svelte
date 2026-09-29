@@ -243,8 +243,10 @@
 			</span>
 			<div class="min-w-0">
 				<h2 class="font-display text-2xl font-bold leading-tight">
-					{patient?.completeName}
-					<span class="font-mono text-lg font-medium text-leaf-active">· {age}</span>
+					{patient?.completeName ?? (loading ? 'Loading…' : 'Patient not found')}
+					{#if age}
+						<span class="font-mono text-lg font-medium text-leaf-active">· {age}</span>
+					{/if}
 				</h2>
 				{#if patient?.address}
 					<p class="mt-1 text-sm text-white/70">{patient.address}</p>

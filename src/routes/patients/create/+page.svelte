@@ -60,8 +60,8 @@
 						submitting = false;
 				}
 			} catch (error) {
-				console.error('error', error);
-					submitting = false;
+				message = 'Something went wrong. Please try again.';
+				submitting = false;
 			}
 		}}
 	>
@@ -71,7 +71,7 @@
 					class="field-label"
 					for="inline-firstName"
 				>
-					First Name
+					First Name <span class="text-danger" aria-hidden="true">*</span>
 				</label>
 			</div>
 			<div class="md:w-9/12">
@@ -80,6 +80,7 @@
 					id="inline-firstName"
 					type="text"
 					name="firstName"
+					required
 					bind:value={firstName}
 				/>
 			</div>
@@ -109,7 +110,7 @@
 					class="field-label"
 					for="inline-lastName"
 				>
-					Last Name
+					Last Name <span class="text-danger" aria-hidden="true">*</span>
 				</label>
 			</div>
 			<div class="md:w-9/12">
@@ -118,6 +119,7 @@
 					id="inline-lastName"
 					type="text"
 					name="lastName"
+					required
 					bind:value={lastName}
 				/>
 			</div>
@@ -132,7 +134,7 @@
 				</label>
 			</div>
 			<div class="md:w-9/12">
-				<select name="gender" bind:value={gender} class="field">
+				<select id="inline-gender" name="gender" bind:value={gender} class="field">
 					<option value="" disabled>Select…</option>
 					<option value="Male">Male</option>
 					<option value="Female">Female</option>
@@ -174,7 +176,7 @@
 
 		<div class="flex items-center justify-end gap-3 border-t border-line pt-5">
 			{#if message}
-				<span transition:fade class="text-sm font-medium text-muted">{@html message}</span>
+				<span transition:fade class="text-sm font-medium text-muted">{message}</span>
 			{/if}
 			<Button htmlType="submit" type="button" color="primary" text={submitting ? 'Saving…' : 'Save patient'} disabled={submitting} padding="py-2.5 px-5" />
 		</div>

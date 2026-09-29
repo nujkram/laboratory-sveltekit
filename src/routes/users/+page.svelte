@@ -15,6 +15,8 @@
     let status = 'all'
     let search;
     let items = [];
+	let loading = true;
+	let loadError = '';
 	let currentPage = 1;
 	let pageSize = 10;
 	let itemSize;
@@ -55,6 +57,8 @@
 	}
 
 	async function loadUsers() {
+		loading = true;
+		loadError = '';
 		try {
 			let response = await fetch('/api/admin/user', {
 				method: 'GET',
@@ -63,10 +67,14 @@
 				}
 			});
 			let result = await response.json();
-			items = result.response;
+			if (result?.status !== 'Success') throw new Error(result?.message || 'Could not load users.');
+			items = result.response ?? [];
 			sortItems();
 		} catch (error) {
-			console.error('error', error);
+			items = [];
+			loadError = error?.message || 'Could not load users.';
+		} finally {
+			loading = false;
 		}
 	}
 
@@ -187,6 +195,27 @@
 					</tr>
 				</thead>
 				<tbody class="divide-y divide-line">
+					{#if loading}
+						<tr>
+							<td colspan="7" class="px-5 py-14 text-center">
+								<div class="flex items-center justify-center gap-3 text-muted">
+									<svg class="h-5 w-5 animate-spin text-leaf" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+											<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+											<path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+										</svg>
+									<span class="text-sm font-medium">Loading users…</span>
+								</div>
+							</td>
+						</tr>
+					{:else if loadError}
+						<tr>
+							<td colspan="7" class="px-5 py-14 text-center">
+								<p class="font-display text-base font-semibold text-ink">Could not load users</p>
+								<p class="mt-1 text-sm text-muted">{loadError}</p>
+								<button type="button" class="mt-3 text-sm font-medium text-leaf hover:underline" on:click={loadUsers}>Try again</button>
+							</td>
+						</tr>
+					{:else}
 					{#key paginatedItems}
 						{#if paginatedItems.length}
 							{#each paginatedItems as data (data._id)}
@@ -239,7 +268,7 @@
 							{/each}
 						{:else}
 							<tr>
-								<td colspan="6" class="px-5 py-14 text-center">
+								<td colspan="7" class="px-5 py-14 text-center">
 									<p class="font-display text-base font-semibold text-ink">No users found</p>
 									<p class="mt-1 text-sm text-muted">
 										{search || status !== 'all'
@@ -250,6 +279,7 @@
 							</tr>
 						{/if}
 					{/key}
+					{/if}
 				</tbody>
 			</table>
 		</div>

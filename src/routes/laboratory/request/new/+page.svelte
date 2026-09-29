@@ -460,6 +460,7 @@
 			</div>
 
 			{#if selectedLines.length}
+				<div class="overflow-x-auto">
 				<table class="w-full text-sm">
 					<thead class="border-b border-line bg-paper text-left text-xs uppercase tracking-wide text-muted">
 						<tr>
@@ -503,6 +504,7 @@
 						{/each}
 					</tbody>
 				</table>
+				</div>
 			{:else}
 				<p class="px-5 py-10 text-center text-sm text-muted">
 					No tests selected yet. Pick them from the list above.

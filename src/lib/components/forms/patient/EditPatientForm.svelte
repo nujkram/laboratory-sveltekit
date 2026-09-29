@@ -47,13 +47,18 @@
             if (res.ok) {
                 if (res.synced) loadPatient(); // offline: list refreshes after sync
                 isEditModalOpen = false;
+            } else {
+                error = res.result?.message || 'Could not save the changes. Please try again.';
             }
-        } catch (error) {
-            console.error('error', error);
+        } catch (e) {
+            error = 'Something went wrong. Please try again.';
         } finally {
             saving = false;
         }
     }
+
+    let error = '';
+    $: if (isEditModalOpen) error = '';
 
     onMount(setEditValues);
 </script>
@@ -99,7 +104,7 @@
 							</select>
 						</div>
 						<div>
-							<label for="birthDate" class="mb-1.5 block text-sm font-medium text-ink">Birth date</label>
+							<span class="mb-1.5 block text-sm font-medium text-ink">Birth date</span>
 							<DateInput bind:value={birthDate} min={minDob} max={maxDob} format="yyyy-MM-dd" placeholder="Select date" />
 						</div>
 					</div>
@@ -107,6 +112,9 @@
 						<label for="address" class="mb-1.5 block text-sm font-medium text-ink">Address</label>
 						<input id="address" type="text" class="field" bind:value={address} />
 					</div>
+					{#if error}
+						<p class="rounded-lg border border-danger/30 bg-danger/10 px-3 py-2 text-sm font-medium text-danger" role="alert">{error}</p>
+					{/if}
 					<div class="flex justify-end gap-2 pt-2">
 						<button
 							type="button"
