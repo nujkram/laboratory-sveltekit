@@ -121,6 +121,8 @@
 	}
 </script>
 
+<svelte:head><title>Users · Laboratory Information System</title></svelte:head>
+
 <div class="animate-rise-in space-y-5">
 	<!-- Page header -->
 	<div class="flex flex-wrap items-end justify-between gap-3">
@@ -180,6 +182,7 @@
 						<th scope="col" class="px-5 py-3 font-semibold">First name</th>
 						<th scope="col" class="px-5 py-3 font-semibold">Middle name</th>
 						<th scope="col" class="px-5 py-3 font-semibold">Email</th>
+						<th scope="col" class="px-5 py-3 font-semibold">Role</th>
 						<th scope="col" class="px-5 py-3 font-semibold">
 							<span class="inline-flex items-center gap-1">Status <Sort on:click={() => handleSort('isActive')} /></span>
 						</th>
@@ -205,6 +208,13 @@
 									<td class="whitespace-nowrap px-5 py-3 text-ink">{data?.profile?.firstName || '—'}</td>
 									<td class="whitespace-nowrap px-5 py-3 text-muted">{data?.profile?.middleName || '—'}</td>
 									<td class="whitespace-nowrap px-5 py-3 font-mono text-xs text-muted">{data?.profile?.email || '—'}</td>
+									<td class="whitespace-nowrap px-5 py-3">
+										{#if data?.role}
+											<span class="inline-flex items-center rounded-full bg-line/60 px-2.5 py-1 text-xs font-medium text-ink">{data.role}</span>
+										{:else}
+											<span class="text-xs text-muted">—</span>
+										{/if}
+									</td>
 									<td class="px-5 py-3">
 										<span
 											class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium {data.isActive

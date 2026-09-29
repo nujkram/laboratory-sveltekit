@@ -220,6 +220,8 @@
 	}
 </script>
 
+<svelte:head><title>New request · Laboratory Information System</title></svelte:head>
+
 <div class="animate-rise-in mx-auto max-w-5xl space-y-5">
 	<div class="flex flex-wrap items-end justify-between gap-3">
 		<div>

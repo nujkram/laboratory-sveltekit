@@ -31,6 +31,8 @@
 	}
 </script>
 
+<svelte:head><title>Settings · Laboratory Information System</title></svelte:head>
+
 <div class="animate-rise-in mx-auto max-w-2xl space-y-6">
 	<div>
 		<h2 class="font-display text-2xl font-bold text-ink">Settings</h2>

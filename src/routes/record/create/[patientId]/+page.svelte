@@ -226,6 +226,8 @@
 	}
 </script>
 
+<svelte:head><title>New result · Laboratory Information System</title></svelte:head>
+
 <div class="animate-rise-in mx-auto max-w-4xl space-y-5">
 	<div>
 		<h2 class="font-display text-2xl font-bold text-ink">New laboratory result</h2>

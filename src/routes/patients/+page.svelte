@@ -147,6 +147,8 @@
 
 </script>
 
+<svelte:head><title>Patients · Laboratory Information System</title></svelte:head>
+
 <div class="animate-rise-in space-y-5">
 	<!-- Page header -->
 	<div class="flex flex-wrap items-end justify-between gap-3">

@@ -225,6 +225,8 @@
 	onMount(loadTransactions);
 </script>
 
+<svelte:head><title>Transactions · Laboratory Information System</title></svelte:head>
+
 <div class="animate-rise-in space-y-6">
 	<div class="flex flex-wrap items-end justify-between gap-3">
 		<div>

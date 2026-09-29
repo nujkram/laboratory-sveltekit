@@ -31,6 +31,8 @@
 	];
 </script>
 
+<svelte:head><title>Records · Laboratory Information System</title></svelte:head>
+
 <div class="animate-rise-in space-y-6">
 	<div>
 		<h2 class="font-display text-2xl font-bold text-ink">Laboratory records</h2>

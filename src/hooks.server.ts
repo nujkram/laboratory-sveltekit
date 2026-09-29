@@ -80,7 +80,9 @@ function guardRequest(event: any): Response | undefined {
 	}
 
 	if (!canView(event.locals.user, route)) {
-		throw redirect(303, landingFor(event.locals.user));
+		// The layout reads the flag and tells them, rather than a silent bounce
+		// that looks like a broken link.
+		throw redirect(303, `${landingFor(event.locals.user)}?denied=1`);
 	}
 }
 

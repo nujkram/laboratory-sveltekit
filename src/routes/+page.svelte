@@ -12,4 +12,6 @@
 	};
 </script>
 
+<svelte:head><title>Dashboard · Laboratory Information System</title></svelte:head>
+
 <Dashboard {summary} />

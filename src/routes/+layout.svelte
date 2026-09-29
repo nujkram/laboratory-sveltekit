@@ -16,6 +16,16 @@
 
 	let cachedUser = null;
 
+	// Set by the server guard when it bounced a page the user may not open. Read
+	// once, then dropped from the address bar so a reload does not repeat it.
+	let deniedNotice = false;
+	$: if (browser && $page.url.searchParams.has('denied')) {
+		deniedNotice = true;
+		const clean = new URL(window.location.href);
+		clean.searchParams.delete('denied');
+		history.replaceState(history.state, '', clean);
+	}
+
 	// Whenever the app is used online, refresh the data needed offline: the form
 	// reference lists, plus the working set (patients + recent records per patient)
 	// so any active patient's chart opens offline — not just recently-viewed ones.
@@ -71,6 +81,27 @@
 		<Navbar {user} />
 		<main class="pt-16 transition-[padding] duration-300 ease-in-out {$sidebarOpen ? 'sm:pl-64' : 'sm:pl-0'}">
 			<div class="px-4 py-4 sm:px-5 lg:px-6">
+				{#if deniedNotice}
+					<div
+						class="mb-4 flex items-center gap-3 rounded-xl border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-ink"
+						role="status"
+						transition:fade={{ duration: 150 }}
+					>
+						<svg class="h-5 w-5 shrink-0 text-warning" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+							<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm0-11a1 1 0 011 1v3a1 1 0 11-2 0V8a1 1 0 011-1zm0 7a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+						</svg>
+						<span class="flex-1">
+							That page isn't available to your role, so you were brought back here.
+						</span>
+						<button
+							type="button"
+							class="rounded-lg px-2 py-1 text-xs font-medium text-muted transition-colors hover:bg-ink/5 hover:text-ink"
+							on:click={() => (deniedNotice = false)}
+						>
+							Dismiss
+						</button>
+					</div>
+				{/if}
 				<slot />
 			</div>
 		</main>

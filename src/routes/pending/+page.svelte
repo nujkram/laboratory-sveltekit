@@ -71,6 +71,8 @@
 	$: $pendingCount, refresh?.();
 </script>
 
+<svelte:head><title>Pending sync · Laboratory Information System</title></svelte:head>
+
 <div class="animate-rise-in mx-auto max-w-3xl space-y-5">
 	<div class="flex flex-wrap items-end justify-between gap-3">
 		<div>

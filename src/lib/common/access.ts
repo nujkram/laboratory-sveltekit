@@ -64,7 +64,7 @@ const API_RULES: Array<{ prefix: string; allow: Access }> = [
 	{ prefix: '/api/auth/login', allow: 'public' },
 	{ prefix: '/api/auth/logout', allow: 'authenticated' },
 
-	// changing your OWN password; the endpoint itself checks admin for resets
+	// changing your OWN password only — an admin reset goes through /user/update
 	{ prefix: '/api/admin/user/password', allow: 'authenticated' },
 	// reference lists the record forms need to populate their selects
 	{ prefix: '/api/admin/user/med-tech', allow: CLINICAL },

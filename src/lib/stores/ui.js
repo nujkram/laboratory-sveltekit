@@ -7,9 +7,12 @@ const KEY = 'sidebarOpen';
 
 function initial() {
 	if (!browser) return true;
+	// On a phone the open sidebar covers the page, so a preference saved on a
+	// desktop-sized window must not carry over: small screens always start closed.
+	if (window.innerWidth < 640) return false;
 	const saved = localStorage.getItem(KEY);
 	if (saved !== null) return saved === 'true';
-	return window.innerWidth >= 640;
+	return true;
 }
 
 export const sidebarOpen = writable(initial());

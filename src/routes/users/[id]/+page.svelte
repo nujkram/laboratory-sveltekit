@@ -26,6 +26,8 @@
 	];
 </script>
 
+<svelte:head><title>User · Laboratory Information System</title></svelte:head>
+
 <div class="animate-rise-in space-y-6">
 	<a
 		href="/users"

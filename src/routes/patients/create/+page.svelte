@@ -18,6 +18,8 @@
 	const minDob = new Date(1900, 0, 1);
 	const maxDob = new Date();
 </script>
+
+<svelte:head><title>New patient · Laboratory Information System</title></svelte:head>
 <div class="animate-rise-in mx-auto max-w-2xl space-y-5">
 	<div>
 		<h2 class="font-display text-2xl font-bold text-ink">New patient</h2>

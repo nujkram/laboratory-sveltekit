@@ -6,7 +6,7 @@
 	import Users from './icons/Users.svelte';
 	import { sidebarOpen, closeSidebar } from '$lib/stores/ui.js';
 	import { page } from '$app/stores';
-	import { canView } from '$lib/common/access';
+	import { canView, landingFor } from '$lib/common/access';
 
 	// Same map the server guard uses, so the nav can never offer a page that
 	// would just bounce the user back.
@@ -41,11 +41,8 @@
 	</button>
 
 	<!-- Brand lockup -->
-	<a
-		href="/"
-		class="flex items-center gap-3 px-5 pt-5 pb-4 no-underline"
-		style="text-decoration-line: none;"
-	>
+	<!-- a cashier has no dashboard: the brand goes to whatever their home is -->
+	<a href={landingFor($page.data.user)} class="flex items-center gap-3 px-5 pt-5 pb-4 no-underline">
 		<span class="text-leaf-active">
 			<Logo size={46} />
 		</span>

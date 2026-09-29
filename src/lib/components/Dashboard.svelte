@@ -2,6 +2,8 @@
 	// @ts-nocheck
 	// All values are computed in the DB (see /api/admin/dashboard):
 	// summary = { counts, kpis, categories[], roles[], monthly[], topMedTechs[] }
+	import { page } from '$app/stores';
+	import { canView } from '$lib/common/access';
 	export let summary = {
 		counts: { patients: 0, records: 0, users: 0 },
 		kpis: { recordsThisMonth: 0, recordsToday: 0, patientsThisMonth: 0, activePatients: 0 },
@@ -165,7 +167,11 @@
 		<section class="rounded-xl border border-line bg-surface shadow-card">
 			<header class="flex items-center justify-between border-b border-line px-5 py-4">
 				<h3 class="font-display text-base font-bold text-ink">Staff by role</h3>
-				<a href="/users" class="text-xs font-medium text-leaf no-underline hover:underline">View all</a>
+				<!-- only an administrator can open the users page; offering the link
+				     to a med-tech would just bounce them back here -->
+				{#if canView($page.data.user, '/users')}
+					<a href="/users" class="text-xs font-medium text-leaf no-underline hover:underline">View all</a>
+				{/if}
 			</header>
 			<ul class="divide-y divide-line">
 				{#if roles.length}

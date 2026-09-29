@@ -215,6 +215,8 @@
 	});
 </script>
 
+<svelte:head><title>Patient chart · Laboratory Information System</title></svelte:head>
+
 <div class="animate-rise-in space-y-6">
 	<a
 		href="/patients"
