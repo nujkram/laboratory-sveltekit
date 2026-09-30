@@ -14,7 +14,10 @@ export function setPageSize(paperName) {
 		el.id = STYLE_ID;
 		document.head.appendChild(el);
 	}
-	el.textContent = `@media print { @page { size: ${paper.size}; margin: ${paper.margin}; } }`;
+	// A preset without a size (the thermal roll) leaves the paper to the print
+	// dialog and only fixes the margins — see reportPapers.js for why.
+	const size = paper.size ? `size: ${paper.size}; ` : '';
+	el.textContent = `@media print { @page { ${size}margin: ${paper.margin}; } }`;
 }
 
 export function clearPageSize() {

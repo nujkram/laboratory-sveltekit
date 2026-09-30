@@ -29,7 +29,28 @@ export const papers = {
 	// Half-letter charge slip. Not from a Word template — this is the new
 	// laboratory transaction receipt, sized so two print per letter sheet on an
 	// ordinary office printer (no slip printer needed).
-	receipt: { size: '5.5in 8.5in', margin: '0.3in', content: '4.9in', base: '9pt', head: '7pt' }
+	receipt: { size: '5.5in 8.5in', margin: '0.3in', content: '4.9in', base: '9pt', head: '7pt' },
+	// The same slip on a 58mm thermal receipt roll (48mm printable, 203 dpi).
+	//
+	// `size` is deliberately absent: a roll driver exposes its own variable-
+	// height paper, and a @page size that does not match one of the driver's
+	// media makes Chrome fit-to-page — a silent rescale that would knock the
+	// barcode off its 2-dots-per-module grid. The page therefore takes the paper
+	// picked in the print dialog; only the margins are published.
+	//
+	// 44mm rather than the full 48mm: Blink shrinks any horizontal overflow
+	// without saying so, and drivers clamp margins up to their hardware minimum,
+	// so 2mm of headroom either side keeps the printout at 1:1.
+	//
+	// `screenZoom` is applied on screen only, so the 44mm preview is readable.
+	thermal58: {
+		size: null,
+		margin: '0 2mm',
+		content: '44mm',
+		base: '8pt',
+		head: '7pt',
+		screenZoom: 2
+	}
 };
 
 /**

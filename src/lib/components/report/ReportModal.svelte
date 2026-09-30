@@ -25,6 +25,11 @@
 	 * exactly as it always has.
 	 */
 	export let transaction = null;
+	/**
+	 * Replaces the default print-dialog hint (margins / headers / background)
+	 * when a report needs different dialog settings — the thermal roll does.
+	 */
+	export let printHint = '';
 
 	// Deliberately a prompt, not a block. A result that cannot be printed in an
 	// emergency is a worse failure than one released before the cashier has been
@@ -62,7 +67,8 @@
 	use:portal
 	class="report-modal {isViewModalOpen ? 'block' : 'hidden'}"
 	id="print-record-modal"
-	style="--sheet-width: {sheet.content}; --sheet-base: {sheet.base}; --sheet-head: {sheet.head};"
+	style="--sheet-width: {sheet.content}; --sheet-base: {sheet.base}; --sheet-head: {sheet.head}; --sheet-zoom: {sheet.screenZoom ??
+		1};"
 >
 	<div class="report-backdrop" on:click={handleCloseModal} />
 	<!-- The scroll layer covers the backdrop, so a click on the grey area lands
@@ -92,6 +98,8 @@
 						{transaction.status === 'Cancelled' ? 'cancelled' : 'unpaid'} — the official receipt
 						has not been issued.
 					</p>
+				{:else if printHint}
+					<p class="absolute top-4 left-20 text-xs text-muted">{printHint}</p>
 				{:else}
 					<!-- Chrome draws its own URL/date strip inside the page margin and
 					     lets the user override margins per destination; both silently
@@ -117,6 +125,15 @@
 					<span class="sr-only">Close modal</span>
 				</button>
 			</div>
+			{#if $$slots.controls}
+				<!-- Screen-only controls a report adds above its sheet (the slip's
+				     paper toggle). A row of its own rather than a spot in the bar, so
+				     it never collides with the print hint on a narrow sheet;
+				     .report-screen-only keeps it off the paper (app.css). -->
+				<div class="report-screen-only mb-3 flex items-center justify-end gap-2">
+					<slot name="controls" />
+				</div>
+			{/if}
 			<div id="report-sheet">
 				<slot />
 			</div>
@@ -166,6 +183,20 @@
 		line-height: 1.2;
 		color: #000;
 		width: var(--sheet-width, 6.5in);
+	}
+
+	/* A 44mm thermal slip is a sliver at 96dpi, so the preset can ask for a
+	   screen-only magnification. `zoom` (not transform) so the card grows with
+	   it, and scoped to screen so the paper is untouched. */
+	@media screen {
+		#report-sheet {
+			zoom: var(--sheet-zoom, 1);
+		}
+		/* Even magnified, the thermal slip is narrower than the Print bar's
+		   hint text; hold the card at the half-letter width so nothing spills. */
+		.report-card {
+			min-width: 34rem;
+		}
 	}
 
 	@media print {

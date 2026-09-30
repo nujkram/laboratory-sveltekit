@@ -5,24 +5,34 @@
 	//             forms: 8pt, four lines ending in LABORATORY DEPARTMENT.
 	//   tall    — the long-bond TSH / T3 T4 / PSA forms: 10pt, street and
 	//             telephone on separate lines, and no LABORATORY DEPARTMENT line.
+	//   thermal — the charge slip on a 58mm receipt roll: no logo (a dithered
+	//             photo on 1-bit thermal paper is a smudge) and no banner fill
+	//             (a colour under print-color-adjust:exact prints as grey noise
+	//             behind the title); the banner is text between two rules.
 	/** department name shown in the banner, e.g. "HEMATOLOGY" */
 	export let title = '';
 	/** banner fill, e.g. "bg-report-hematology" */
 	export let bannerClass = 'bg-report-misc';
-	/** 'compact' | 'tall' */
+	/** 'compact' | 'tall' | 'thermal' */
 	export let variant = 'compact';
 	/** point-size override for the hospital block — RS FORM sets it at 9pt where the others use 8pt */
 	export let headSize = '';
 </script>
 
 <div class="flex items-center justify-center gap-2">
-	<img src="/mmg-logo.png" alt="" class="shrink-0" style="width: 0.65in; height: auto;" />
+	{#if variant !== 'thermal'}
+		<img src="/mmg-logo.png" alt="" class="shrink-0" style="width: 0.65in; height: auto;" />
+	{/if}
 	<div class="rpt-head text-center leading-tight" style={headSize ? `font-size: ${headSize}` : ''}>
 		<div class="font-bold uppercase">Medical Mission Group Hospital &amp; Health</div>
 		<div>Services Cooperative of Roxas City and Capiz</div>
 		{#if variant === 'tall'}
 			<div>Washington St., Roxas City</div>
 			<div>Tel. No. (036) 6215-798</div>
+		{:else if variant === 'thermal'}
+			<div>Washington St., Roxas City</div>
+			<div>Tel. No. (036) 6215-798</div>
+			<div class="font-bold tracking-wide">LABORATORY DEPARTMENT</div>
 		{:else}
 			<div>Washington St., Roxas City Tel. No. (036) 6215-798</div>
 			<div class="font-bold tracking-wide">LABORATORY DEPARTMENT</div>
@@ -30,8 +40,14 @@
 	</div>
 </div>
 
-<div
-	class="report-gap rpt-lg mt-2 border border-black py-0.5 text-center font-bold uppercase tracking-wide text-black {bannerClass}"
->
-	{title}
-</div>
+{#if variant === 'thermal'}
+	<div class="report-gap rpt-md mt-1.5 border-y border-black py-0.5 text-center font-bold uppercase tracking-wide">
+		{title}
+	</div>
+{:else}
+	<div
+		class="report-gap rpt-lg mt-2 border border-black py-0.5 text-center font-bold uppercase tracking-wide text-black {bannerClass}"
+	>
+		{title}
+	</div>
+{/if}
