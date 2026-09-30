@@ -332,12 +332,18 @@
 	>
 		<label class="mb-1.5 block text-sm font-medium text-ink" for="lookup">Reference number</label>
 		<div class="flex gap-2">
+			<!-- The counter's only purpose is to receive a scan, so it must own focus
+			     the moment the page appears. After a client-side navigation SvelteKit
+			     moves focus to the page root — after onMount has run — unless an
+			     element carries `autofocus`, which is exactly the exception wanted. -->
+			<!-- svelte-ignore a11y-autofocus -->
 			<input
 				id="lookup"
 				bind:this={lookupEl}
 				bind:value={lookup}
 				class="field flex-1 font-mono text-lg"
 				type="text"
+				autofocus
 				autocomplete="off"
 				spellcheck="false"
 				placeholder="Scan the slip, or type LT-000123"

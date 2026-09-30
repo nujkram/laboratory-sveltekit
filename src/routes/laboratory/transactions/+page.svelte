@@ -350,10 +350,15 @@
 						/>
 					</svg>
 				</span>
+				<!-- A slip scanned here should land in the search straight away, so the
+				     field takes focus on arrival (SvelteKit honours `autofocus` when it
+				     resets focus after navigation). -->
+				<!-- svelte-ignore a11y-autofocus -->
 				<input
 					type="search"
 					bind:value={search}
 					on:input={handleSearch}
+					autofocus
 					placeholder="Search reference, name or doctor…"
 					class="w-full rounded-lg border-line bg-surface py-2 pl-9 pr-3 text-sm text-ink placeholder:text-muted/60 focus:border-leaf focus:ring-2 focus:ring-leaf/25"
 				/>
