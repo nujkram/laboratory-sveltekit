@@ -87,7 +87,7 @@
 		"lucia-sveltekit": "^0.14.3",
 		"mongodb": "^4.12.0",
 		"nodemailer": "^6.8.0",
-		"pdfjs-dist": "^2.15.349",
+		"pdfjs-dist": "^4.0.0",
 		"plyr": "^3.7.2",
 		"postcss-load-config": "^4.0.1",
 		"postmark": "^3.0.14",
